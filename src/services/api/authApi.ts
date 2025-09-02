@@ -7,8 +7,8 @@ export interface LoginCredentials {
   email: string;
   password: string;
 }
-export interface LoginResponse {
-  data: {
+export interface AuthUser {
+ 
     id: string;
     fullName: string;
     emailAddress: string;
@@ -17,11 +17,15 @@ export interface LoginResponse {
     hmoId: string;
     isProvider: boolean;
     providerId: string;
-  };
-  message: string;
-  isSuccess: boolean;
+
+
 }
 
+export interface LoginResponse {
+  data: AuthUser;
+   message: string;
+  isSuccess: boolean;
+}
 
 
 class AuthAPI {
