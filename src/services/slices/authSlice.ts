@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { type AuthUser } from "../api/authApi";
+import type { AuthUser } from "../../types/api";
 
 interface AuthState {
   token: string | null;
@@ -53,7 +53,7 @@ const authSlice = createSlice({
       state.user = null;
       state.isAuthenticated = false;
       // Remove token and user from localStorage
-      localStorage.removeItem("user");
+  
       localStorage.removeItem("token");
     },
     clearError: (state) => {

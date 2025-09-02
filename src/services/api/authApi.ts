@@ -1,32 +1,7 @@
-
-import axios from 'axios';
+import axios from "axios";
+import type { LoginCredentials, LoginResponse } from "../../types/api";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-export interface LoginCredentials {
-  email: string;
-  password: string;
-}
-export interface AuthUser {
- 
-    id: string;
-    fullName: string;
-    emailAddress: string;
-    token: string;
-    role: string;
-    hmoId: string;
-    isProvider: boolean;
-    providerId: string;
-
-
-}
-
-export interface LoginResponse {
-  data: AuthUser;
-   message: string;
-  isSuccess: boolean;
-}
-
 
 class AuthAPI {
   private baseURL: string;
@@ -38,29 +13,27 @@ class AuthAPI {
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
     try {
       const response = await axios.post<LoginResponse>(
-        `${this.baseURL}/auths`, 
+        `${this.baseURL}/auths`,
         credentials,
         {
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         }
       );
-      
+
       return response.data;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       if (error.response) {
-        
-        throw new Error(error.response.data.message || 'Login failed');
+        throw new Error(error.response.data.message || "Login failed");
       } else if (error.request) {
-        throw new Error('Network error. Please check your connection.');
+        throw new Error("Network error. Please check your connection.");
       } else {
-        throw new Error('An unexpected error occurred');
+        throw new Error("An unexpected error occurred");
       }
     }
   }
-
 }
 
 export const authAPI = new AuthAPI();
