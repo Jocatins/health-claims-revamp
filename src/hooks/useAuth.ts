@@ -1,0 +1,62 @@
+import { useDispatch, useSelector } from 'react-redux';
+import type { RootState, AppDispatch } from '../services/store/store';
+import{ loginStart, loginSuccess, loginFailure, logout, clearError } from '../services/slices/authSlice';
+import { authAPI } from '../services/api/authApi';
+
+interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export const useAuth = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const authState = useSelector((state: RootState) => state.auth);
+
+  const login = async (credentials: LoginCredentials) => {
+    dispatch(loginStart());
+    
+ try {
+      const response = await authAPI.login(credentials);
+      
+      if (response.isSuccess && response.data.token) {
+        dispatch(loginSuccess({
+          token: response.data.token,
+          user: {
+            id: response.data.id,
+            fullName: response.data.fullName,
+            emailAddress: response.data.emailAddress,
+            role: response.data.role,
+            hmoId: response.data.hmoId,
+            isProvider: response.data.isProvider,
+            providerId: response.data.providerId
+          }
+        }));
+        return { success: true };
+      } else {
+        const errorMessage = response.message || 'Login failed';
+        dispatch(loginFailure(errorMessage));
+        return { success: false, error: errorMessage };
+      }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      const errorMessage = error.message || 'Login failed. Please try again.';
+      dispatch(loginFailure(errorMessage));
+      return { success: false, error: errorMessage };
+    }
+  };
+
+  const signOut = () => {
+    dispatch(logout());
+  };
+
+  const resetError = () => {
+    dispatch(clearError());
+  };
+
+  return {
+    ...authState,
+    login,
+    logout: signOut,
+    clearError: resetError,
+  };
+};
