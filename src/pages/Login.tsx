@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import Input from "../components/ui/Input";
 import HimisLogo from "../assets/himis-logo";
+import Button from "../components/ui/Button";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -27,12 +28,12 @@ const Login: React.FC = () => {
           </label>
         </div>
 
-        <button
+        <Button
           className="w-full bg-green-900 text-white py-2 rounded-md hover:bg-green-800 transition-colors"
           onClick={() => navigate("/dashboard")}
         >
-          Log in
-        </button>
+          Login
+        </Button>
 
         <p className="text-center mt-4 text-sm text-gray-600 cursor-pointer hover:underline">
           Forgot your password?

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Select from "../../components/ui/Select";
+import { HiMenu } from "react-icons/hi";
 
 interface TopNavProps {
   sidebarOpen: boolean;
@@ -25,15 +26,13 @@ const TopNav: React.FC<TopNavProps> = ({ sidebarOpen, setSidebarOpen }) => {
           className="lg:hidden"
           onClick={() => setSidebarOpen(!sidebarOpen)}
         >
-          {sidebarOpen ? "✖" : "☰"}
+          <HiMenu />
         </button>
-
         {/* <h2 className="text-lg font-semibold">Dashboard</h2> */}
       </div>
 
       {/* Right side */}
       <div>
-      
         <Select
           options={providers}
           value={selectedProvider}
