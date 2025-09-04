@@ -18,9 +18,9 @@ export const useAuth = () => {
  try {
       const response = await authAPI.login(credentials);
       
-      if (response.isSuccess && response.data.token) {
+      if (response.isSuccess && response.data) {
         dispatch(loginSuccess({
-          token: response.data.token,
+          token: response.token,
           user: {
             id: response.data.id,
             fullName: response.data.fullName,
@@ -28,7 +28,8 @@ export const useAuth = () => {
             role: response.data.role,
             hmoId: response.data.hmoId,
             isProvider: response.data.isProvider,
-            providerId: response.data.providerId
+            providerId: response.data.providerId,
+            
           }
         }));
         return { success: true };

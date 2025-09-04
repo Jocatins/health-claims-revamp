@@ -6,7 +6,7 @@ export interface AuthUser {
   id: string;
   fullName: string;
   emailAddress: string;
-  token: string;
+  // token: string;
   role: string;
   hmoId: string;
   isProvider: boolean;
@@ -15,6 +15,7 @@ export interface AuthUser {
 
 export interface LoginResponse {
   data: AuthUser;
+    token: string;
   message: string;
   isSuccess: boolean;
 }

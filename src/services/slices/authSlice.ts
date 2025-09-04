@@ -53,7 +53,7 @@ const authSlice = createSlice({
       state.user = null;
       state.isAuthenticated = false;
       // Remove token and user from localStorage
-  
+      localStorage.removeItem("user");
       localStorage.removeItem("token");
     },
     clearError: (state) => {
