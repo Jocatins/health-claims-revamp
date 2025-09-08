@@ -58,18 +58,14 @@ const SideNav: React.FC<SideNavProps> = () => {
                 }`}>
                   {item.label}
                 </span>
-                {item.active && (
-                  <span className="ml-auto text-sm bg-green-700 text-white px-2 py-1 rounded">
-                    +
-                  </span>
-                )}
+              
               </a>
             );
           }
         })}
       </nav>
 
-      <div className="p-4 border-t border-green-800 mt-auto">
+      <div className="p-4 mt-auto">
         <Button
           className="w-full justify-center bg-green-800 hover:bg-green-700 text-white"
           onClick={logout}
