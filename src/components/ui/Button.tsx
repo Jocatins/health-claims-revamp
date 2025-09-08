@@ -10,6 +10,7 @@ interface ButtonProps {
   iconPosition?: "left" | "right";
   className?: string;
   size?: "sm" | "md" | "lg";
+  variant?: "solid" | "outline";
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -21,13 +22,15 @@ const Button: React.FC<ButtonProps> = ({
   iconPosition = "left",
   className = "",
   size = "md",
+  variant = "solid",
 }) => {
+
   const baseStyles =
-    "bg-green-600 text-white font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2";
+    "bg-primary text-white font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2";
 
   const stateStyles = disabled
     ? "opacity-50 cursor-not-allowed"
-    : "hover:bg-green-700 active:bg-green-800";
+    : "hover:bg-primary/90 active:bg-primary/80";
 
   // Size variants
   const sizeStyles = {
@@ -43,6 +46,11 @@ const Button: React.FC<ButtonProps> = ({
     lg: 20,
   };
 
+  const variantStyles =
+    variant === "outline"
+      ? "bg-transparent border border-primary text-primary hover:bg-primary/10"
+      : "";
+
   return (
     <button
       type={type}
@@ -52,6 +60,7 @@ const Button: React.FC<ButtonProps> = ({
         ${baseStyles}
         ${stateStyles}
         ${sizeStyles[size]}
+        ${variantStyles}
         ${className}
         inline-flex items-center justify-center gap-2
       `}

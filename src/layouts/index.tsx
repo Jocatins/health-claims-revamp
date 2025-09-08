@@ -1,9 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import SideNav from "./navbar/SideNav";
 import TopNav from "./navbar/TopNav";
-import ProductsList from "../pages/Products";
 
-const Layout = () => {
+interface LayoutProps {
+  children?: ReactNode;
+}
+
+const Layout = ({ children }: LayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -54,7 +57,7 @@ const Layout = () => {
           isMobile={isMobile}
         />
         <main className="flex-1 overflow-y-auto p-6 w-full">
-          <ProductsList />
+          {children}
         </main>
       </div>
     </div>

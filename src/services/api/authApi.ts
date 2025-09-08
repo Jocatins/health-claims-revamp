@@ -1,4 +1,4 @@
-import axios from "axios";
+import axiosInstance from "./axiosInstance";
 import type { LoginCredentials, LoginResponse } from "../../types/api";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -12,7 +12,7 @@ class AuthAPI {
 
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
     try {
-      const response = await axios.post<LoginResponse>(
+  const response = await axiosInstance.post<LoginResponse>(
         `${this.baseURL}/auths`,
         credentials,
         {

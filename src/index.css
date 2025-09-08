@@ -23,3 +23,7 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
 }
+
+.tableHeaderText {
+  /* @apply text-sm font-extrabold text-[#6b6f80]; */
+}
