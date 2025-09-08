@@ -49,8 +49,8 @@ export const PROVIDER_SIDEBAR: SidebarItem[] = [
 
 
 export const ADMIN_SIDEBAR: SidebarItem[] = [
-  {  icon: <DashboardIcon className="w-5 h-5" />, label: "Dashboard", active: false },
-  {  icon: <EnrolleeIcon className="w-5 h-5" />, label: "Claims Management", active: false },
+  {  icon: <DashboardIcon className="w-5 h-5" />, label: "Dashboard", active: false, path: "/dashboard" },
+  {  icon: <EnrolleeIcon className="w-5 h-5" />, label: "Claims Management", active: false, path: "/claims" },
   { icon: <EnrolleeIcon className="w-5 h-5" />, label: "Enrollees Management", active: false},
   { icon: <SettingsIcon className="w-5 h-5" />, label: "Settings", active: false },
   {  icon: <SettingsIcon className="w-5 h-5" />, label: "Tariff", active: false },
