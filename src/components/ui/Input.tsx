@@ -1,10 +1,16 @@
 import React, { type InputHTMLAttributes, useState } from "react";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-  label: string; 
+  label: string;
+  endAdornment?: React.ReactNode;
 }
 
-const Input: React.FC<InputProps> = ({ label, type = "text", ...props }) => {
+const Input: React.FC<InputProps> = ({
+  label,
+  endAdornment,
+  type = "text",
+  ...props
+}) => {
   const [focused, setFocused] = useState(false);
 
   return (
@@ -20,7 +26,7 @@ const Input: React.FC<InputProps> = ({ label, type = "text", ...props }) => {
           setFocused(e.target.value !== "");
           props.onBlur?.(e);
         }}
-        className="peer w-full border rounded-md px-3 pt-5 pb-2 focus:outline-none focus:ring-2 focus:ring-green-700"
+        className="peer w-full border rounded-md px-3 pr-10 pt-5 pb-2 focus:outline-none focus:ring-2 focus:ring-green-700"
       />
       <label
         className={`absolute left-3 text-gray-500 transition-all duration-200 
@@ -29,6 +35,12 @@ const Input: React.FC<InputProps> = ({ label, type = "text", ...props }) => {
       >
         {label}
       </label>
+
+      {endAdornment && (
+        <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center">
+          {endAdornment}
+        </div>
+      )}
     </div>
   );
 };

@@ -11,7 +11,7 @@ export interface SidebarItem {
   children?: SidebarItem[];
 }
 
-export const PROVIDER_SIDEBAR: SidebarItem[] = [
+export const ADMIN_SIDEBAR: SidebarItem[] = [
   { 
     icon: <DashboardIcon className="w-5 h-5" />, 
     label: "Dashboard", 
@@ -48,7 +48,7 @@ export const PROVIDER_SIDEBAR: SidebarItem[] = [
 ];
 
 
-export const ADMIN_SIDEBAR: SidebarItem[] = [
+export const PROVIDER_SIDEBAR: SidebarItem[] = [
   {  icon: <DashboardIcon className="w-5 h-5" />, label: "Dashboard", active: false, path: "/dashboard" },
   {  icon: <EnrolleeIcon className="w-5 h-5" />, label: "Claims Management", active: false, path: "/claims" },
   { icon: <EnrolleeIcon className="w-5 h-5" />, label: "Enrollees Management", active: false},

@@ -13,7 +13,6 @@ const AppRoutes = () => {
 
         <Route path="/login" element={<Login />} />
 
-        {/* <Route path="/dashboard" element={<Layout />} /> */}
         <Route
           path="/"
           element={<ProtectedRoute />}
