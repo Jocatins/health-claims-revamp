@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom"; // Add these imports
 import { FiChevronDown, FiChevronRight } from "react-icons/fi";
 import type { SidebarItem } from "../../constant/sideBarItems";
 
@@ -9,6 +10,7 @@ interface SidebarDropdownProps {
 
 const SidebarDropdown: React.FC<SidebarDropdownProps> = ({ item, level = 0 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation(); // Add useLocation hook
 
   const toggleDropdown = () => {
     // Only allow toggling if the item has children
@@ -20,13 +22,18 @@ const SidebarDropdown: React.FC<SidebarDropdownProps> = ({ item, level = 0 }) =>
   // Check if item has children
   const hasChildren = item.children && item.children.length > 0;
 
+  // Check if a route is active
+  const isActive = (path: string | undefined) => {
+    return path && location.pathname === path;
+  };
+
   return (
     <div>
       {/* Parent item */}
       <div
         onClick={toggleDropdown}
         className={`flex items-center justify-between px-4 py-3 transition-colors duration-200 group cursor-pointer ${
-          item.active 
+          isActive(item.path)
             ? "bg-green-800 text-white" 
             : "hover:bg-green-800 hover:text-white"
         }`}
@@ -34,12 +41,12 @@ const SidebarDropdown: React.FC<SidebarDropdownProps> = ({ item, level = 0 }) =>
       >
         <div className="flex items-center space-x-3">
           <span className={`transition-colors duration-200 ${
-            item.active ? "text-white" : "group-hover:text-white"
+            isActive(item.path) ? "text-white" : "group-hover:text-white"
           }`}>
             {item.icon}
           </span>
           <span className={`transition-colors duration-200 ${
-            item.active ? "text-white" : "group-hover:text-white"
+            isActive(item.path) ? "text-white" : "group-hover:text-white"
           }`}>
             {item.label}
           </span>
@@ -56,9 +63,42 @@ const SidebarDropdown: React.FC<SidebarDropdownProps> = ({ item, level = 0 }) =>
       {/* Dropdown children */}
       {isOpen && item.children && (
         <div className="overflow-hidden">
-          {item.children.map((child, index) => (
-            <SidebarDropdown key={index} item={child} level={level + 1} />
-          ))}
+          {item.children.map((child, index) => {
+            if (child.children) {
+              // If child has its own children, render recursively
+              return <SidebarDropdown key={index} item={child} level={level + 1} />;
+            } else {
+              // If child is a leaf node, render as Link
+              return (
+                <Link
+                  key={index}
+                  to={child.path || "#"}
+                  className={`flex items-center space-x-3 px-4 py-3 transition-colors duration-200 group ${
+                    isActive(child.path)
+                      ? "bg-green-800 text-white"
+                      : "hover:bg-green-800 hover:text-white"
+                  }`}
+                  style={{ paddingLeft: `${(level + 1) * 20 + 16}px` }}
+                  onClick={(e) => e.stopPropagation()} // Prevent dropdown toggle when clicking link
+                >
+                  <span
+                    className={`text-xl transition-colors duration-200 ${
+                      isActive(child.path) ? "text-white" : "group-hover:text-white"
+                    }`}
+                  >
+                    {child.icon}
+                  </span>
+                  <span
+                    className={`transition-colors duration-200 ${
+                      isActive(child.path) ? "text-white" : "group-hover:text-white"
+                    }`}
+                  >
+                    {child.label}
+                  </span>
+                </Link>
+              );
+            }
+          })}
         </div>
       )}
     </div>

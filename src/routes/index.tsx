@@ -4,6 +4,7 @@ import Layout from "../layouts";
 import ProtectedRoute from "./ProtectedRoute";
 import ProductsList from "../pages/Products";
 import { ClaimsManagement } from "../pages/ClaimsManagement";
+import Individual from "../pages/enrollee/registration/Individual";
 
 const AppRoutes = () => {
   return (
@@ -22,6 +23,14 @@ const AppRoutes = () => {
             element={
               <Layout>
                 <ProductsList />
+              </Layout>
+            }
+          />
+             <Route
+            path="enrollees/registration"
+            element={
+              <Layout>
+                <Individual/>
               </Layout>
             }
           />
