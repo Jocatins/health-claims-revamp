@@ -60,7 +60,7 @@ const Layout = ({ children }: LayoutProps) => {
           {children}
         </main>
       </div>
-    </div>
+  </div>
   );
 };
 

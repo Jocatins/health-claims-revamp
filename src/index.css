@@ -1,13 +1,27 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Tailwind v4 single import */
+@import "tailwindcss";
 
-/* Custom line-clamp utilities */
+/* Theme tokens (CSS custom properties) */
+:root {
+  --color-primary: #1B5845;
+  --font-avenir: Avenir, ui-sans-serif, system-ui;
+  --tracking-tightpx: -0.25px;
+  --text-heading-xl-size: 24px;
+  --text-heading-xl-line: 32px;
+  --text-body-size: 16px;
+  --text-body-line: 20px;
+}
+
+/* Base font setup */
+body { font-family: var(--font-avenir); letter-spacing: var(--tracking-tightpx); }
+
+/* Custom line-clamp utilities (keep legacy) */
 .line-clamp-1 {
   overflow: hidden;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
+  line-clamp: 1;
 }
 
 .line-clamp-2 {
@@ -15,6 +29,7 @@
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 
 .line-clamp-3 {
@@ -22,8 +37,29 @@
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
 }
 
-.tableHeaderText {
-  /* @apply text-sm font-extrabold text-[#6b6f80]; */
+/* Removed unused .tableHeaderText class */
+
+/* Avenir font (assumes it's available or loaded via OS). If hosting webfonts, add src urls here */
+@font-face {
+  font-family: 'Avenir';
+  src: local('Avenir'), local('Avenir Next');
+  font-weight: 400;
+  font-style: normal;
 }
+@font-face {
+  font-family: 'Avenir';
+  src: local('Avenir Medium'), local('AvenirNext-Medium');
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Avenir';
+  src: local('Avenir Heavy'), local('AvenirNext-DemiBold'), local('AvenirNext-Heavy');
+  font-weight: 800;
+  font-style: normal;
+}
+
+/* Removed custom typography utility classes in favor of direct Tailwind utility usage */

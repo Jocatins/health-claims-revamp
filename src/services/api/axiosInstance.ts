@@ -23,8 +23,14 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   response => response,
   error => {
-    if (error.response && error.response?.status === 401) {
-      window.location.href = '/login';
+    const status = error?.response?.status || error?.status;
+    if (status === 401) {
+      // Clear stored auth info
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

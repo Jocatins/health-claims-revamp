@@ -10,7 +10,7 @@ interface ButtonProps {
   iconPosition?: "left" | "right";
   className?: string;
   size?: "sm" | "md" | "lg";
-  variant?: "solid" | "outline";
+  variant?: "solid" | "outline" | "text";
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -26,11 +26,11 @@ const Button: React.FC<ButtonProps> = ({
 }) => {
 
   const baseStyles =
-    "bg-primary text-white font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2";
+    "bg-[#1B5845] text-white font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#1B5845] focus:ring-offset-2";
 
   const stateStyles = disabled
     ? "opacity-50 cursor-not-allowed"
-    : "hover:bg-primary/90 active:bg-primary/80";
+    : "hover:bg-[#1B5845]/90 active:bg-[#1B5845]/80";
 
   // Size variants
   const sizeStyles = {
@@ -48,7 +48,11 @@ const Button: React.FC<ButtonProps> = ({
 
   const variantStyles =
     variant === "outline"
-      ? "bg-transparent border border-primary text-primary hover:bg-primary/10"
+      ? "bg-transparent border border-[#1B5845] text-[#1B5845] hover:bg-[#1B5845]/10"
+      : variant === "solid"
+      ? "bg-[#1B5845] text-white font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#1B5845] focus:ring-offset-2"
+      : variant === "text"
+      ? "bg-transparent text-[#1B5845] hover:bg-[#1B5845]/10"
       : "";
 
   return (
@@ -62,7 +66,7 @@ const Button: React.FC<ButtonProps> = ({
         ${sizeStyles[size]}
         ${variantStyles}
         ${className}
-        inline-flex items-center justify-center gap-2
+        inline-flex items-center justify-center gap-2 h-[45px]
       `}
     >
       {Icon && iconPosition === "left" && (

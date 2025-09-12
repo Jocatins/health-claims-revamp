@@ -1,31 +1,21 @@
 import axiosInstance from "./axiosInstance";
 import type { LoginCredentials, LoginResponse } from "../../types/api";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 class AuthAPI {
-  private baseURL: string;
-
-  constructor() {
-    this.baseURL = API_BASE_URL;
-  }
 
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
     try {
-  const response = await axiosInstance.post<LoginResponse>(
-        `${this.baseURL}/auths`,
+      // Use relative path so shared axiosInstance baseURL applies cleanly
+      const response = await axiosInstance.post<LoginResponse>(
+        '/auths',
         credentials,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        { headers: { "Content-Type": "application/json" } }
       );
 
       return response.data;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      if (error.response) {
+  if (error.response) {
         throw new Error(error.response.data.message || "Login failed");
       } else if (error.request) {
         throw new Error("Network error. Please check your connection.");

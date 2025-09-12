@@ -67,3 +67,65 @@ export default tseslint.config([
   },
 ])
 ```
+
+## Design Tokens & Tailwind Setup
+
+The project uses Tailwind CSS (v4) with a minimal config (`tailwind.config.js`).
+
+Current customizations:
+
+- Primary color: `#1B5845` (available via `text-primary`, `bg-primary`, etc.)
+- Font family alias: `font-avenir` (Avenir → falls back to system sans)
+- Letter spacing helper: `tracking-tightpx` ( -0.25px )
+
+Because we inlined most typography directly in components (to avoid custom class conflicts), you will see utility combinations like:
+
+```
+className="font-avenir font-extrabold text-[24px] leading-8 tracking-tightpx"
+```
+
+### Adding New Tokens
+
+Extend `tailwind.config.js`:
+
+```js
+extend: {
+  colors: { secondary: '#F2B705' },
+  spacing: { '4.5': '1.125rem' },
+  fontFamily: { avenir: ['Avenir','ui-sans-serif','system-ui'] },
+}
+```
+
+### Suggested Future Enhancements
+
+- Introduce CSS variables for dynamic theming (dark mode / brand variants).
+- Centralize commonly repeated font utility groups via small wrapper components (e.g., `<Heading level={1}>`).
+- Add a style guide page showcasing tokens and components.
+
+## Animated Tabs Indicator
+
+`Tabs` component uses a single sliding underline (CSS transform via width/left). To alter speed, adjust `duration-300` or easing class in `Tabs.tsx`.
+
+## File Drop Zone
+
+`FileDropZone` provides drag & drop + browse; customize border color or hover effect inside `FileDropZone.tsx`.
+
+## Conventions
+
+- Prefer axios services under `src/services/api` with clear response typing.
+- Enrollee detail view lazy-loads claims when the Claims tab is first opened.
+- Form date fields use ISO -> local slice for `<input type="date">`.
+
+## Next Steps (Optional)
+
+| Area | Idea |
+|------|------|
+| Theming | Add dark mode toggle (class strategy) |
+| Typography | Extract repeated font stacks into semantic components |
+| Accessibility | Add focus styles to Tabs indicator and ARIA roles |
+| Testing | Snapshot test Tabs underline animation logic |
+| Performance | Memoize heavy detail sub-sections if they grow |
+
+---
+
+Feel free to prune any sections not needed for distribution.

@@ -1,14 +1,19 @@
-module.exports = {
-  content: [
-    './index.html',
-    './src/**/*.{js,ts,jsx,tsx}',
-  ],
+// ESM export because package.json has "type": "module"
+export default {
+  content: ['./index.html','./src/**/*.{js,ts,jsx,tsx}'],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        primary: '#1B5845',
+        primary: 'var(--color-primary)'
       },
-    },
+      fontFamily: {
+        avenir: ['Avenir','ui-sans-serif','system-ui']
+      },
+      letterSpacing: {
+        tightpx: '-0.25px'
+      }
+    }
   },
-  plugins: [],
+  plugins: []
 };
