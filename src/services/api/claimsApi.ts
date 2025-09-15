@@ -39,9 +39,12 @@ export const fetchClaims = async (params: {
   HmoId?: string;
   claimStatus?: string;
   IsExcel?: boolean;
-}) => {
-  const res = await axiosInstance.get(`/claims/all-claims`, { params });
-  return res.data;
+  PageNumber?: number;
+  PageSize?: number;
+} = {}) => {
+  const merged = { PageNumber: 1, PageSize: 100, ...params };
+  const res = await axiosInstance.get(`/claims/all-claims`, { params: merged });
+  return res.data; // expect backend returns { data: Claim[] } or array
 };
 
 // Fetch claim details (assuming endpoint, update if needed)
@@ -80,6 +83,41 @@ export const submitClaim = async (data: {
   providerId: string;
 }) => {
   const res = await axiosInstance.post(`/claims/create-claims`, data);
+  return res.data;
+};
+
+// New strongly typed create-claims payload based on provided schema
+export interface CreateClaimItem {
+  serviceRendered: string;
+  enrolleeName: string;
+  patientEnrolleeNumber: string; // enrolleeIdNumber
+  providerId: string;
+  hmoId: string;
+  enrolleeEmail: string;
+  enrolleePhoneNumber: string;
+  claimType: string; // e.g. InpatientCare
+  quantity: number;
+  price: number;
+  discount: number;
+  amount: number;
+  diagnosis: string;
+  approvalCode: string;
+  referralHospital: string;
+  nhisno: string;
+  serviceDate: string; // ISO date
+  attachments: string[]; // file paths or base64 ids
+}
+
+export interface CreateClaimsPayload {
+  claimItems: CreateClaimItem[];
+  hmoId: string;
+  claimDate: string; // ISO
+  claimName: string;
+  providerId: string;
+}
+
+export const createClaims = async (payload: CreateClaimsPayload) => {
+  const res = await axiosInstance.post('/claims/create-claims', payload);
   return res.data;
 };
 

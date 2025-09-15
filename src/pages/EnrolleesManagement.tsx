@@ -25,7 +25,16 @@ const EnrolleesManagement: React.FC = () => {
 		const load = useCallback(() => {
 		if (!userHmoId) return; // need user HMO id
 		setLoading(true); setError(null);
-		getEnrollees({ HMOId: userHmoId, EnrolleeName: search || undefined, PageNumber: pageNumber, PageSize: pageSize })
+		const hasDigit = /\d/.test(search);
+		const params: Record<string, unknown> = {
+			HMOId: userHmoId,
+			PageNumber: pageNumber,
+			PageSize: pageSize
+		};
+		if (search) {
+			if (hasDigit) params.EnrolleeNumber = search; else params.EnrolleeName = search;
+		}
+		getEnrollees(params)
 			.then(res => { setItems(res.data || []); })
 			.catch(e => setError(e instanceof Error ? e.message : 'Failed to load enrollees'))
 			.finally(()=> setLoading(false));
@@ -53,7 +62,7 @@ const EnrolleesManagement: React.FC = () => {
 		<div className='p-6'>
 			<div className='bg-white p-4 rounded-md shadow-sm mb-6'>
 				<form onSubmit={doSearch} className='flex items-center gap-3'>
-					<input value={search} onChange={e=>setSearch(e.target.value)} placeholder='Search enrollee ID or name' className='flex-1 border rounded px-3 py-2 text-sm'/>
+					<input value={search} onChange={e=>setSearch(e.target.value)} placeholder='Search enrollee name' className='flex-1 border rounded px-3 py-2 text-sm'/>
 					<Button type='submit' size='sm'>Search</Button>
 					<Button type='button' size='sm' variant='outline' onClick={()=>{ setSearch(''); setPageNumber(1); load(); }}>Reset</Button>
 					<div className='ml-auto flex gap-2'>

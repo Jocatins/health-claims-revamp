@@ -166,15 +166,16 @@ const EnrolleeDetails: React.FC = () => {
 
   const claims = (
     <div className='text-sm'>
-      <form onSubmit={fetchClaim} className='flex items-center gap-2 mb-4'>
-        <input value={claimIdInput} onChange={e=>setClaimIdInput(e.target.value)} placeholder='Enter claim ID' className='border rounded px-3 py-2 text-sm flex-1'/>
-        <Button size='sm' type='submit' disabled={claimFetchLoading || !claimIdInput.trim()}>{claimFetchLoading? 'Loading...':'Fetch'}</Button>
-      </form>
       {claimFetchError && <div className='text-xs text-red-600 mb-3'>{claimFetchError}</div>}
       {claimsAutoLoading && <div className='text-xs text-gray-500 mb-2'>Loading claims...</div>}
       {claimsData.length === 0 && !claimsAutoLoading ? (
-        <div className='text-gray-500 text-xs'>No claims yet. Enter a claim ID to fetch manually.</div>
+        <div className='text-gray-500 text-xs'>No claims available for this enrollee yet.</div>
       ) : (
+        <>
+        <form onSubmit={fetchClaim} className='flex items-center gap-2 mb-4'>
+          <input value={claimIdInput} onChange={e=>setClaimIdInput(e.target.value)} placeholder='Enter claim ID' className='border rounded px-3 py-2 text-sm flex-1'/>
+          <Button size='sm' type='submit' disabled={claimFetchLoading || !claimIdInput.trim()}>{claimFetchLoading? 'Loading...':'Fetch'}</Button>
+        </form>
         <div className='border rounded-md overflow-hidden'>
           <table className='w-full text-xs'>
             <thead className='bg-green-50 text-gray-700'>
@@ -231,6 +232,7 @@ const EnrolleeDetails: React.FC = () => {
             </tbody>
           </table>
         </div>
+        </>
       )}
     </div>
   );
