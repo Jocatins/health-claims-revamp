@@ -13,8 +13,8 @@ const Modal: React.FC<ModalProps> = ({ open, onClose, children, title, width }) 
   return (
     <div className="modal-overlay">
       <div className="modal-content" style={{ width: width || '400px' }}>
-        <div className="modal-header">
-          {title && <h2>{title}</h2>}
+        <div className="modal-header border-b border-gray-200">
+          {title && <h2 className='font-avenir font-extrabold text-[24px] leading-8 tracking-tightpx m-0'>{title}</h2>}
           <button className="modal-close" onClick={onClose}>×</button>
         </div>
         <div className="modal-body">{children}</div>
@@ -40,7 +40,9 @@ const Modal: React.FC<ModalProps> = ({ open, onClose, children, title, width }) 
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 16px;
+          margin-bottom: 30px;
+          border-bottom: 1px solid #217346;
+          padding-bottom: 16px;
         }
         .modal-close {
           background: none;

@@ -1,3 +1,3 @@
 export const environment = {
-  apiUrl: import.meta.env.VITE_FAKE_STORE_API_URL,
+  apiUrl: import.meta.env.VITE_API_BASE_URL,
 };

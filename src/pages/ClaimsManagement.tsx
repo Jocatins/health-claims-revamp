@@ -1,5 +1,7 @@
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useProviderContext } from '../context/useProviderContext';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../services/store/store';
 import { fetchClaims, fetchClaimDetails } from '../services/api/claimsApi';
 import EmptyState from '../components/ui/EmptyState';
 import Table from '../components/ui/Table';
@@ -44,20 +46,46 @@ export const ClaimsManagement = () => {
     const [showExportModal, setShowExportModal] = useState(false);
     const [exportLoading, setExportLoading] = useState(false);
     const [exportError, setExportError] = useState('');
+    const { selectedProviderId } = useProviderContext();
+    const hmoId = useSelector((s: RootState)=> s.auth.user?.hmoId);
 
-  useEffect(() => {
+  const loadClaims = useCallback(()=> {
     setLoading(true);
-    fetchClaims({})
-      .then(data => {
-        const newData = data?.data;
-        setClaims(newData);
-        setLoading(false);
+    fetchClaims({ PageNumber:1, PageSize:500, ProviderId: selectedProviderId || undefined, HmoId: hmoId || undefined })
+      .then((resp: unknown) => {
+        interface RawClaim {
+          id?: unknown; claimId?: unknown; claimName?: unknown; enrolleeName?: unknown;
+          patientEnrolleeNumber?: unknown; enrolleeId?: unknown; claimDate?: unknown; serviceDate?: unknown;
+          amount?: unknown; claimStatus?: unknown; status?: unknown;
+        }
+        const toArray = (val: unknown): RawClaim[] => {
+          if (Array.isArray(val)) return val as RawClaim[];
+          if (typeof val === 'object' && val && Array.isArray((val as { data?: unknown }).data)) {
+            return (val as { data: unknown[] }).data as RawClaim[];
+          }
+          return [];
+        };
+        const arr = toArray(resp);
+        const mapped: Claim[] = arr.map(rc => {
+          const numAmount = typeof rc.amount === 'number' ? rc.amount : (typeof rc.amount === 'string' ? Number(rc.amount) : NaN);
+          return {
+            id: String(rc.id ?? rc.claimId ?? ''),
+            name: String(rc.claimName ?? rc.enrolleeName ?? ''),
+            enrolleeId: String(rc.patientEnrolleeNumber ?? rc.enrolleeId ?? ''),
+            date: String(rc.claimDate ?? rc.serviceDate ?? ''),
+            amount: isFinite(numAmount) ? numAmount.toFixed(2) : (typeof rc.amount === 'string' ? rc.amount : ''),
+            status: String(rc.claimStatus ?? rc.status ?? '')
+          };
+        });
+        setClaims(mapped.filter(c=>c.id));
       })
       .catch(() => {
         setError('Failed to fetch claims');
-        setLoading(false);
-      });
-  }, []);
+      })
+      .finally(()=> setLoading(false));
+  }, [selectedProviderId, hmoId]);
+
+  useEffect(() => { loadClaims(); }, [loadClaims]);
 
   // Status color map
   const statusColor = {
@@ -153,7 +181,11 @@ export const ClaimsManagement = () => {
         </div>
       </Modal>
 
-        <SingleClaimModal open={showSingleClaimModal} onClose={() => setShowSingleClaimModal(false)} />
+        <SingleClaimModal
+          open={showSingleClaimModal}
+          onClose={() => setShowSingleClaimModal(false)}
+          onSubmitted={() => { loadClaims(); }}
+        />
 
         {/* Batch Upload Modal */}
         <BatchUploadModal open={showBatchUploadModal} onClose={() => setShowBatchUploadModal(false)} />

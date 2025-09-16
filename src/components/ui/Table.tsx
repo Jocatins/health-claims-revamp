@@ -20,7 +20,7 @@ const Table: React.FC<TableProps> = ({ headers, rows, headerStyle, rowStyle, tab
         ))}
       </tr>
     </thead>
-    <tbody>
+    <tbody className='text-center'>
       {rows.map((row, rIdx) => (
         <tr key={rIdx} style={rowStyle}>
           {row.map((cell, cIdx) => (
