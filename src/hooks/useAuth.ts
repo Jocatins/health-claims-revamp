@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState, AppDispatch } from '../services/store/store';
-import{ loginStart, loginSuccess, loginFailure, logout, clearError } from '../services/slices/authSlice';
+import{ loginStart, loginSuccess, loginFailure, logout, clearError, togglePasswordVisibility } from '../services/slices/authSlice';
 import { authAPI } from '../services/api/authApi';
 
 interface LoginCredentials {
@@ -66,10 +66,14 @@ export const useAuth = () => {
     dispatch(clearError());
   };
 
+   const togglePasswordVisible = () => {
+    dispatch(togglePasswordVisibility());
+  };
+
   return {
     ...authState,
     login,
     logout: signOut,
-    clearError: resetError,
+    clearError: resetError,togglePasswordVisibility: togglePasswordVisible
   };
 };

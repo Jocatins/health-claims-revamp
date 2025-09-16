@@ -62,4 +62,22 @@ body { font-family: var(--font-avenir); letter-spacing: var(--tracking-tightpx);
   font-style: normal;
 }
 
-/* Removed custom typography utility classes in favor of direct Tailwind utility usage */
+
+.tableHeaderText {
+  /* @apply text-sm font-extrabold text-[#6b6f80]; */
+}
+
+/*  Hide browser icon toggle visibility */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+
+input[type="password"]::-webkit-textfield-decoration-container,
+input[type="password"]::-webkit-clear-button,
+input[type="password"]::-webkit-inner-spin-button,
+input[type="password"]::-webkit-outer-spin-button,
+input[type="password"]::-webkit-reveal {
+  display: none;
+}
+

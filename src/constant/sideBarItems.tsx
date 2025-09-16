@@ -6,25 +6,25 @@ export interface SidebarItem {
  icon: React.ReactNode;
   label: string;
   active: boolean;
-  href?: string;
+ 
   path?: string;
   children?: SidebarItem[];
 }
 
-export const PROVIDER_SIDEBAR: SidebarItem[] = [
+export const ADMIN_SIDEBAR: SidebarItem[] = [
   { 
     icon: <DashboardIcon className="w-5 h-5" />, 
     label: "Dashboard", 
     active: false,
-    href: "/dashboard"
+    path: "/dashboard"
   },
   { 
     icon: <EnrolleeIcon className="w-5 h-5" />, 
     label: "Enrollees", 
     active: false,
     children: [
-      { icon: null, label: "All Enrollees", active: false, href: "/enrollees" },
-      { icon: null, label: "Enrollee Registration", active: false, href: "/enrollees/registration" }
+      { icon: null, label: "All Enrollees", active: false, path: "/enrollee" },
+      { icon: null, label: "Enrollee Registration", active: false, path: "/enrollee/registration" }
     ]
   },
   { 
@@ -32,8 +32,8 @@ export const PROVIDER_SIDEBAR: SidebarItem[] = [
     label: "Providers", 
     active: false,
     children: [
-      { icon: null, label: "All Providers", active: false, href: "/providers" },
-      { icon: null, label: "Providers Registration", active: false, href: "/providers/registration" }
+      { icon: null, label: "All Providers", active: false, path: "/providers" },
+      { icon: null, label: "Providers Registration", active: false, path: "/providers/registration" }
     ]
   },
   { 
@@ -41,14 +41,14 @@ export const PROVIDER_SIDEBAR: SidebarItem[] = [
     label: "Payments", 
     active: false,
     children: [
-      { icon: null, label: "Claims", active: false, href: "/payments/claims" },
-      { icon: null, label: "Authorization", active: false, href: "/payments/authorization" }
+      { icon: null, label: "Claims", active: false, path: "/payments/claims" },
+      { icon: null, label: "Authorization", active: false, path: "/payments/authorization" }
     ]
   }
 ];
 
 
-export const ADMIN_SIDEBAR: SidebarItem[] = [
+export const PROVIDER_SIDEBAR: SidebarItem[] = [
   {  icon: <DashboardIcon className="w-5 h-5" />, label: "Dashboard", active: false, path: "/dashboard" },
   {  icon: <EnrolleeIcon className="w-5 h-5" />, label: "Claims Management", active: false, path: "/claims" },
   { icon: <EnrolleeIcon className="w-5 h-5" />, label: "Enrollees Management", active: false, path: "/enrollees" },

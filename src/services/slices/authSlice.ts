@@ -1,12 +1,15 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { AuthUser } from "../../types/api";
 
+
 interface AuthState {
   token: string | null;
   user: AuthUser | null;
   isAuthenticated: boolean;
   loading: boolean;
-  error: string | null;
+   error: string | null;
+  isPasswordVisible: boolean;
+ rememberMe: boolean;
 }
 
 const initialState: AuthState = {
@@ -17,6 +20,8 @@ const initialState: AuthState = {
   isAuthenticated: !!localStorage.getItem("token"),
   loading: false,
   error: null,
+   isPasswordVisible: false,
+  rememberMe: false,
 };
 
 const authSlice = createSlice({
@@ -40,6 +45,8 @@ const authSlice = createSlice({
       // Save to localStorage
       localStorage.setItem("token", action.payload.token);
       localStorage.setItem("user", JSON.stringify(action.payload.user));
+
+      // success('Authenticated successfully');
     },
     loginFailure: (state, action: PayloadAction<string>) => {
       state.loading = false;
@@ -47,6 +54,7 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.token = null;
       state.user = null;
+      //  error(action.payload);
     },
     logout: (state) => {
       state.token = null;
@@ -55,13 +63,21 @@ const authSlice = createSlice({
       // Remove token and user from localStorage
       localStorage.removeItem("user");
       localStorage.removeItem("token");
+        // success('Logout successfully');
     },
     clearError: (state) => {
       state.error = null;
     },
+        togglePasswordVisibility: (state) => {
+      state.isPasswordVisible = !state.isPasswordVisible;
+    },
+    setRememberMe: (state, action: PayloadAction<boolean>) => {
+      state.rememberMe = action.payload;
+    },
   },
 });
 
-export const { loginStart, loginSuccess, loginFailure, logout, clearError } =
+export const { loginStart, loginSuccess, loginFailure, logout, clearError,   togglePasswordVisibility,
+  setRememberMe } =
   authSlice.actions;
 export default authSlice.reducer;

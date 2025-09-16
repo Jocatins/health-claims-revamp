@@ -1,5 +1,6 @@
 import axiosInstance from "./axiosInstance";
 import type { LoginCredentials, LoginResponse } from "../../types/api";
+import { formatApiError } from "../../utils/errorFormatter";
 
 class AuthAPI {
 
@@ -15,13 +16,16 @@ class AuthAPI {
       return response.data;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-  if (error.response) {
-        throw new Error(error.response.data.message || "Login failed");
-      } else if (error.request) {
-        throw new Error("Network error. Please check your connection.");
-      } else {
-        throw new Error("An unexpected error occurred");
-      }
+
+        throw new Error(formatApiError(error));
+      // if (error.response) {
+      //   throw new Error(error.response.data.message || "Login failed");
+      // } else if (error.request) {
+      //   throw new Error("Network error. Please check your connection.");
+      // } else {
+      //   throw new Error("An unexpected error occurred");
+      // }
+
     }
   }
 }
