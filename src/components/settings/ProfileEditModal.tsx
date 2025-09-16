@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import Modal from '../ui/Modal';
-import Input from '../ui/Input';
+// import Input from '../ui/Input';
 import Button from '../ui/Button';
 import EmailWarningModal from './EmailWarningModal';
 import { updateUserProfile } from '../../services/api/userApi';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../services/store/store';
 import { loginSuccess } from '../../services/slices/authSlice';
+import Input from '../form/Input';
 
 interface Props { open: boolean; onClose: () => void; }
 

@@ -33,18 +33,10 @@ const AppRoutes = () => {
           <Route path="settings" element={<Layout><Settings /></Layout>} />
           
           <Route path="enrollee/">
-          
+          <Route path="dashboard" element={<Layout><ProductsList /></Layout>} />
+          <Route path="registration" element={<Layout><Individual /></Layout>} />
           </Route>
 
-         
-           <Route
-            path="enrollee/registration"
-            element={
-              <Layout>
-                <Individual/>
-              </Layout>
-            }
-          />
         
 
         </Route>

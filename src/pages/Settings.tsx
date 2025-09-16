@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import Tabs from '../components/ui/Tabs';
 import Button from '../components/ui/Button';
 import ProfileEditModal from '../components/settings/ProfileEditModal';
-import Input from '../components/ui/Input';
+// import Input from '../components/ui/Input';
 import { changePassword, passwordStrength } from '../services/api/userApi';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../services/store/store';
+import Input from '../components/form/Input';
 
 const Settings: React.FC = () => {
 	const user = useSelector((s: RootState) => s.auth.user);

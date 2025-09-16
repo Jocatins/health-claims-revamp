@@ -13,9 +13,12 @@ type Step = "enrollee" | "plan";
 const Individual = () => {
   const [step, setStep] = useState<Step>("enrollee");
 
-
-const { genders, loading: loadingGenders, error: errorGenders } = useGender();
-const { statuses, loading: loadingStatuses, error: errorStatuses } = useMaritalStatus();
+  const { genders, loading: loadingGenders, error: errorGenders } = useGender();
+  const {
+    statuses,
+    loading: loadingStatuses,
+    error: errorStatuses,
+  } = useMaritalStatus();
 
   const nextStep = () => {
     if (step === "enrollee") setStep("plan");
@@ -24,7 +27,6 @@ const { statuses, loading: loadingStatuses, error: errorStatuses } = useMaritalS
   const prevStep = () => {
     if (step === "plan") setStep("enrollee");
   };
- 
 
   return (
     <>
@@ -76,8 +78,8 @@ const { statuses, loading: loadingStatuses, error: errorStatuses } = useMaritalS
               <Input type="text" label="First name" />
               <Input type="text" label="Other name" />
               <Input type="text" label="Last name" />
-            <FormSelect 
-                label="Gender" 
+              <FormSelect
+                label="Gender"
                 defaultValue=""
                 isLoading={loadingGenders}
                 error={errorGenders}
@@ -90,8 +92,8 @@ const { statuses, loading: loadingStatuses, error: errorStatuses } = useMaritalS
               </FormSelect>
 
               <Input type="text" label="Occupation" />
-                  <FormSelect 
-                label="Marital Status" 
+              <FormSelect
+                label="Marital Status"
                 defaultValue=""
                 isLoading={loadingStatuses}
                 error={errorStatuses}

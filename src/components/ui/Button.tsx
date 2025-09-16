@@ -24,8 +24,8 @@ const Button: React.FC<ButtonProps> = ({
   size = "md",
   variant = "solid",
 }) => {
- const baseStyles =
-  "bg-[#186255] text-white font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#186255] focus:ring-offset-2";
+//  const baseStyles =
+//   "bg-[#186255] text-white font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#186255] focus:ring-offset-2";
 
 
   const baseStyles =
