@@ -5,6 +5,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import ProductsList from "../pages/Products";
 import Dashboard from "../pages/Dashboard";
 import { ClaimsManagement } from "../pages/ClaimsManagement";
+import Individual from "../pages/enrollee/registration/Individual";
 
 const AppRoutes = () => {
   return (
@@ -16,13 +17,34 @@ const AppRoutes = () => {
         {/* Public route */}
         <Route path="/login" element={<Login />} />
 
-        {/* Protected routes */}
-        <Route element={<ProtectedRoute />}>
-          <Route element={<Layout />}>
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="products" element={<ProductsList />} />
-            <Route path="claims" element={<ClaimsManagement />} />
-          </Route>
+        <Route
+          path="/"
+          element={<ProtectedRoute />}
+        >
+          <Route
+            path="dashboard"
+            element={
+              <Layout>
+                <ProductsList />
+              </Layout>
+            }
+          />
+           <Route
+            path="enrollee/registration"
+            element={
+              <Layout>
+                <Individual/>
+              </Layout>
+            }
+          />
+          <Route
+            path="claims"
+            element={
+              <Layout>
+                <ClaimsManagement />
+              </Layout>
+            }
+          />
         </Route>
       </Routes>
     </BrowserRouter>

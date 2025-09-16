@@ -24,13 +24,12 @@ const Button: React.FC<ButtonProps> = ({
   size = "md",
   variant = "solid",
 }) => {
+ const baseStyles =
+  "bg-[#186255] text-white font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#186255] focus:ring-offset-2";
 
-  const baseStyles =
-    "bg-primary text-white font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2";
-
-  const stateStyles = disabled
-    ? "opacity-50 cursor-not-allowed"
-    : "hover:bg-primary/90 active:bg-primary/80";
+const stateStyles = disabled
+  ? "opacity-50 cursor-not-allowed"
+  : "hover:bg-[#145247] active:bg-[#104036]";
 
   // Size variants
   const sizeStyles = {
@@ -46,10 +45,10 @@ const Button: React.FC<ButtonProps> = ({
     lg: 20,
   };
 
-  const variantStyles =
-    variant === "outline"
-      ? "bg-transparent border border-primary text-primary hover:bg-primary/10"
-      : "";
+const variantStyles =
+  variant === "outline"
+    ? "bg-transparent border border-[#186255] text-[#186255] hover:bg-[#186255]/10"
+    : "";
 
   return (
     <button

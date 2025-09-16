@@ -7,6 +7,7 @@ export interface SidebarItem {
   icon: React.ReactNode | null;
   label: string;
   active: boolean;
+ 
   path?: string;
   children?: SidebarItem[];
 }
@@ -17,16 +18,16 @@ export const ADMIN_SIDEBAR: SidebarItem[] = [
     icon: <DashboardIcon className="w-5 h-5" />,
     label: "Dashboard",
     active: false,
-    path: "/dashboard",
+    path: "/dashboard"
   },
   {
     icon: <EnrolleeIcon className="w-5 h-5" />,
     label: "Enrollees",
     active: false,
     children: [
-      { icon: null, label: "All Enrollees", active: false, path: "/enrollees" },
-      { icon: null, label: "Enrollee Registration", active: false, path: "/enrollees/registration" },
-    ],
+      { icon: null, label: "All Enrollees", active: false, path: "/enrollee" },
+      { icon: null, label: "Enrollee Registration", active: false, path: "/enrollee/registration" }
+    ]
   },
   {
     icon: <EnrolleeIcon className="w-5 h-5" />,
@@ -34,24 +35,18 @@ export const ADMIN_SIDEBAR: SidebarItem[] = [
     active: false,
     children: [
       { icon: null, label: "All Providers", active: false, path: "/providers" },
-      { icon: null, label: "Provider Registration", active: false, path: "/providers/registration" },
-    ],
+      { icon: null, label: "Providers Registration", active: false, path: "/providers/registration" }
+    ]
   },
   {
     icon: <EnrolleeIcon className="w-5 h-5" />,
     label: "Payments",
     active: false,
     children: [
-      { icon: null, label: "Claims", active: false, path: "/claims" },
-      { icon: null, label: "Authorization", active: false, path: "/authorization" },
-    ],
-  },
-  {
-    icon: <SettingsIcon className="w-5 h-5" />,
-    label: "Reports",
-    active: false,
-    path: "/reports",
-  },
+      { icon: null, label: "Claims", active: false, path: "/payments/claims" },
+      { icon: null, label: "Authorization", active: false, path: "/payments/authorization" }
+    ]
+  }
 ];
 
 // Provider Sidebar
