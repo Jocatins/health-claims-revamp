@@ -1,5 +1,5 @@
 import axiosInstance from "./axiosInstance";
-import type { LoginCredentials, LoginResponse } from "../../types/api";
+import type { LoginCredentials, LoginResponse } from "../../types/auth";
 import { formatApiError } from "../../utils/errorFormatter";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;

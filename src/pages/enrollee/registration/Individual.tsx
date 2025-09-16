@@ -5,10 +5,17 @@ import ButtonT from "../../../components/form/ButttonT";
 import ButtonG from "../../../components/form/ButtonG";
 import FormSelect from "../../../components/form/FormSelect";
 
+import { useGender } from "../../../hooks/resources/useGender";
+import { useMaritalStatus } from "../../../hooks/resources/useMaritalStatus";
+
 type Step = "enrollee" | "plan";
 
 const Individual = () => {
   const [step, setStep] = useState<Step>("enrollee");
+
+
+const { genders, loading: loadingGenders, error: errorGenders } = useGender();
+const { statuses, loading: loadingStatuses, error: errorStatuses } = useMaritalStatus();
 
   const nextStep = () => {
     if (step === "enrollee") setStep("plan");
@@ -17,6 +24,7 @@ const Individual = () => {
   const prevStep = () => {
     if (step === "plan") setStep("enrollee");
   };
+ 
 
   return (
     <>
@@ -68,14 +76,32 @@ const Individual = () => {
               <Input type="text" label="First name" />
               <Input type="text" label="Other name" />
               <Input type="text" label="Last name" />
-              <FormSelect label="Gender" defaultValue="">
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
+            <FormSelect 
+                label="Gender" 
+                defaultValue=""
+                isLoading={loadingGenders}
+                error={errorGenders}
+              >
+                {genders?.map((gender) => (
+                  <option key={gender} value={gender}>
+                    {gender}
+                  </option>
+                ))}
               </FormSelect>
 
               <Input type="text" label="Occupation" />
-              <Input type="text" label="Marital Status" />
+                  <FormSelect 
+                label="Marital Status" 
+                defaultValue=""
+                isLoading={loadingStatuses}
+                error={errorStatuses}
+              >
+                {statuses?.map((st) => (
+                  <option key={st} value={st}>
+                    {st}
+                  </option>
+                ))}
+              </FormSelect>
               <Input type="text" label="Email" />
               <Input type="text" label="Date of Birth" />
               <Input type="text" label="Phone Number" />
