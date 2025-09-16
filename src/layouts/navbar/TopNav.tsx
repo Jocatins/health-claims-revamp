@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import Select from "../../components/ui/Select";
 import { HiMenu } from "react-icons/hi";
+import { useProviderContext } from "../../context/useProviderContext";
 
 interface TopNavProps {
   sidebarOpen: boolean;
@@ -9,14 +10,8 @@ interface TopNavProps {
 }
 
 const TopNav: React.FC<TopNavProps> = ({ sidebarOpen, setSidebarOpen }) => {
-  const [selectedProvider, setSelectedProvider] = useState("");
-
-  const providers = [
-    // { value: "", label: "Select Provider", disabled: true },
-    { value: "provider-a", label: "Provider A" },
-    { value: "provider-b", label: "Provider B" },
-    { value: "provider-c", label: "Provider C" },
-  ];
+  const { providers, selectedProviderId, setSelectedProviderId, loading } = useProviderContext();
+  const selectOptions = providers.map(p => ({ value: p.id, label: p.hospitalName }));
 
   return (
     <header className="h-16 bg-white shadow flex items-center justify-between px-6">
@@ -32,12 +27,12 @@ const TopNav: React.FC<TopNavProps> = ({ sidebarOpen, setSidebarOpen }) => {
       </div>
 
       {/* Right side */}
-      <div>
+      <div className="w-64">
         <Select
-          options={providers}
-          value={selectedProvider}
-          onChange={setSelectedProvider}
-          placeholder="Choose a provider"
+          options={selectOptions}
+          value={selectedProviderId || ''}
+          onChange={(val) => setSelectedProviderId(val || null)}
+          placeholder={loading ? "Loading providers..." : "Choose a provider"}
         />
       </div>
     </header>

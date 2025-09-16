@@ -1,21 +1,10 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { environment } from "../../utils/environment";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { baseQueryWithReauth } from "../api/baseQuery";
 import type { Product } from "../../types/Product";
 
 export const productApiSlice = createApi({
   reducerPath: "productApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: environment.apiUrl,
-
-    prepareHeaders: (headers) => {
-      // for tokens
-      const token = localStorage.getItem("token");
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithReauth,
   tagTypes: ["Product"],
   endpoints: (builder) => ({
     // Get all products
