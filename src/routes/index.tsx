@@ -26,8 +26,8 @@ const AppRoutes = () => {
               </Layout>
             }
           />
-             <Route
-            path="enrollees/registration"
+           <Route
+            path="enrollee/registration"
             element={
               <Layout>
                 <Individual/>

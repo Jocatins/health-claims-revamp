@@ -30,7 +30,7 @@ const SideNav: React.FC<SideNavProps> = () => {
     <aside className="w-64 bg-white text-gray-700 h-full flex flex-col font-avenir">
       <div className="flex items-center justify-center p-4">
         <HimisLogo className="w-8 h-8" />
-        <h1 className="text-xl text-green-800 text-center">HIMIS</h1>
+        <h1 className="text-xl text-[#186255]  text-center">HIMIS</h1>
       </div>
 
       <nav className="flex-1 space-y-1 mt-2 overflow-y-auto">
@@ -45,8 +45,8 @@ const SideNav: React.FC<SideNavProps> = () => {
                 to={item.path || "#"}
                 className={`flex items-center space-x-3 px-4 py-3 transition-colors duration-200 group ${
                   isActive(item.path)
-                    ? "bg-green-800 text-white"
-                    : "hover:bg-green-800 hover:text-white"
+                    ? " bg-[#186255] text-white"
+                    : "hover:bg-[#145247]  hover:text-white"
                 }`}
               >
                 <span

@@ -34,8 +34,8 @@ const SidebarDropdown: React.FC<SidebarDropdownProps> = ({ item, level = 0 }) =>
         onClick={toggleDropdown}
         className={`flex items-center justify-between px-4 py-3 transition-colors duration-200 group cursor-pointer ${
           isActive(item.path)
-            ? "bg-green-800 text-white" 
-            : "hover:bg-green-800 hover:text-white"
+            ? "bg-[#186255] text-white" 
+            : "hover:bg-[#145247]  hover:text-white"
         }`}
         style={{ paddingLeft: `${level * 20 + 16}px` }}
       >
@@ -75,8 +75,8 @@ const SidebarDropdown: React.FC<SidebarDropdownProps> = ({ item, level = 0 }) =>
                   to={child.path || "#"}
                   className={`flex items-center space-x-3 px-4 py-3 transition-colors duration-200 group ${
                     isActive(child.path)
-                      ? "bg-green-800 text-white"
-                      : "hover:bg-green-800 hover:text-white"
+                      ? "  bg-[#186255] text-white"
+                      : " hover:bg-[#145247]  hover:text-white"
                   }`}
                   style={{ paddingLeft: `${(level + 1) * 20 + 16}px` }}
                   onClick={(e) => e.stopPropagation()} // Prevent dropdown toggle when clicking link
