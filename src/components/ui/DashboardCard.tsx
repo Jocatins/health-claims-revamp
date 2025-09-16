@@ -3,8 +3,8 @@ import React from "react";
 interface DashboardCardProps {
   title: string;
   value: number;
-  percentage?: string; // e.g., "+2.5% Last Month"
-  changeColor?: string; // tailwind color for change text
+  percentage?: string; 
+  changeColor?: string; 
   indicatorColor: string;
 }
 

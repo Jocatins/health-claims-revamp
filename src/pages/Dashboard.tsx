@@ -2,6 +2,7 @@
 import React from "react";
 import DashboardCard from "../components/ui/DashboardCard";
 
+
 const Dashboard: React.FC = () => {
   return (
     <div className="p-6 grid grid-cols-2 grid-rows-2 gap-6">
