@@ -14,8 +14,10 @@ export interface AuthUser {
 }
 
 export interface LoginResponse {
-  data: AuthUser;
-    token: string;
+
+  data: AuthUser & { token?: string; accessToken?: string };
+  token?: string; 
+  accessToken?: string; 
   message: string;
   isSuccess: boolean;
 }
