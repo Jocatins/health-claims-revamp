@@ -1,8 +1,8 @@
 import React from "react";
-import DashboardCard from "../components/ui/DashboardCard";
-import NumberOfEnrollees from "../components/ui/Dashboardenrollees";
-import ClaimsChart from "../components/ui/DashboardClaims";
-import StatCard from "../components/ui/StatCard";
+import DashboardCard from "../components/ui/DashboardCardItems/DashboardCard";
+import NumberOfEnrollees from "../components/ui/DashboardCardItems/Dashboardenrollees";
+import ClaimsChart from "../components/ui/DashboardCardItems/DashboardClaims";
+import StatCard from "../components/ui/DashboardCardItems/StatCard";
 
 const Dashboard: React.FC = () => {
   return (
