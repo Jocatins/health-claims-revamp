@@ -3,6 +3,8 @@ import Login from "../pages/auth/Login";
 import Layout from "../layouts";
 import { ProviderProvider } from "../context/ProviderContext";
 import ProtectedRoute from "./ProtectedRoute";
+// import ProductsList from "../pages/Products";
+import Dashboard from "../pages/Dashboard";
 
 import { ClaimsManagement } from "../pages/ClaimsManagement";
 
@@ -18,8 +20,10 @@ const AppRoutes = () => {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Redirect root to login */}
         <Route path="/" element={<Navigate to="/login" replace />} />
 
+        {/* Public route */}
         <Route path="/login" element={<Login />} />
 
         <Route path="/" element={<ProviderProvider><ProtectedRoute /></ProviderProvider>}> 
@@ -32,7 +36,7 @@ const AppRoutes = () => {
           
           <Route path="enrollee/">
           {/* inside this guy call the dashboard component page instead of the Individual */}
-           <Route path="dashboard" element={<Layout><Individual /></Layout>} />
+           <Route path="dashboard" element={<Layout><Dashboard /></Layout>} />
           <Route path="registration" element={<Layout><Individual /></Layout>} />
           </Route>
 

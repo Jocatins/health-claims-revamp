@@ -1,9 +1,9 @@
-import { useState, useEffect, type ReactNode } from "react";
+import { type ReactNode, useState, useEffect } from "react";
 import SideNav from "./navbar/SideNav";
 import TopNav from "./navbar/TopNav";
 
 interface LayoutProps {
-  children?: ReactNode;
+  children: ReactNode;
 }
 
 const Layout = ({ children }: LayoutProps) => {
@@ -26,9 +26,7 @@ const Layout = ({ children }: LayoutProps) => {
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
-      {/* Sidebar - Different behavior for mobile vs desktop */}
       {isMobile ? (
-        // Mobile: SideNav as overlay
         <>
           {sidebarOpen && (
             <div
@@ -45,11 +43,9 @@ const Layout = ({ children }: LayoutProps) => {
           </div>
         </>
       ) : (
-        //  Desktop: Normal behavior
         <SideNav sidebarOpen={sidebarOpen} />
       )}
 
-      {/* Main content */}
       <div className="flex-1 flex flex-col min-h-0 w-full">
         <TopNav
           sidebarOpen={sidebarOpen}
