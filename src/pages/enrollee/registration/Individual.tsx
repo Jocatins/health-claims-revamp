@@ -7,11 +7,14 @@ import FormSelect from "../../../components/form/FormSelect";
 
 import { useGender } from "../../../hooks/resources/useGender";
 import { useMaritalStatus } from "../../../hooks/resources/useMaritalStatus";
+// import DatePicker from "../../../components/form/DatePicker";
+import AdvancedDatePicker from "../../../components/form/ADatePicker";
 
 type Step = "enrollee" | "plan";
 
 const Individual = () => {
   const [step, setStep] = useState<Step>("enrollee");
+  const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null);
 
   const { genders, loading: loadingGenders, error: errorGenders } = useGender();
   const {
@@ -26,6 +29,10 @@ const Individual = () => {
 
   const prevStep = () => {
     if (step === "plan") setStep("enrollee");
+  };
+  const handleDateChange = (date: Date | null) => {
+    setDateOfBirth(date);
+    // console.log(date); // This will be a Date object
   };
 
   return (
@@ -104,8 +111,13 @@ const Individual = () => {
                   </option>
                 ))}
               </FormSelect>
-              <Input type="text" label="Email" />
-              <Input type="text" label="Date of Birth" />
+              <Input type="email" label="Email" />
+              <AdvancedDatePicker
+                label="Date of Birth"
+             selected={dateOfBirth}
+             onChange={handleDateChange}
+             
+              />
               <Input type="text" label="Phone Number" />
               <Input type="text" label="Full Address" />
 

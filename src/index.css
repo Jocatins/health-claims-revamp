@@ -81,3 +81,20 @@ input[type="password"]::-webkit-reveal {
   display: none;
 }
 
+/* styles/datepicker */
+.react-datepicker-wrapper {
+  display: block;
+  width: 100%;
+}
+
+
+.react-datepicker__input-container::after {
+  display: none !important;
+}
+
+
+.react-datepicker__input-container input {
+  background-color: transparent;
+  width: 100%;
+  
+}

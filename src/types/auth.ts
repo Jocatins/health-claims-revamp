@@ -14,10 +14,10 @@ export interface AuthUser {
 }
 
 export interface LoginResponse {
-  // Some backends put token at root, others nest inside data
+
   data: AuthUser & { token?: string; accessToken?: string };
-  token?: string; // optional root token
-  accessToken?: string; // alternative naming
+  token?: string; 
+  accessToken?: string; 
   message: string;
   isSuccess: boolean;
 }
