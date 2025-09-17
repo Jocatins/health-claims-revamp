@@ -1,9 +1,10 @@
+import React from "react";
 import DashboardIcon from "../assets/sidebar-icons/dashboard-icon";
 import EnrolleeIcon from "../assets/sidebar-icons/enrollee-icon";
 import SettingsIcon from "../assets/sidebar-icons/settings-icon";
 
 export interface SidebarItem {
- icon: React.ReactNode;
+  icon: React.ReactNode | null;
   label: string;
   active: boolean;
  
@@ -11,34 +12,35 @@ export interface SidebarItem {
   children?: SidebarItem[];
 }
 
+// Admin Sidebar
 export const ADMIN_SIDEBAR: SidebarItem[] = [
-  { 
-    icon: <DashboardIcon className="w-5 h-5" />, 
-    label: "Dashboard", 
+  {
+    icon: <DashboardIcon className="w-5 h-5" />,
+    label: "Dashboard",
     active: false,
-    path: "/dashboard"
+    path: "/enrollee/dashboard"
   },
-  { 
-    icon: <EnrolleeIcon className="w-5 h-5" />, 
-    label: "Enrollees", 
+  {
+    icon: <EnrolleeIcon className="w-5 h-5" />,
+    label: "Enrollees",
     active: false,
     children: [
       { icon: null, label: "All Enrollees", active: false, path: "/enrollee" },
       { icon: null, label: "Enrollee Registration", active: false, path: "/enrollee/registration" }
     ]
   },
-  { 
-    icon: <EnrolleeIcon className="w-5 h-5" />, 
-    label: "Providers", 
+  {
+    icon: <EnrolleeIcon className="w-5 h-5" />,
+    label: "Providers",
     active: false,
     children: [
       { icon: null, label: "All Providers", active: false, path: "/providers" },
       { icon: null, label: "Providers Registration", active: false, path: "/providers/registration" }
     ]
   },
-  { 
-    icon: <EnrolleeIcon className="w-5 h-5" />, 
-    label: "Payments", 
+  {
+    icon: <EnrolleeIcon className="w-5 h-5" />,
+    label: "Payments",
     active: false,
     children: [
       { icon: null, label: "Claims", active: false, path: "/payments/claims" },
@@ -47,9 +49,9 @@ export const ADMIN_SIDEBAR: SidebarItem[] = [
   }
 ];
 
-
+// Provider Sidebar
 export const PROVIDER_SIDEBAR: SidebarItem[] = [
-  {  icon: <DashboardIcon className="w-5 h-5" />, label: "Dashboard", active: false, path: "/dashboard" },
+  {  icon: <DashboardIcon className="w-5 h-5" />, label: "Dashboard", active: false, path: "/enrollee/dashboard" },
   {  icon: <EnrolleeIcon className="w-5 h-5" />, label: "Claims Management", active: false, path: "/claims" },
   { icon: <EnrolleeIcon className="w-5 h-5" />, label: "Enrollees Management", active: false, path: "/enrollees" },
   { icon: <SettingsIcon className="w-5 h-5" />, label: "Settings", active: false, path: "/settings"  },
