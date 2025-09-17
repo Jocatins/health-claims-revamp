@@ -10,19 +10,19 @@ const claimsData = [
 ];
 const ClaimsChart = () => {
   return (
-    <div className="bg-white p-6 rounded-2xl shadow w-[90%] mx-auto mt-6">
+    <div className="bg-white p-6 shadow w-[100%] ">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold">All Claims</h2>
-        <div className="flex items-center gap-4">
-          <select className="border rounded-md px-3 py-1 text-sm">
+         <a href="#" className="text-green-600 text-sm font-medium">
+            See All Claims
+          </a>
+      </div>
+       <div className="flex items-center gap-4">
+          <select className="bg-green-100 border rounded-md px-3 py-1 text-sm">
             <option>Monthly</option>
             <option>Yearly</option>
           </select>
-          <a href="#" className="text-green-600 text-sm font-medium">
-            See All Claims
-          </a>
         </div>
-      </div>
       <div className="grid grid-cols-2 items-center">
         <div className="flex flex-col items-center justify-center">
           <p className="text-2xl font-semibold">0</p>

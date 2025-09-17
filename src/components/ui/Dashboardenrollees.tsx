@@ -48,13 +48,13 @@ const NumberOfEnrollees = () => {
   });
   const selectedPeriod = watch("period");
   return (
-    <div className="bg-white p-4  shadow w-[70%]">
+    <div className="bg-white p-4  shadow w-[100%]">
       <div className="flex justify-between items-start gap-40 mb-4">
         <h2 className="text-lg font-semibold">Number of Enrollees-128k</h2>
     
         <select
           {...register("period")}
-          className="bg-blue-100 border rounded-md px-2 py-1 text-sm">
+          className="bg-green-100 border rounded-md px-2 py-1 text-sm">
           <option value="monthly">Monthly</option>
           <option value="yearly">Yearly</option>
           <option value="biannually">Biannually</option>
@@ -68,11 +68,11 @@ const NumberOfEnrollees = () => {
         </div>
         <div className="flex gap-20 mb-2 text-sm items-right flex-end">
         <div className="flex  gap-2">
-          <span className="w-3 h-3 rounded-sm" style={{ backgroundColor: "#82ca9d" }}></span>
+          <span className="w-3 h-3 rounded-sm" style={{ backgroundColor: "#2C9A5B" }}></span>
           <span className="font-medium">Individual Enrollee</span>
         </div>
         <div className="flex gap-2">
-          <span className="w-3 h-3 rounded-sm" style={{ backgroundColor: "#8884d8" }}></span>
+          <span className="w-3 h-3 rounded-sm" style={{ backgroundColor: "#A7D7A9" }}></span>
           <span className="font-medium">Employer Enrollee</span>
         </div>
       </div>
@@ -85,8 +85,8 @@ const NumberOfEnrollees = () => {
   domain={[0, 100]}   
   ticks={[0, 20, 40, 60, 80, 100]}/>
           <Tooltip />
-          <Bar dataKey="individual" fill="#82ca9d" name="Individual Enrollee" />
-          <Bar dataKey="employer" fill="#8884d8" name="Employer Enrollee" />
+          <Bar dataKey="individual" fill="#2C9A5B" name="Individual Enrollee" />
+          <Bar dataKey="employer" fill="#A7D7A9" name="Employer Enrollee" />
         </BarChart>
       </ResponsiveContainer>
     </div>
