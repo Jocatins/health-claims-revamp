@@ -1,0 +1,55 @@
+.phone-input-custom .react-international-phone-input {
+  width: 100%;
+  height: 48px; /* Increased height */
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  padding: 1.25rem 0.75rem 0.75rem 0.75rem; /* Adjusted padding for height */
+  font-size: 16px; /* Prevents zoom on iOS */
+}
+
+.phone-input-custom .react-international-phone-input::placeholder {
+  color: #9ca3af;
+  opacity: 1;
+  font-size: 0.875rem;
+}
+
+.phone-input-custom .react-international-phone-input:focus {
+  outline: none;
+  ring: 2px;
+  ring-color: #186255;
+  border-color: #186255;
+}
+
+.phone-input-custom .react-international-phone-country-selector-button {
+  height: 48px; /* Match the input height */
+  border: 1px solid #d1d5db;
+  border-right: none;
+  border-radius: 0.375rem 0 0 0.375rem;
+  padding: 0 0.75rem;
+  background-color: #f9fafb;
+  display: flex;
+  align-items: center;
+}
+
+.phone-input-custom .react-international-phone-country-selector-dropdown {
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  margin-top: 0.25rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Floating label effect */
+.phone-input-custom {
+  position: relative;
+}
+
+.phone-input-custom label {
+  position: absolute;
+  top: -8px;
+  left: 12px;
+  font-size: 0.75rem;
+  background: white;
+  padding: 0 4px;
+  z-index: 10;
+  color: #374151;
+}

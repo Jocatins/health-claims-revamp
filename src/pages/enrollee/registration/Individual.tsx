@@ -9,6 +9,7 @@ import { useGender } from "../../../hooks/resources/useGender";
 import { useMaritalStatus } from "../../../hooks/resources/useMaritalStatus";
 // import DatePicker from "../../../components/form/DatePicker";
 import AdvancedDatePicker from "../../../components/form/ADatePicker";
+import PhoneNumberInput from "../../../components/form/PhoneInput";
 
 type Step = "enrollee" | "plan";
 
@@ -118,7 +119,8 @@ const Individual = () => {
              onChange={handleDateChange}
              
               />
-              <Input type="text" label="Phone Number" />
+        
+              <PhoneNumberInput/>
               <Input type="text" label="Full Address" />
 
               <FormHeader>Next of Kin</FormHeader>
