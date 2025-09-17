@@ -1,10 +1,13 @@
 
 import React from "react";
 import DashboardCard from "../components/ui/DashboardCard";
+import NumberOfEnrollees from "../components/ui/Dashboardenrollees";
+import ClaimsChart from "../components/ui/DashboardClaims";
 
 
 const Dashboard: React.FC = () => {
   return (
+    <div>
     <div className="p-6 grid grid-cols-2 grid-rows-2 gap-6">
       <DashboardCard
       indicatorColor="bg-blue-100 text-blue-600"
@@ -32,6 +35,14 @@ const Dashboard: React.FC = () => {
         value={125}
         title="Total Healthcare Providers"
       />
+       </div>
+      <div>
+        <NumberOfEnrollees />
+      </div>
+      <div>
+        <ClaimsChart />
+      </div>
+   
     </div>
   );
 };

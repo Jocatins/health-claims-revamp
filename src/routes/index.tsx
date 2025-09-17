@@ -25,7 +25,7 @@ const AppRoutes = () => {
             path="dashboard"
             element={
               <Layout>
-                <ProductsList />
+                <Dashboard />
               </Layout>
             }
           />

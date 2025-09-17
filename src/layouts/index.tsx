@@ -1,10 +1,12 @@
-
-import { useState, useEffect, type ReactNode } from "react";
+import { type ReactNode, useState, useEffect } from "react";
 import SideNav from "./navbar/SideNav";
 import TopNav from "./navbar/TopNav";
-// import ProductsList from "../pages/Products";
-import { Outlet } from "react-router-dom";
-const Layout = () => {
+
+interface LayoutProps {
+  children: ReactNode;
+}
+
+const Layout = ({ children }: LayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -24,9 +26,7 @@ const Layout = () => {
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
-      {/* Sidebar - Different behavior for mobile vs desktop */}
       {isMobile ? (
-        // Mobile: SideNav as overlay
         <>
           {sidebarOpen && (
             <div
@@ -43,11 +43,9 @@ const Layout = () => {
           </div>
         </>
       ) : (
-        //  Desktop: Normal behavior
         <SideNav sidebarOpen={sidebarOpen} />
       )}
 
-      {/* Main content */}
       <div className="flex-1 flex flex-col min-h-0 w-full">
         <TopNav
           sidebarOpen={sidebarOpen}
@@ -55,7 +53,7 @@ const Layout = () => {
           isMobile={isMobile}
         />
         <main className="flex-1 overflow-y-auto p-6 w-full">
-          <Outlet />
+          {children}
         </main>
       </div>
     </div>
