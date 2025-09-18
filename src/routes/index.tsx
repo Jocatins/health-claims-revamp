@@ -27,6 +27,7 @@ const AppRoutes = () => {
         <Route path="/login" element={<Login />} />
 
         <Route path="/" element={<ProviderProvider><ProtectedRoute /></ProviderProvider>}> 
+        <Route path="dashboard" element={<Layout><Dashboard /></Layout>} />
          
           <Route path="claims" element={<Layout><ClaimsManagement /></Layout>} />
           <Route path="enrollees" element={<Layout><EnrolleesManagement /></Layout>} />

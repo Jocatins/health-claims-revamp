@@ -9,3 +9,9 @@ export interface IMaritalStatuses {
   message: string;
   isSuccess: boolean;
 }
+export interface IRelationship {
+  data: string[];
+  message: string;
+  isSuccess: boolean;
+}
+

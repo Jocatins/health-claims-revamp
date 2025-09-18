@@ -10,6 +10,9 @@ import { useMaritalStatus } from "../../../hooks/resources/useMaritalStatus";
 // import DatePicker from "../../../components/form/DatePicker";
 import AdvancedDatePicker from "../../../components/form/ADatePicker";
 import PhoneNumberInput from "../../../components/form/PhoneInput";
+import { useRelationship } from "../../../hooks/resources/useRelationship";
+import FileUpload from "../../../components/form/FileUpload";
+import CountryStateSelector from "../../../context/CountryStateSelector";
 
 type Step = "enrollee" | "plan";
 
@@ -23,6 +26,20 @@ const Individual = () => {
     loading: loadingStatuses,
     error: errorStatuses,
   } = useMaritalStatus();
+  const { relations, loading: loadingRelation, error: errorRelation } = useRelationship();
+
+  const [selectedCountryCode, setSelectedCountryCode] = useState<string | null>(null);
+  const [selectedStateId, setSelectedStateId] = useState<string | null>(null);
+
+  const handleCountryChange = (countryCode: string) => {
+   setSelectedCountryCode(countryCode);
+  // setSelectedCountryId(countryId);
+  setSelectedStateId(null);
+  };
+
+  const handleStateChange = (stateId: string) => {
+    setSelectedStateId(stateId);
+  };
 
   const nextStep = () => {
     if (step === "enrollee") setStep("plan");
@@ -33,8 +50,11 @@ const Individual = () => {
   };
   const handleDateChange = (date: Date | null) => {
     setDateOfBirth(date);
-    // console.log(date); // This will be a Date object
+    // console.log(date); 
   };
+  const handleSubmit = () => {
+    console.log("submitted")
+  }
 
   return (
     <>
@@ -82,7 +102,7 @@ const Individual = () => {
         {step === "enrollee" && (
           <div>
             <FormHeader>Basic Info</FormHeader>
-            <form className="grid grid-cols-2 gap-4 mt-6">
+            <form className="grid grid-cols-2 gap-4 mt-6" onSubmit={handleSubmit}>
               <Input type="text" label="First name" />
               <Input type="text" label="Other name" />
               <Input type="text" label="Last name" />
@@ -122,17 +142,40 @@ const Individual = () => {
         
               <PhoneNumberInput/>
               <Input type="text" label="Full Address" />
+             <CountryStateSelector
+                     onCountryChange={handleCountryChange}
+                     selectedCountryCode={selectedCountryCode}
+                     selectedStateId={selectedStateId}
+                     onStateChange={handleStateChange}
+                    />
+           
+              <Input type="text" label="Etnicity" />
+              <Input type="text" label="Enrollee Type" />
+              <Input type="text" label="Plan Type" />
+            
+              <FileUpload/>
 
               <FormHeader>Next of Kin</FormHeader>
-              <Input type="text" label="First name" />
-              <Input type="text" label="Other name" />
-              <Input type="text" label="Last name" />
-              <Input type="text" label="Gender" />
+              <Input type="text" label="Full name" />
+                <FormSelect
+                label="Relationship"
+                defaultValue=""
+                isLoading={loadingRelation}
+                error={errorRelation}
+              >
+                {relations?.map((relation) => (
+                  <option key={relation} value={relation}>
+                    {relation}
+                  </option>
+                ))}
+              </FormSelect>
+               <PhoneNumberInput/>
+              <Input type="text" label="Home Address" />
               <div className="flex">
                 <ButtonT>Back</ButtonT>
               </div>
               <div className="flex justify-end">
-                <ButtonG type="button" onClick={nextStep}>
+                <ButtonG type="submit" onClick={nextStep}>
                   Next
                 </ButtonG>
               </div>
