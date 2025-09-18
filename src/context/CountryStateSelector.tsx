@@ -6,7 +6,6 @@ import { useStates } from "../hooks/resources/useStates";
 interface CountryStateSelectorProps {
   selectedCountryCode: string | null;
   onCountryChange: (countryCode: string) => void;
-//   onCountryChange: (countryCode: string, countryId: string) => void;
   selectedStateId: string | null;
   onStateChange: (stateId: string) => void;
 }

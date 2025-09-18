@@ -30,7 +30,7 @@ const AppRoutes = () => {
         <Route path="dashboard" element={<Layout><Dashboard /></Layout>} />
          
           <Route path="claims" element={<Layout><ClaimsManagement /></Layout>} />
-          <Route path="enrollees" element={<Layout><EnrolleesManagement /></Layout>} />
+          <Route path="enrollee-management" element={<Layout><EnrolleesManagement /></Layout>} />
           <Route path="enrollees/:id" element={<Layout><EnrolleeDetails /></Layout>} />
           <Route path="tariff" element={<Layout><Tariffs /></Layout>} />
           <Route path="settings" element={<Layout><Settings /></Layout>} />
