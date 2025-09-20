@@ -1,4 +1,3 @@
-
 export interface Country {
   id: string;
   isActive: boolean;

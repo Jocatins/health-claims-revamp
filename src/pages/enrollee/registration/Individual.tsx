@@ -7,12 +7,15 @@ import FormSelect from "../../../components/form/FormSelect";
 
 import { useGender } from "../../../hooks/resources/useGender";
 import { useMaritalStatus } from "../../../hooks/resources/useMaritalStatus";
-// import DatePicker from "../../../components/form/DatePicker";
+
 import AdvancedDatePicker from "../../../components/form/ADatePicker";
 import PhoneNumberInput from "../../../components/form/PhoneInput";
 import { useRelationship } from "../../../hooks/resources/useRelationship";
 import FileUpload from "../../../components/form/FileUpload";
 import CountryStateSelector from "../../../context/CountryStateSelector";
+import { useEnrolleeTypes } from "../../../hooks/resources/useEnrolleeTypes";
+import { useEnrolleeClass } from "../../../hooks/resources/useEnrolleeClass";
+import { usePlanTypes } from "../../../hooks/resources/usePlanTypes";
 
 type Step = "enrollee" | "plan";
 
@@ -21,6 +24,9 @@ const Individual = () => {
   const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null);
 
   const { genders, loading: loadingGenders, error: errorGenders } = useGender();
+  const { enrolleeTypes, loading: loadingEnrolleeTypes, error: errorEnrolleeTypes } = useEnrolleeTypes();
+  const { planType, loading: loadingPlanTypes, error: errorPlanTypes } = usePlanTypes();
+  const { enrolleeClass, loading: loadingEnrolleeClass, error: errorEnrolleeClass } = useEnrolleeClass();
   const {
     statuses,
     loading: loadingStatuses,
@@ -33,7 +39,6 @@ const Individual = () => {
 
   const handleCountryChange = (countryCode: string) => {
    setSelectedCountryCode(countryCode);
-  // setSelectedCountryId(countryId);
   setSelectedStateId(null);
   };
 
@@ -150,8 +155,42 @@ const Individual = () => {
                     />
            
               <Input type="text" label="Etnicity" />
-              <Input type="text" label="Enrollee Type" />
-              <Input type="text" label="Plan Type" />
+                <FormSelect
+                label="Enrollee Type"
+                defaultValue=""
+                isLoading={loadingEnrolleeTypes}
+                error={errorEnrolleeTypes}
+              >
+                {enrolleeTypes?.map((et) => (
+                  <option key={et} value={et}>
+                    {et}
+                  </option>
+                ))}
+              </FormSelect>
+               <FormSelect
+                label="Enrollee Class"
+                defaultValue=""
+                isLoading={loadingEnrolleeClass}
+                error={errorEnrolleeClass}
+              >
+                {enrolleeClass?.map((ec) => (
+                  <option key={ec} value={ec}>
+                    {ec}
+                  </option>
+                ))}
+              </FormSelect>
+               <FormSelect
+                label="Plan Types"
+                defaultValue=""
+                isLoading={loadingPlanTypes}
+                error={errorPlanTypes}
+              >
+                {planType?.map((pt) => (
+                  <option key={pt} value={pt}>
+                    {pt}
+                  </option>
+                ))}
+              </FormSelect>
             
               <FileUpload/>
 

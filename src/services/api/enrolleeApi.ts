@@ -1,4 +1,4 @@
-import axiosInstance from './axiosInstance';
+import axiosInstance from '../../config/axiosInstance';
 import type { EnrolleeListResponse, EnrolleeDetailResponse, AuthorizationRequestPayload, AuthorizationResponse } from '../../types/Enrollee';
 
 export interface GetEnrolleesParams {

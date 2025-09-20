@@ -1,7 +1,11 @@
 import type { ApiResponse, Country, State } from "../../types/Country";
+import type { IEnrolleeClassResponse } from "../../types/EnrolleeClass";
+
+import type {  IEnrolleeTypeResponse } from "../../types/EnrolleeType";
+import type { IPlanTypeResponse } from "../../types/PlanType";
 import type { IGender, IMaritalStatuses, IRelationship } from "../../types/resources";
 import { formatApiError } from "../../utils/errorFormatter";
-import axiosInstance from "./axiosInstance";
+import axiosInstance from "../../config/axiosInstance";
 
 const RESOURCES_BASE = "/resources";
 const SETTINGS_BASE = "/settings";
@@ -76,15 +80,52 @@ export const fetchStatesByCountry = async (countryCode: string): Promise<State[]
   }
 };
 
+export const fetchEnrolleeType = async (): Promise<string[]> => {
+  try {
+    const response = await axiosInstance.get<IEnrolleeTypeResponse>(
+      `${SETTINGS_BASE}/enrollee-type`
+    );
 
+    if (response.data.isSuccess) {
+      return response.data.data.map((enrollee) => enrollee.name); 
+    } else {
+      throw new Error(response.data.message);
+    }
+  } catch (error: unknown) {
+    const message = formatApiError(error);
+    console.error("Error fetching enrollee types:", message);
+    throw new Error(message);
+  }
+};
+
+
+export const fetchEnrolleeClass = async (): Promise<string[]> => {
+  try {
+    const response = await axiosInstance.get<IEnrolleeClassResponse>(`${SETTINGS_BASE}/enrollee-class`);
+       if (response.data.isSuccess) {
+      return response.data.data.map((enrollee) => enrollee.name); 
+    } else {
+      throw new Error(response.data.message);
+    }
+  } catch (error: unknown) {
+    const message = formatApiError(error);
+    console.error("Error fetching enrollee class:", message);
+    throw new Error(message);
+  }
+};
 
 export const fetchPlanTypes = async (): Promise<string[]> => {
   try {
-    const response = await axiosInstance.get<IRelationship>(`${SETTINGS_BASE}/plan-types`);
-    return response.data.data;
+    const response = await axiosInstance.get<IPlanTypeResponse>(`${SETTINGS_BASE}/plan-types`);
+    if (response.data.isSuccess) {
+      return response.data.data.map((pt) => pt.name); 
+    } else {
+      throw new Error(response.data.message);
+    }
   } catch (error: unknown) {
     const message = formatApiError(error);
     console.error("Error Plan-types", message);
     throw new Error(message);
   }
 };
+

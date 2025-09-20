@@ -3,7 +3,6 @@ import Login from "../pages/auth/Login";
 import Layout from "../layouts";
 import { ProviderProvider } from "../context/ProviderContext";
 import ProtectedRoute from "./ProtectedRoute";
-// import ProductsList from "../pages/Products";
 import Dashboard from "../pages/Dashboard";
 
 import { ClaimsManagement } from "../pages/ClaimsManagement";
@@ -14,6 +13,8 @@ import EnrolleesManagement from "../pages/EnrolleesManagement";
 import EnrolleeDetails from "../pages/EnrolleeDetails";
 
 import Individual from "../pages/enrollee/registration/Individual";
+
+import EnrolleesPage from "../pages/enrollee/EnrolleesPage";
 
 
 const AppRoutes = () => {
@@ -36,11 +37,12 @@ const AppRoutes = () => {
           <Route path="settings" element={<Layout><Settings /></Layout>} />
           
           <Route path="enrollee/">
-          {/* inside this guy call the dashboard component page instead of the Individual */}
+       
            <Route path="dashboard" element={<Layout><Dashboard /></Layout>} />
+            <Route path="enrollees" element={<Layout><EnrolleesPage /></Layout>} />
+          
           <Route path="registration" element={<Layout><Individual /></Layout>} />
           </Route>
-
         </Route>
          
       </Routes>

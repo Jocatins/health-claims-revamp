@@ -1,4 +1,4 @@
-import axiosInstance from "./axiosInstance";
+import axiosInstance from "../../config/axiosInstance";
 import type { LoginCredentials, LoginResponse } from "../../types/auth";
 import { formatApiError } from "../../utils/errorFormatter";
 

@@ -6,7 +6,7 @@ export default {
     extend: {
       colors: {
 
-        primary: 'var(--color-primary)'
+        primary: 'var(--color-primary)',
 
          brand: {
           DEFAULT: "#186255",
@@ -23,5 +23,5 @@ export default {
       }
     }
   },
-  plugins: []
+plugins: [require("@tailwindcss/forms")],
 };

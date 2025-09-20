@@ -12,7 +12,7 @@ export const exportClaimsReport = async (params: {
   });
   return res.data;
 };
-import axiosInstance from './axiosInstance';
+import axiosInstance from '../../config/axiosInstance';
 
 // Claim detail type based on provided schema
 export interface ClaimAttachment {

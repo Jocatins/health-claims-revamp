@@ -1,4 +1,4 @@
-import axiosInstance from './axiosInstance';
+import axiosInstance from '../../config/axiosInstance';
 import type { TariffListResponse, TariffQueryArgs } from '../../types/Tariff';
 
 // Map camelCase params to API expected query keys

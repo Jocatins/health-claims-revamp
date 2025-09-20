@@ -1,4 +1,4 @@
-import axiosInstance from './axiosInstance';
+import axiosInstance from '../../config/axiosInstance';
 
 // Types for responses (simplified)
 export interface UserProfileResponse {
