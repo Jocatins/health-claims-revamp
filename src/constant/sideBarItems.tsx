@@ -26,7 +26,8 @@ export const ADMIN_SIDEBAR: SidebarItem[] = [
     active: false,
     children: [
       { icon: null, label: "All Enrollees", active: false, path:"/enrollee/enrollees" },
-      { icon: null, label: "Enrollee Registration", active: false, path: "/enrollee/registration" }
+      { icon: null, label: "Enrollee Registration", active: false, path: "/enrollee/registration/individual" },
+      // { icon: null, label: "Corporate Registration", active: false, path: "/enrollee/registration/corporate" }
     ]
   },
   {
@@ -44,8 +45,25 @@ export const ADMIN_SIDEBAR: SidebarItem[] = [
     active: false,
     children: [
       { icon: null, label: "Claims", active: false, path: "/payments/claims" },
-      { icon: null, label: "Authorization", active: false, path: "/payments/authorization" }
+      { icon: null, label: "Authorization", active: false, path: "/payments/authorization" },
+      { icon: null, label: "Tracker", active: false, path: "/payments/tracker" }
     ]
+  },
+    {
+    icon: <EnrolleeIcon className="w-5 h-5" />,
+    label: "Reports",
+    active: false,
+    children: [
+      { icon: null, label: "Claims History", active: false, path: "/reports/claims-history" },
+      { icon: null, label: "Payments History", active: false, path: "/reports/payments-history" },
+    
+    ]
+  },
+   {
+    icon: <SettingsIcon className="w-5 h-5" />,
+    label: "Settings",
+    active: false,
+ 
   }
 ];
 

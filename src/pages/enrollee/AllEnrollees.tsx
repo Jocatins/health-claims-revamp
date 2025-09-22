@@ -114,7 +114,7 @@ const AllEnrollees: React.FC = () => {
                 type="button"
                 size="sm"
                 className="bg-green-800 text-white hover:bg-green-900"
-                onClick={() => navigate("/enrollee/registration")}
+                onClick={() => navigate("/enrollee/registration/individual")}
               >
                 + Add New Enrollee
               </Button>

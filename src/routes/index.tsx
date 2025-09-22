@@ -15,6 +15,7 @@ import EnrolleeDetails from "../pages/EnrolleeDetails";
 import Individual from "../pages/enrollee/registration/Individual";
 
 import EnrolleesPage from "../pages/enrollee/EnrolleesPage";
+import Corporate from "../pages/enrollee/registration/Corporate";
 
 
 const AppRoutes = () => {
@@ -41,7 +42,8 @@ const AppRoutes = () => {
            <Route path="dashboard" element={<Layout><Dashboard /></Layout>} />
             <Route path="enrollees" element={<Layout><EnrolleesPage /></Layout>} />
           
-          <Route path="registration" element={<Layout><Individual /></Layout>} />
+          <Route path="registration/individual" element={<Layout><Individual /></Layout>} />
+          <Route path="registration/corporate" element={<Layout><Corporate /></Layout>} />
           </Route>
         </Route>
          

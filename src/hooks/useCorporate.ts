@@ -4,7 +4,7 @@ import { fetchCorporates } from "../services/api/corporateApi";
 import type { ICorporateEnrollee } from "../types/Corporate";
 
 export function useCorporates() {
-  const [data, setData] = useState<ICorporateEnrollee[]>([]);
+  const [corporates, setCorporate] = useState<ICorporateEnrollee[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -13,7 +13,7 @@ export function useCorporates() {
     setError(null);
     try {
       const corporates = await fetchCorporates();
-      setData(corporates);
+      setCorporate(corporates);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load corporates");
     } finally {
@@ -26,7 +26,7 @@ export function useCorporates() {
   }, [load]);
 
   return {
-    data,
+    corporates,
     loading,
     error,
     refetch: load, 

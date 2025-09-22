@@ -9,10 +9,9 @@ import { useCorporates } from "../../hooks/useCorporate";
 import { LoadingSpinner } from "../../components/ui/LoadingSpinner";
 
 
-
 const CorporateEnrollees: React.FC = () => {
   const navigate = useNavigate();
-  const { data: corporates, loading, error, refetch } = useCorporates();
+  const { corporates, loading, error, refetch } = useCorporates();
 
   const [pageNumber, setPageNumber] = useState(1);
   const pageSize = 20;
@@ -38,7 +37,7 @@ const CorporateEnrollees: React.FC = () => {
               type="button"
               size="sm"
               className="bg-green-800 text-white hover:bg-green-900"
-              onClick={() => navigate("/enrollee/registration")}
+              onClick={() => navigate("/enrollee/registration/corporate")}
             >
               + Add Corporate
             </Button>

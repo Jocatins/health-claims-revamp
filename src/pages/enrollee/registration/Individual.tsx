@@ -16,6 +16,7 @@ import CountryStateSelector from "../../../context/CountryStateSelector";
 import { useEnrolleeTypes } from "../../../hooks/resources/useEnrolleeTypes";
 import { useEnrolleeClass } from "../../../hooks/resources/useEnrolleeClass";
 import { usePlanTypes } from "../../../hooks/resources/usePlanTypes";
+import { useCorporates } from "../../../hooks/useCorporate";
 
 type Step = "enrollee" | "plan";
 
@@ -24,22 +25,43 @@ const Individual = () => {
   const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null);
 
   const { genders, loading: loadingGenders, error: errorGenders } = useGender();
-  const { enrolleeTypes, loading: loadingEnrolleeTypes, error: errorEnrolleeTypes } = useEnrolleeTypes();
-  const { planType, loading: loadingPlanTypes, error: errorPlanTypes } = usePlanTypes();
-  const { enrolleeClass, loading: loadingEnrolleeClass, error: errorEnrolleeClass } = useEnrolleeClass();
+  const {
+    enrolleeTypes,
+    loading: loadingEnrolleeTypes,
+    error: errorEnrolleeTypes,
+  } = useEnrolleeTypes();
+  const {
+    planType,
+    loading: loadingPlanTypes,
+    error: errorPlanTypes,
+  } = usePlanTypes();
+  const {
+    enrolleeClass,
+    loading: loadingEnrolleeClass,
+    error: errorEnrolleeClass,
+  } = useEnrolleeClass();
   const {
     statuses,
     loading: loadingStatuses,
     error: errorStatuses,
   } = useMaritalStatus();
-  const { relations, loading: loadingRelation, error: errorRelation } = useRelationship();
+  const {
+    relations,
+    loading: loadingRelation,
+    error: errorRelation,
+  } = useRelationship();
+   const {corporates, loading: loadingCorporates, error: errorCorporates} = useCorporates();
 
-  const [selectedCountryCode, setSelectedCountryCode] = useState<string | null>(null);
+  const [selectedCountryCode, setSelectedCountryCode] = useState<string | null>(
+    null
+  );
   const [selectedStateId, setSelectedStateId] = useState<string | null>(null);
 
+  const [selectedType, setSelectedType] = useState("");
+
   const handleCountryChange = (countryCode: string) => {
-   setSelectedCountryCode(countryCode);
-  setSelectedStateId(null);
+    setSelectedCountryCode(countryCode);
+    setSelectedStateId(null);
   };
 
   const handleStateChange = (stateId: string) => {
@@ -55,11 +77,11 @@ const Individual = () => {
   };
   const handleDateChange = (date: Date | null) => {
     setDateOfBirth(date);
-    // console.log(date); 
+    // console.log(date);
   };
   const handleSubmit = () => {
-    console.log("submitted")
-  }
+    console.log("submitted");
+  };
 
   return (
     <>
@@ -107,7 +129,10 @@ const Individual = () => {
         {step === "enrollee" && (
           <div>
             <FormHeader>Basic Info</FormHeader>
-            <form className="grid grid-cols-2 gap-4 mt-6" onSubmit={handleSubmit}>
+            <form
+              className="grid grid-cols-2 gap-4 mt-6"
+              onSubmit={handleSubmit}
+            >
               <Input type="text" label="First name" />
               <Input type="text" label="Other name" />
               <Input type="text" label="Last name" />
@@ -140,26 +165,26 @@ const Individual = () => {
               <Input type="email" label="Email" />
               <AdvancedDatePicker
                 label="Date of Birth"
-             selected={dateOfBirth}
-             onChange={handleDateChange}
-             
+                selected={dateOfBirth}
+                onChange={handleDateChange}
               />
-        
-              <PhoneNumberInput/>
+
+              <PhoneNumberInput />
               <Input type="text" label="Full Address" />
-             <CountryStateSelector
-                     onCountryChange={handleCountryChange}
-                     selectedCountryCode={selectedCountryCode}
-                     selectedStateId={selectedStateId}
-                     onStateChange={handleStateChange}
-                    />
-           
+              <CountryStateSelector
+                onCountryChange={handleCountryChange}
+                selectedCountryCode={selectedCountryCode}
+                selectedStateId={selectedStateId}
+                onStateChange={handleStateChange}
+              />
+
               <Input type="text" label="Etnicity" />
-                <FormSelect
+              <FormSelect
                 label="Enrollee Type"
                 defaultValue=""
                 isLoading={loadingEnrolleeTypes}
                 error={errorEnrolleeTypes}
+                onChange={(e) => setSelectedType(e.target.value)}
               >
                 {enrolleeTypes?.map((et) => (
                   <option key={et} value={et}>
@@ -167,19 +192,38 @@ const Individual = () => {
                   </option>
                 ))}
               </FormSelect>
-               <FormSelect
-                label="Enrollee Class"
-                defaultValue=""
-                isLoading={loadingEnrolleeClass}
-                error={errorEnrolleeClass}
-              >
-                {enrolleeClass?.map((ec) => (
-                  <option key={ec} value={ec}>
-                    {ec}
-                  </option>
-                ))}
-              </FormSelect>
-               <FormSelect
+              {selectedType && selectedType !== "Individual" && (
+                <>
+                <FormSelect
+                  label="Enrollee Class"
+                  defaultValue=""
+                  isLoading={loadingEnrolleeClass}
+                  error={errorEnrolleeClass}
+                  >
+                  <option value="">-- Select Class --</option>
+                  {enrolleeClass?.map((ec) => (
+                    <option key={ec} value={ec}>
+                      {ec}
+                    </option>
+                  ))}
+                </FormSelect>
+                  <FormSelect
+                  label="Benificiary"
+                  defaultValue=""
+                  isLoading={loadingCorporates}
+                  error={errorCorporates}
+                  >
+                  <option value="">-- Select Beneficiary --</option>
+                  {corporates?.map((cp) => (
+                    <option key={cp.id} value={cp.id}>
+                      {cp.companyName}
+                    </option>
+                  ))}
+                </FormSelect>
+                  </>
+                
+              )}
+              <FormSelect
                 label="Plan Types"
                 defaultValue=""
                 isLoading={loadingPlanTypes}
@@ -191,12 +235,12 @@ const Individual = () => {
                   </option>
                 ))}
               </FormSelect>
-            
-              <FileUpload/>
+
+              <FileUpload />
 
               <FormHeader>Next of Kin</FormHeader>
               <Input type="text" label="Full name" />
-                <FormSelect
+              <FormSelect
                 label="Relationship"
                 defaultValue=""
                 isLoading={loadingRelation}
@@ -208,7 +252,7 @@ const Individual = () => {
                   </option>
                 ))}
               </FormSelect>
-               <PhoneNumberInput/>
+              <PhoneNumberInput />
               <Input type="text" label="Home Address" />
               <div className="flex">
                 <ButtonT>Back</ButtonT>
