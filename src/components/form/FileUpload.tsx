@@ -1,13 +1,16 @@
 import React, { useRef, useState } from "react";
+import { type UseFormRegisterReturn } from "react-hook-form";
 
 interface FileUploadProps {
   accept?: string;
-  onFileSelect?: (file: File | null) => void;
+  register: UseFormRegisterReturn;
+  error?: string;
 }
 
 const FileUpload: React.FC<FileUploadProps> = ({
   accept = "image/*",
-  onFileSelect,
+  register,
+  error
 }) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [fileName, setFileName] = useState<string>("");
@@ -15,18 +18,38 @@ const FileUpload: React.FC<FileUploadProps> = ({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
     setFileName(file ? file.name : "");
-    if (onFileSelect) {
-      onFileSelect(file);
-    }
+    
+    // Update React Hook Form value
+    register.onChange({
+      target: {
+        name: register.name,
+        value: file ? [file] : [],
+        files: e.target.files,
+      },
+    });
+  };
+
+  const handleBlur = () => {
+    register.onBlur({
+      target: {
+        name: register.name,
+        value: fileName,
+      },
+    } as React.FocusEvent<HTMLInputElement>);
   };
 
   const handleClick = () => {
     fileInputRef.current?.click();
   };
 
+  // Set up ref for React Hook Form
+  React.useEffect(() => {
+    register.ref(fileInputRef.current);
+  }, [register]);
+
   return (
     <div className="w-full">
-      <div className="flex items-center border border-gray-300 rounded-md overflow-hidden">
+      <div className={`flex items-center border ${error ? 'border-red-500' : 'border-gray-300'} rounded-md overflow-hidden`}>
         <span className="flex-grow px-3 py-2 text-gray-500 text-sm truncate">
           {fileName || "Choose a Photo"}
         </span>
@@ -44,7 +67,10 @@ const FileUpload: React.FC<FileUploadProps> = ({
         accept={accept}
         className="hidden"
         onChange={handleFileChange}
+        onBlur={handleBlur}
+        name={register.name}
       />
+      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
     </div>
   );
 };

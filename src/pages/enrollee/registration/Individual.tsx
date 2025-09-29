@@ -17,13 +17,44 @@ import { useEnrolleeTypes } from "../../../hooks/resources/useEnrolleeTypes";
 import { useEnrolleeClass } from "../../../hooks/resources/useEnrolleeClass";
 import { usePlanTypes } from "../../../hooks/resources/usePlanTypes";
 import { useCorporates } from "../../../hooks/useCorporate";
+import { useMemberTypes } from "../../../hooks/resources/useMemberTypes";
+import { useBillingFrequency } from "../../../hooks/resources/useBillingFrequency";
 
-type Step = "enrollee" | "plan";
+import { useCountries } from "../../../hooks/resources/useCountries";
+import { useStates } from "../../../hooks/resources/useStates";
+import { useEnrolleeForm } from "../../../hooks/useEnrolleeForm";
+import { useNavigate } from "react-router-dom";
+import { useStepValidator } from "../../../constant/stepValidatior";
+// import { usePlanTypeById } from "../../../hooks/resources/usePlanTypeById";
+
+export type Step = "enrollee" | "plan";
 
 const Individual = () => {
   const [step, setStep] = useState<Step>("enrollee");
   const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null);
+  const navigate = useNavigate();
 
+  const { validateEnrolleeStep } = useStepValidator();
+
+  // react - form hooks
+  const {
+    methods: {
+      register,
+      formState: { errors },
+      watch,
+      setValue,
+      trigger,
+    },
+    handleFormSubmit,
+    isSubmitting,
+  } = useEnrolleeForm();
+  // ----------------------
+  const handleValidateEnrolleeStep = () => {
+    validateEnrolleeStep(trigger, setStep);
+  };
+  const watchedPlanTypeId = watch("planTypeId");
+
+  //  --- Data hooks
   const { genders, loading: loadingGenders, error: errorGenders } = useGender();
   const {
     enrolleeTypes,
@@ -50,37 +81,102 @@ const Individual = () => {
     loading: loadingRelation,
     error: errorRelation,
   } = useRelationship();
-   const {corporates, loading: loadingCorporates, error: errorCorporates} = useCorporates();
+  const {
+    corporates,
+    loading: loadingCorporates,
+    error: errorCorporates,
+  } = useCorporates();
+  const {
+    memberTypes,
+    loading: loadingMemberTypes,
+    error: errorMemberTypes,
+  } = useMemberTypes();
+  const {
+    billingFrequency,
+    loading: loadingBillingFrequency,
+    error: errorBillingFrequency,
+  } = useBillingFrequency();
+  //   const {
+  //   planType: selectedPlanType,
+  //   loading: loadingPlanTypeDetails,
+  //   error: errorPlanTypeDetails,
+  // } = usePlanTypeById(watchedPlanTypeId);
 
   const [selectedCountryCode, setSelectedCountryCode] = useState<string | null>(
     null
   );
+  const {
+    countries,
+    loading: countriesLoading,
+    error: countriesError,
+  } = useCountries();
+  const {
+    states,
+    loading: statesLoading,
+    error: statesError,
+  } = useStates(selectedCountryCode);
   const [selectedStateId, setSelectedStateId] = useState<string | null>(null);
+  // --------------------------
 
   const [selectedType, setSelectedType] = useState("");
 
   const handleCountryChange = (countryCode: string) => {
     setSelectedCountryCode(countryCode);
     setSelectedStateId(null);
+
+    // Find the country name and set the form value
+    const selectedCountry = countries.find((c) => c.alpha2 === countryCode);
+    if (selectedCountry) {
+      setValue("nationality", selectedCountry.name); // Set country name
+      console.log("Country set to:", selectedCountry.name);
+    }
+
+    // Clear state when country changes
+    setValue("stateOfResidence", "");
   };
 
   const handleStateChange = (stateId: string) => {
     setSelectedStateId(stateId);
+
+    // Find the state name and set the form value
+    const selectedState = states.find((s) => s.id === stateId);
+    if (selectedState) {
+      setValue("stateOfResidence", selectedState.name);
+      console.log("State set to:", selectedState.name);
+    }
   };
 
-  const nextStep = () => {
-    if (step === "enrollee") setStep("plan");
-  };
+  const watchedEnrolleeType = watch("enrolleeTypeId");
+  const selectedEnrolleeTypeName = enrolleeTypes.find(
+    (et) => et.id === watchedEnrolleeType
+  )?.name;
+
+  // const nextStep = () => {
+  //   if (step === "enrollee") setStep("plan");
+  // };
 
   const prevStep = () => {
     if (step === "plan") setStep("enrollee");
   };
   const handleDateChange = (date: Date | null) => {
+    console.log("Date selected:", date);
     setDateOfBirth(date);
-    // console.log(date);
+    if (date) {
+      setValue("dateOfBirth", date, {
+        shouldValidate: true,
+      });
+      console.log("Date set in form:", date);
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      setValue("dateOfBirth", null as any, {
+        shouldValidate: true,
+      });
+    }
   };
-  const handleSubmit = () => {
-    console.log("submitted");
+  //
+
+  const backNavigation = () => {
+    navigate("/enrollee/enrollees");
   };
 
   return (
@@ -112,179 +208,333 @@ const Individual = () => {
             className={`flex items-center space-x-2 cursor-pointer ${
               step === "plan" ? "text-[#186255] font-semibold" : "text-gray-500"
             }`}
-            onClick={() => setStep("plan")}
+            onClick={() => step === "plan" && setStep("plan")}
           >
             <span
               className={`w-5 h-5 flex items-center justify-center rounded-full border ${
                 step === "plan" ? "bg-[#186255] text-white" : "border-gray-400"
               }`}
             >
-              ○
+              {step === "plan" ? "✓" : "○"}
             </span>
             <span>Plan Details</span>
           </div>
         </div>
 
-        {/* Step forms */}
-        {step === "enrollee" && (
-          <div>
-            <FormHeader>Basic Info</FormHeader>
-            <form
-              className="grid grid-cols-2 gap-4 mt-6"
-              onSubmit={handleSubmit}
-            >
-              <Input type="text" label="First name" />
-              <Input type="text" label="Other name" />
-              <Input type="text" label="Last name" />
-              <FormSelect
-                label="Gender"
-                defaultValue=""
-                isLoading={loadingGenders}
-                error={errorGenders}
-              >
-                {genders?.map((gender) => (
-                  <option key={gender} value={gender}>
-                    {gender}
-                  </option>
-                ))}
-              </FormSelect>
+        {/* Single form wrapper */}
+        <form onSubmit={handleFormSubmit} className="mt-6">
+          {step === "enrollee" && (
+            <div>
+              <FormHeader>Basic Info</FormHeader>
+              <div className="grid grid-cols-2 gap-4 mt-6">
+                <Input
+                  type="text"
+                  label="First name"
+                  {...register("firstName", {
+                    required: "First name is required",
+                  })}
+                  error={errors.firstName?.message}
+                />
+                <Input
+                  type="text"
+                  label="Other name"
+                  {...register("otherName")}
+                />
+                <Input
+                  type="text"
+                  label="Last name"
+                  {...register("lastName", {
+                    required: "Last name is required",
+                  })}
+                  error={errors.lastName?.message}
+                />
 
-              <Input type="text" label="Occupation" />
-              <FormSelect
-                label="Marital Status"
-                defaultValue=""
-                isLoading={loadingStatuses}
-                error={errorStatuses}
-              >
-                {statuses?.map((st) => (
-                  <option key={st} value={st}>
-                    {st}
-                  </option>
-                ))}
-              </FormSelect>
-              <Input type="email" label="Email" />
-              <AdvancedDatePicker
-                label="Date of Birth"
-                selected={dateOfBirth}
-                onChange={handleDateChange}
-              />
-
-              <PhoneNumberInput />
-              <Input type="text" label="Full Address" />
-              <CountryStateSelector
-                onCountryChange={handleCountryChange}
-                selectedCountryCode={selectedCountryCode}
-                selectedStateId={selectedStateId}
-                onStateChange={handleStateChange}
-              />
-
-              <Input type="text" label="Etnicity" />
-              <FormSelect
-                label="Enrollee Type"
-                defaultValue=""
-                isLoading={loadingEnrolleeTypes}
-                error={errorEnrolleeTypes}
-                onChange={(e) => setSelectedType(e.target.value)}
-              >
-                {enrolleeTypes?.map((et) => (
-                  <option key={et} value={et}>
-                    {et}
-                  </option>
-                ))}
-              </FormSelect>
-              {selectedType && selectedType !== "Individual" && (
-                <>
                 <FormSelect
-                  label="Enrollee Class"
+                  label="Gender"
                   defaultValue=""
-                  isLoading={loadingEnrolleeClass}
-                  error={errorEnrolleeClass}
-                  >
-                  <option value="">-- Select Class --</option>
-                  {enrolleeClass?.map((ec) => (
-                    <option key={ec} value={ec}>
-                      {ec}
+                  isLoading={loadingGenders}
+                  error={errorGenders}
+                  {...register("gender", {
+                    required: "Gender is required",
+                  })}
+                >
+                  {genders?.map((gender) => (
+                    <option key={gender} value={gender}>
+                      {gender}
                     </option>
                   ))}
                 </FormSelect>
-                  <FormSelect
-                  label="Benificiary"
+
+                <Input
+                  type="text"
+                  label="Occupation"
+                  {...register("occupation", {
+                    required: "Occupation",
+                  })}
+                  error={errors.occupation?.message}
+                />
+
+                <FormSelect
+                  label="Marital Status"
+                  {...register("maritalStatus")}
+                  error={errorStatuses}
+                  isLoading={loadingStatuses}
                   defaultValue=""
-                  isLoading={loadingCorporates}
-                  error={errorCorporates}
-                  >
-                  <option value="">-- Select Beneficiary --</option>
-                  {corporates?.map((cp) => (
-                    <option key={cp.id} value={cp.id}>
-                      {cp.companyName}
+                >
+                  {statuses?.map((st) => (
+                    <option key={st} value={st}>
+                      {st}
                     </option>
                   ))}
                 </FormSelect>
-                  </>
-                
-              )}
-              <FormSelect
-                label="Plan Types"
-                defaultValue=""
-                isLoading={loadingPlanTypes}
-                error={errorPlanTypes}
-              >
-                {planType?.map((pt) => (
-                  <option key={pt} value={pt}>
-                    {pt}
-                  </option>
-                ))}
-              </FormSelect>
 
-              <FileUpload />
+                <Input
+                  type="email"
+                  label="Email"
+                  {...register("emailAddress", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^\S+@\S+$/i,
+                      message: "Invalid email address",
+                    },
+                  })}
+                  error={errors.emailAddress?.message}
+                />
 
-              <FormHeader>Next of Kin</FormHeader>
-              <Input type="text" label="Full name" />
-              <FormSelect
-                label="Relationship"
-                defaultValue=""
-                isLoading={loadingRelation}
-                error={errorRelation}
-              >
-                {relations?.map((relation) => (
-                  <option key={relation} value={relation}>
-                    {relation}
-                  </option>
-                ))}
-              </FormSelect>
-              <PhoneNumberInput />
-              <Input type="text" label="Home Address" />
-              <div className="flex">
-                <ButtonT>Back</ButtonT>
+                <AdvancedDatePicker
+                  label="Date of Birth"
+                  selected={dateOfBirth}
+                  onChange={handleDateChange}
+                />
+
+                <PhoneNumberInput
+                  register={register("phoneNumber", {
+                    required: "Phone number is required",
+                  })}
+                  error={errors.phoneNumber?.message}
+                />
+
+                <Input
+                  type="text"
+                  label="Full Address"
+                  {...register("fullAddress", {
+                    required: "Address is required",
+                  })}
+                  error={errors?.fullAddress?.message}
+                />
+
+                <CountryStateSelector
+                  onCountryChange={handleCountryChange}
+                  selectedCountryCode={selectedCountryCode}
+                  selectedStateId={selectedStateId}
+                  onStateChange={handleStateChange}
+                  countries={countries} // Pass the data
+                  states={states} // Pass the data
+                  countriesLoading={countriesLoading}
+                  statesLoading={statesLoading}
+                  countriesError={countriesError}
+                  statesError={statesError}
+                />
+
+                <Input
+                  type="text"
+                  label="Ethnicity"
+                  {...register("ethnicity")}
+                  error={errors.ethnicity?.message}
+                />
+
+                <FormSelect
+                  label="Enrollee Type"
+                  {...register("enrolleeTypeId")}
+                  error={errorEnrolleeTypes}
+                  isLoading={loadingEnrolleeTypes}
+                  onChange={(e) => {
+                    setSelectedType(e.target.value);
+                    setValue("enrolleeTypeId", e.target.value);
+                  }}
+                  defaultValue=""
+                >
+                  {enrolleeTypes?.map((et) => (
+                    <option key={et.id} value={et.id}>
+                      {et.name}
+                    </option>
+                  ))}
+                </FormSelect>
+
+                {watchedEnrolleeType &&
+                  selectedEnrolleeTypeName !== "Individual" && (
+                    <>
+                      <FormSelect
+                        label="Enrollee Class"
+                        {...register("enrolleeClassId")}
+                        error={errorEnrolleeClass}
+                        isLoading={loadingEnrolleeClass}
+                        defaultValue=""
+                      >
+                        {enrolleeClass?.map((ec) => (
+                          <option key={ec.id} value={ec.id}>
+                            {ec.name}
+                          </option>
+                        ))}
+                      </FormSelect>
+                      <FormSelect
+                        label="Beneficiary"
+                        {...register("corporateId")}
+                        error={errorCorporates}
+                        isLoading={loadingCorporates}
+                        defaultValue=""
+                      >
+                        {corporates?.map((cp) => (
+                          <option key={cp.id} value={cp.id}>
+                            {cp.companyName}
+                          </option>
+                        ))}
+                      </FormSelect>
+                    </>
+                  )}
+
+                <FormSelect
+                  label="Plan Types"
+                  {...register("planTypeId")}
+                  error={errorPlanTypes}
+                  isLoading={loadingPlanTypes}
+                  defaultValue=""
+                >
+                  {planType?.map((pt) => (
+                    <option key={pt.id} value={pt.id}>
+                      {pt.name}
+                    </option>
+                  ))}
+                </FormSelect>
+
+                <FileUpload
+                  register={register("photo")}
+                  error={errors.photo?.message}
+                />
+
+                <FormHeader>Next of Kin</FormHeader>
+                <Input
+                  type="text"
+                  label="Full name"
+                  {...register("nextOfKin.fullName", {
+                    required: "Full Name is required",
+                  })}
+                  error={errors.nextOfKin?.fullName?.message}
+                />
+                <FormSelect
+                  label="Relationship"
+                  {...register("nextOfKin.relationship")}
+                  error={errorRelation}
+                  isLoading={loadingRelation}
+                  defaultValue=""
+                >
+                  {relations?.map((relation) => (
+                    <option key={relation} value={relation}>
+                      {relation}
+                    </option>
+                  ))}
+                </FormSelect>
+
+                <PhoneNumberInput
+                  register={register("nextOfKin.phoneNumber", {
+                    required: "NOK Phone number is required",
+                  })}
+                  error={errors.nextOfKin?.phoneNumber?.message}
+                />
+
+                <Input
+                  type="text"
+                  label="Home Address"
+                  {...register("nextOfKin.homeAddress", {
+                    required: "Home Address is required",
+                  })}
+                  error={errors.nextOfKin?.homeAddress?.message}
+                />
+
+                <div className="flex">
+                  <ButtonT type="button" onClick={backNavigation}>
+                    Back
+                  </ButtonT>
+                </div>
+                <div className="flex justify-end">
+                  <ButtonG type="button" onClick={handleValidateEnrolleeStep}>
+                    Next
+                  </ButtonG>
+                </div>
               </div>
-              <div className="flex justify-end">
-                <ButtonG type="submit" onClick={nextStep}>
-                  Next
-                </ButtonG>
+            </div>
+          )}
+
+          {step === "plan" && (
+            <div>
+              <FormHeader>Plan Details</FormHeader>
+              <div className="grid grid-cols-2 gap-4 mt-6">
+                <FormSelect
+                  label="Membership Type"
+                  isLoading={loadingMemberTypes}
+                  defaultValue=""
+                >
+                  {Array.from(
+                    new Map(memberTypes?.map((mt) => [mt.id, mt])).values()
+                  ).map((mt, index) => (
+                    <option key={mt.id || `mt-${index}`} value={mt.id}>
+                      {mt.name}
+                    </option>
+                  ))}
+                </FormSelect>
+
+                <FormSelect
+                  label="Billing Frequency"
+                  isLoading={loadingBillingFrequency}
+                  defaultValue=""
+                >
+                  {billingFrequency?.map((bf: string) => (
+                    <option key={bf} value={bf}>
+                      {bf}
+                    </option>
+                  ))}
+                </FormSelect>
+
+                <Input type="number" label="Amount" />
+
+                <Input type="number" label="Discount" />
+
+                <Input type="text" label="Benefit" />
+
+                <Input type="text" label="Referral Number" />
+
+                <div className="flex">
+                  <ButtonT type="button" onClick={prevStep}>
+                    Back
+                  </ButtonT>
+                </div>
+                <div className="flex justify-end">
+                  <ButtonG
+                    type="submit"
+                    disabled={isSubmitting}
+                    className={
+                      isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                    }
+                  >
+                    {isSubmitting ? "Submitting..." : "Submit"}
+                  </ButtonG>
+                </div>
               </div>
-            </form>
-          </div>
-        )}
-
-        {step === "plan" && (
-          <form className="grid grid-cols-2 gap-4 mt-6">
-            <h2 className="col-span-2 text-lg font-semibold">Plan Details</h2>
-            <Input type="text" label="Plan Name" />
-            <Input type="text" label="Plan Name" />
-            <Input type="text" label="Plan Name" />
-            <Input type="text" label="Plan Name" />
-
-            <div className="flex">
-              <ButtonT onClick={prevStep}>Back</ButtonT>
             </div>
-            <div className="flex justify-end">
-              <ButtonG type="button">Submit</ButtonG>
-            </div>
-          </form>
-        )}
+          )}
+        </form>
       </div>
     </>
   );
 };
 
 export default Individual;
+
+//   useEffect(() => {
+//   if (selectedPlanType) {
+//     setValue("amount", selectedPlanType.amount);
+//     setValue("discount", selectedPlanType.discount);
+//     setValue("benefits", selectedPlanType.benefits);
+//     setValue("referralNumber", selectedPlanType.referralNumber ?? "");
+//   }
+// }, [selectedPlanType, setValue]);

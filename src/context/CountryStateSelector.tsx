@@ -1,13 +1,19 @@
 import React from "react";
 import FormSelect from "../components/form/FormSelect";
-import { useCountries } from "../hooks/resources/useCountries";
-import { useStates } from "../hooks/resources/useStates";
 
 interface CountryStateSelectorProps {
   selectedCountryCode: string | null;
   onCountryChange: (countryCode: string) => void;
   selectedStateId: string | null;
   onStateChange: (stateId: string) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  countries: any[]; 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  states: any[];
+  countriesLoading: boolean;
+  statesLoading: boolean;
+  countriesError: string | null;
+  statesError: string | null;
 }
 
 const CountryStateSelector: React.FC<CountryStateSelectorProps> = ({
@@ -15,17 +21,14 @@ const CountryStateSelector: React.FC<CountryStateSelectorProps> = ({
   onCountryChange,
   selectedStateId,
   onStateChange,
+  countries, // Use the data from props
+  states,
+  countriesLoading,
+  statesLoading,
+  countriesError,
+  statesError,
 }) => {
-  const {
-    countries,
-    loading: countriesLoading,
-    error: countriesError,
-  } = useCountries();
-  const {
-    states,
-    loading: statesLoading,
-    error: statesError,
-  } = useStates(selectedCountryCode);
+
 
   return (
     <>
@@ -40,13 +43,11 @@ const CountryStateSelector: React.FC<CountryStateSelectorProps> = ({
             error={countriesError || undefined}
           >
             <option value="">Select a country</option>
-
-          {countries.map((country, index) => (
-            <option key={country.alpha2 ?? `country-${index}`} value={country.alpha2}>
-              {country.name}
-            </option>
-          ))}
-
+            {countries.map((country, index) => (
+              <option key={country.alpha2 ?? `country-${index}`} value={country.alpha2}>
+                {country.name}
+              </option>
+            ))}
           </FormSelect>
         </div>
 
@@ -61,9 +62,9 @@ const CountryStateSelector: React.FC<CountryStateSelectorProps> = ({
             disabled={!selectedCountryCode}
           >
             <option value="">Select a state</option>
-           {states.map((state, index) => (
-            <option key={state.id ?? `state-${index}`} value={state.id}>
-              {state.name}
+            {states.map((state, index) => (
+              <option key={state.id ?? `state-${index}`} value={state.id}>
+                {state.name}
               </option>
             ))}
           </FormSelect>

@@ -39,9 +39,9 @@ const FormSelect: React.FC<SelectProps> = ({
       >
         {/* Show loading or error message as the only option if applicable */}
         {isLoading ? (
-          <option value="">Loading options...</option>
+          <option value="">...</option>
         ) : error ? (
-          <option value="">Failed to load options</option>
+          <option value=""></option>
         ) : (
           <>
             <option value="" disabled hidden></option>
