@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FormHeader from "../../../components/form/FormHeader";
 import Input from "../../../components/form/Input";
 import ButtonT from "../../../components/form/ButttonT";
@@ -16,7 +16,7 @@ import CountryStateSelector from "../../../context/CountryStateSelector";
 import { useEnrolleeTypes } from "../../../hooks/resources/useEnrolleeTypes";
 import { useEnrolleeClass } from "../../../hooks/resources/useEnrolleeClass";
 import { usePlanTypes } from "../../../hooks/resources/usePlanTypes";
-import { useCorporates } from "../../../hooks/useCorporate";
+
 import { useMemberTypes } from "../../../hooks/resources/useMemberTypes";
 import { useBillingFrequency } from "../../../hooks/resources/useBillingFrequency";
 
@@ -25,11 +25,20 @@ import { useStates } from "../../../hooks/resources/useStates";
 import { useEnrolleeForm } from "../../../hooks/useEnrolleeForm";
 import { useNavigate } from "react-router-dom";
 import { useStepValidator } from "../../../constant/stepValidatior";
+import type { AppDispatch, RootState } from "../../../services/store/store";
+import { fetchCorporateEntities } from "../../../services/thunks/corporateThunk";
+import { useDispatch, useSelector } from "react-redux";
 // import { usePlanTypeById } from "../../../hooks/resources/usePlanTypeById";
 
 export type Step = "enrollee" | "plan";
 
 const Individual = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const {
+    corporates,
+    loading: loadingCorporates,
+    error: errorCorporates,
+  } = useSelector((state: RootState) => state.corporate);
   const [step, setStep] = useState<Step>("enrollee");
   const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null);
   const navigate = useNavigate();
@@ -81,11 +90,7 @@ const Individual = () => {
     loading: loadingRelation,
     error: errorRelation,
   } = useRelationship();
-  const {
-    corporates,
-    loading: loadingCorporates,
-    error: errorCorporates,
-  } = useCorporates();
+
   const {
     memberTypes,
     loading: loadingMemberTypes,
@@ -174,6 +179,11 @@ const Individual = () => {
     }
   };
   //
+  useEffect(() => {
+    if (corporates.length === 0) {
+      dispatch(fetchCorporateEntities());
+    }
+  }, [dispatch, corporates.length]);
 
   const backNavigation = () => {
     navigate("/enrollee/enrollees");
@@ -377,6 +387,7 @@ const Individual = () => {
                           </option>
                         ))}
                       </FormSelect>
+
                       <FormSelect
                         label="Beneficiary"
                         {...register("corporateId")}
@@ -384,11 +395,13 @@ const Individual = () => {
                         isLoading={loadingCorporates}
                         defaultValue=""
                       >
-                        {corporates?.map((cp) => (
-                          <option key={cp.id} value={cp.id}>
-                            {cp.companyName}
-                          </option>
-                        ))}
+                        <option value="">Select a corporate</option>
+                        {Array.isArray(corporates) &&
+                          corporates.map((corp) => (
+                            <option key={corp.id} value={corp.id}>
+                              {corp.companyName}
+                            </option>
+                          ))}
                       </FormSelect>
                     </>
                   )}
