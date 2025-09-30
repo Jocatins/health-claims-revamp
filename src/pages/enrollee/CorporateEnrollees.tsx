@@ -1,37 +1,48 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import Button from "../../components/ui/Button";
 import Table from "../../components/ui/Table";
 import EmptyState from "../../components/ui/EmptyState";
 import FormHeader from "../../components/form/FormHeader";
 import ActionMenu from "../../components/ui/ActionMenu";
-import { useCorporates } from "../../hooks/useCorporate";
 import { LoadingSpinner } from "../../components/ui/LoadingSpinner";
-
+import { fetchCorporateEntities } from "../../services/thunks/corporateThunk";
+import type { AppDispatch, RootState } from "../../services/store/store";
 
 const CorporateEnrollees: React.FC = () => {
   const navigate = useNavigate();
-  const { corporates, loading, error, refetch } = useCorporates();
+  const dispatch = useDispatch<AppDispatch>();
+  
+  const { corporates, loading, error } = useSelector((state: RootState) => state.corporate);
 
   const [pageNumber, setPageNumber] = useState(1);
   const pageSize = 20;
 
-  // Pagination slice (basic client-side for now)
-  const paginated = corporates.slice((pageNumber - 1) * pageSize, pageNumber * pageSize);
+  useEffect(() => {
+    dispatch(fetchCorporateEntities());
+  }, [dispatch]);
+
+  const handleRefresh = () => {
+    dispatch(fetchCorporateEntities());
+  };
+
+  // SAFE ARRAY HANDLING
+  const corporatesArray = Array.isArray(corporates) ? corporates : [];
+  const paginated = corporatesArray.slice((pageNumber - 1) * pageSize, pageNumber * pageSize);
+  const totalCount = corporatesArray.length;
 
   return (
     <div className="p-6">
       <div className="bg-white p-4 rounded-md shadow-sm mb-6">
         <div className="flex items-center justify-between">
-          {/* Left side */}
           <div className="flex items-center gap-3">
             <FormHeader>Corporate Enrollees</FormHeader>
-            <Button type="button" size="sm" onClick={refetch}>
+            <Button type="button" size="sm" onClick={handleRefresh}>
               Refresh
             </Button>
           </div>
 
-          {/* Right side */}
           <div className="flex items-center gap-2">
             <Button
               type="button"
@@ -46,11 +57,10 @@ const CorporateEnrollees: React.FC = () => {
       </div>
 
       {loading ? (
-        // <div className="text-center py-16 text-sm">Loading corporates...</div>
         <LoadingSpinner/>
       ) : error ? (
         <div className="text-center py-16 text-red-600 text-sm">{error}</div>
-      ) : corporates.length === 0 ? (
+      ) : totalCount === 0 ? ( 
         <EmptyState
           icon={<span>👥</span>}
           title="No corporates found"
@@ -84,7 +94,7 @@ const CorporateEnrollees: React.FC = () => {
           <div className="flex justify-between items-center p-4 text-xs text-gray-600">
             <span>
               Showing {(pageNumber - 1) * pageSize + 1}–
-              {(pageNumber - 1) * pageSize + paginated.length} of {corporates.length}
+              {(pageNumber - 1) * pageSize + paginated.length} of {totalCount}
             </span>
             <div className="flex gap-2">
               <Button
@@ -98,7 +108,7 @@ const CorporateEnrollees: React.FC = () => {
               <Button
                 size="sm"
                 variant="outline"
-                disabled={pageNumber * pageSize >= corporates.length}
+                disabled={pageNumber * pageSize >= totalCount}
                 onClick={() => setPageNumber((p) => p + 1)}
               >
                 Next

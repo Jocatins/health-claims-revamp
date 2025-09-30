@@ -1,63 +1,84 @@
-import React from "react";
+import { useState } from "react";
 import Input from "../../../components/form/Input";
-
 import FormHeader from "../../../components/form/FormHeader";
 import ButtonT from "../../../components/form/ButttonT";
 import ButtonG from "../../../components/form/ButtonG";
 import FormSelect from "../../../components/form/FormSelect";
-
 import { useEnrolleeClass } from "../../../hooks/resources/useEnrolleeClass";
 import { corporateTypeOptions } from "../../../utils/corporateTypeUtils";
 import { corporateCategoryOptions } from "../../../utils/corporateCatUtils";
-import { useCorporateForm } from "../../../hooks/useCorporateForm";
-import type { CorporateFormData } from "../../../types/iCorporate";
+import type { CorporateEntity } from "../../../types/iCorporate";
 import SuccessModal from "../../../components/form/SuccessModal";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux"; 
+import type { AppDispatch, RootState } from "../../../services/store/store"; 
+import { useForm } from "react-hook-form";
+import { createCorporate } from "../../../services/thunks/corporateThunk";
 
-const Corporate: React.FC = () => {
-
-   const {
-    methods: { register, trigger, formState: { errors } },
+const Corporate = () => {
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [successMessage, setSuccessMessage] = useState('Corporate entity created successfully!'); 
+  const dispatch = useDispatch<AppDispatch>();
   
-    isSubmitting,
-     handleFormSubmit, 
-     showSuccessModal,
-    successMessage,
-    closeSuccessModal,
-  } = useCorporateForm();
+  // Get loading state from Redux
+  const { createLoading } = useSelector((state: RootState) => state.corporate);
+
+  const { 
+    register, 
+    handleSubmit, 
+    formState: { errors }, 
+    reset,
+    trigger // Added trigger from useForm
+  } = useForm<CorporateEntity>();
+
   const {
     enrolleeClass,
     loading: loadingEnrolleeClass,
     error: errorEnrolleeClass,
   } = useEnrolleeClass(); 
+  
   const navigate = useNavigate();
 
-const handleBlur = (fieldName: keyof CorporateFormData) => {
+  const handleBlur = (fieldName: keyof CorporateEntity) => {
     trigger(fieldName);
   };
 
   const handleSuccessModalClose = () => {
-    closeSuccessModal(true); 
-    
+    setShowSuccessModal(false); 
+    // Optional: Navigate after success
+    // navigate("/some-success-page");
   };
-  const backNavigation = () => {
-    navigate("/enrollee/enrollees")
-  }
 
+  const backNavigation = () => {
+    navigate("/enrollee/enrollees");
+  };
+
+  const handleFormSubmit = async (data: CorporateEntity) => {
+   try {
+ 
+    await dispatch(createCorporate(data)).unwrap();
+    
+    setShowSuccessModal(true);
+    reset();
+    
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    console.error('Failed to create corporate entity:', error);
+  }
+  };
 
   return (
-   <>
-   
+    <>
       <div>
         <FormHeader>Corporate Info</FormHeader>
-        <form className="grid grid-cols-2 gap-4 mt-6" onSubmit={handleFormSubmit}>
+        <form className="grid grid-cols-2 gap-4 mt-6" onSubmit={handleSubmit(handleFormSubmit)}>
           <FormSelect
             label="Corporate Type"
             {...register("corporateType", {
               required: "Corporate type is required",
             })}
             error={errors.corporateType?.message as string}
-            // onBlur={() => handleBlur("corporateType")}
           >
             <option value=""></option>
             {corporateTypeOptions.map((option) => (
@@ -69,11 +90,10 @@ const handleBlur = (fieldName: keyof CorporateFormData) => {
 
           <FormSelect
             label="Corporate Category"
-            {...register("corporateCatgory", {
+            {...register("corporateCatgory", { 
               required: "Corporate Category is required",
             })}
             error={errors.corporateCatgory?.message as string}
-   
           >
             <option value=""></option>
             {corporateCategoryOptions.map((option) => (
@@ -134,7 +154,6 @@ const handleBlur = (fieldName: keyof CorporateFormData) => {
             })}
             error={errors.enrolleeClassId?.message as string || errorEnrolleeClass}
             isLoading={loadingEnrolleeClass}
-          
           >
             <option value=""></option>
             {enrolleeClass?.map((ec) => (
@@ -149,14 +168,15 @@ const handleBlur = (fieldName: keyof CorporateFormData) => {
               <ButtonT type="button" onClick={backNavigation}>Back</ButtonT>
             </div>
             <div className="flex justify-end">
-              <ButtonG type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Submitting..." : "Submit"}
+              <ButtonG type="submit" disabled={createLoading}>
+                {createLoading ? "Submitting..." : "Submit"}
               </ButtonG>
             </div>
           </div>
         </form>
       </div>
-       <SuccessModal
+      
+      <SuccessModal
         isOpen={showSuccessModal}
         onClose={handleSuccessModalClose}
         title="Successful!"

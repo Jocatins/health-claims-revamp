@@ -1,7 +1,18 @@
-
-export interface CorporateFormData {
+export interface CorporateEntity {
+  id: string;
+  enrolleeIdNumber: string | null;
+  hmoId: string;
+  isActive: boolean;
+  createdDate: string;
+  enrolleeClass: {
+    id: string;
+    isActive: boolean;
+    createdDate: string;
+    name: string;
+    description: string;
+  };
   corporateType: string;
-  corporateCatgory: string;
+  corporateCatgory: string; 
   companyName: string;
   email: string;
   phoneNumber: string;
@@ -9,9 +20,12 @@ export interface CorporateFormData {
   enrolleeClassId: string;
 }
 
-export interface CorporateFormResponse {
-    id: string;
-    data: CorporateFormData[];
-    message: string;
-    isSuccess: boolean;
+export interface CorporateApiResponse {
+  data: CorporateEntity[]; 
+}
+
+
+export interface CorporateState {
+  corporates: CorporateEntity[]; 
+
 }
