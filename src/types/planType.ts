@@ -12,3 +12,11 @@ export interface IPlanTypeResponse {
   message: string;       
   isSuccess: boolean;    
 }
+
+export interface PlanTypeState {
+  data: IPlanType[];
+  loading: boolean;
+  error: string | null;
+  message: string;
+  isSuccess: boolean;
+}

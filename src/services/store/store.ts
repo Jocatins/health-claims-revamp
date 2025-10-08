@@ -4,12 +4,18 @@ import { providerApiSlice } from "../slices/providerSlice";
 import authReducer from "../slices/authSlice";
 import { toastMiddleware } from "./middleware/toastMiddleware";
 import corporateReducer from "../slices/corporateSlice"
+import { enrolleeClassReducer, enrolleeTypeReducer, genderReducer, maritalStatusReducer, planTypeReducer, relationshipReducer } from "../slices/resourceSlice";
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     corporate: corporateReducer,
-
+    gender: genderReducer,
+    maritalStatus: maritalStatusReducer,
+    relations: relationshipReducer,
+    enrolleeType: enrolleeTypeReducer,
+    planType: planTypeReducer,
+    enrolleeClass: enrolleeClassReducer,
     [providerApiSlice.reducerPath]: providerApiSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>

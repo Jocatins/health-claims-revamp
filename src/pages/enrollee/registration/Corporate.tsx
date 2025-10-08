@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Input from "../../../components/form/Input";
 import FormHeader from "../../../components/form/FormHeader";
 import ButtonT from "../../../components/form/ButttonT";
 import ButtonG from "../../../components/form/ButtonG";
 import FormSelect from "../../../components/form/FormSelect";
-import { useEnrolleeClass } from "../../../hooks/resources/useEnrolleeClass";
+
 import { corporateTypeOptions } from "../../../utils/corporateTypeUtils";
 import { corporateCategoryOptions } from "../../../utils/corporateCatUtils";
 import type { CorporateEntity } from "../../../types/iCorporate";
@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../../services/store/store"; 
 import { useForm } from "react-hook-form";
 import { createCorporate } from "../../../services/thunks/corporateThunk";
+import { fetchEnrolleeClass } from "../../../services/thunks/resourcesThunk";
 
 const Corporate = () => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -23,6 +24,7 @@ const Corporate = () => {
   
   // Get loading state from Redux
   const { createLoading } = useSelector((state: RootState) => state.corporate);
+    const { data: enrolleeClass, loading: loadingEnrolleeClass, error: errorEnrolleeClass } = useSelector((state: RootState) => state.enrolleeClass);
 
   const { 
     register, 
@@ -32,13 +34,11 @@ const Corporate = () => {
     trigger // Added trigger from useForm
   } = useForm<CorporateEntity>();
 
-  const {
-    enrolleeClass,
-    loading: loadingEnrolleeClass,
-    error: errorEnrolleeClass,
-  } = useEnrolleeClass(); 
-  
   const navigate = useNavigate();
+
+  useEffect(() => {
+   dispatch(fetchEnrolleeClass());
+  }, [dispatch])
 
   const handleBlur = (fieldName: keyof CorporateEntity) => {
     trigger(fieldName);

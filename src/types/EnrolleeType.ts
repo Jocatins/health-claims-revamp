@@ -11,3 +11,11 @@ export interface IEnrolleeTypeResponse {
   message: string;
   isSuccess: boolean;
 }
+
+export  interface EnrolleeTypeState {
+  data: IEnrolleeType[];
+  loading: boolean;
+  error: string | null;
+  message: string;
+  isSuccess: boolean;
+}

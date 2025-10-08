@@ -5,17 +5,11 @@ import ButtonT from "../../../components/form/ButttonT";
 import ButtonG from "../../../components/form/ButtonG";
 import FormSelect from "../../../components/form/FormSelect";
 
-import { useGender } from "../../../hooks/resources/useGender";
-import { useMaritalStatus } from "../../../hooks/resources/useMaritalStatus";
-
 import AdvancedDatePicker from "../../../components/form/ADatePicker";
 import PhoneNumberInput from "../../../components/form/PhoneInput";
-import { useRelationship } from "../../../hooks/resources/useRelationship";
+
 import FileUpload from "../../../components/form/FileUpload";
 import CountryStateSelector from "../../../context/CountryStateSelector";
-import { useEnrolleeTypes } from "../../../hooks/resources/useEnrolleeTypes";
-import { useEnrolleeClass } from "../../../hooks/resources/useEnrolleeClass";
-import { usePlanTypes } from "../../../hooks/resources/usePlanTypes";
 
 import { useMemberTypes } from "../../../hooks/resources/useMemberTypes";
 import { useBillingFrequency } from "../../../hooks/resources/useBillingFrequency";
@@ -28,22 +22,29 @@ import { useStepValidator } from "../../../constant/stepValidatior";
 import type { AppDispatch, RootState } from "../../../services/store/store";
 import { fetchCorporateEntities } from "../../../services/thunks/corporateThunk";
 import { useDispatch, useSelector } from "react-redux";
+import { fetchGenders, fetchMaritalStatuses, fetchRelationships, fetchEnrolleeType, fetchPlanTypes, fetchEnrolleeClass } from "../../../services/thunks/resourcesThunk";
 // import { usePlanTypeById } from "../../../hooks/resources/usePlanTypeById";
+
 
 export type Step = "enrollee" | "plan";
 
 const Individual = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const {
-    corporates,
-    loading: loadingCorporates,
-    error: errorCorporates,
-  } = useSelector((state: RootState) => state.corporate);
+
   const [step, setStep] = useState<Step>("enrollee");
   const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null);
   const navigate = useNavigate();
+  const { data: genders, loading: loadingGenders, error: errorGenders } = useSelector((state: RootState) => state.gender);
+  const { data: relations, loading: loadingRelations, error: errorRelations } = useSelector((state: RootState) => state.relations);
+  const { data: maritalStatus, loading: loadingMaritalStatus, error: errorMaritalStatus } = useSelector((state: RootState) => state.maritalStatus);
+  const { data: enrolleeType, loading: loadingEnrolleeType, error: errorEnrolleeType } = useSelector((state: RootState) => state.enrolleeType);
+  const { data: enrolleeClass, loading: loadingEnrolleeClass, error: errorEnrolleeClass } = useSelector((state: RootState) => state.enrolleeClass);
+  const {data: planType, loading: loadingPlanType, error: errorPlanType} = useSelector((state: RootState) => state.planType);
+  const { corporates, loading: loadingCorporates, error: errorCorporates} = useSelector((state: RootState) => state.corporate);
+
 
   const { validateEnrolleeStep } = useStepValidator();
+
 
   // react - form hooks
   const {
@@ -63,34 +64,6 @@ const Individual = () => {
   };
   const watchedPlanTypeId = watch("planTypeId");
 
-  //  --- Data hooks
-  const { genders, loading: loadingGenders, error: errorGenders } = useGender();
-  const {
-    enrolleeTypes,
-    loading: loadingEnrolleeTypes,
-    error: errorEnrolleeTypes,
-  } = useEnrolleeTypes();
-  const {
-    planType,
-    loading: loadingPlanTypes,
-    error: errorPlanTypes,
-  } = usePlanTypes();
-  const {
-    enrolleeClass,
-    loading: loadingEnrolleeClass,
-    error: errorEnrolleeClass,
-  } = useEnrolleeClass();
-  const {
-    statuses,
-    loading: loadingStatuses,
-    error: errorStatuses,
-  } = useMaritalStatus();
-  const {
-    relations,
-    loading: loadingRelation,
-    error: errorRelation,
-  } = useRelationship();
-
   const {
     memberTypes,
     loading: loadingMemberTypes,
@@ -101,11 +74,7 @@ const Individual = () => {
     loading: loadingBillingFrequency,
     error: errorBillingFrequency,
   } = useBillingFrequency();
-  //   const {
-  //   planType: selectedPlanType,
-  //   loading: loadingPlanTypeDetails,
-  //   error: errorPlanTypeDetails,
-  // } = usePlanTypeById(watchedPlanTypeId);
+
 
   const [selectedCountryCode, setSelectedCountryCode] = useState<string | null>(
     null
@@ -152,7 +121,7 @@ const Individual = () => {
   };
 
   const watchedEnrolleeType = watch("enrolleeTypeId");
-  const selectedEnrolleeTypeName = enrolleeTypes.find(
+  const selectedEnrolleeTypeName = enrolleeType.find(
     (et) => et.id === watchedEnrolleeType
   )?.name;
 
@@ -180,6 +149,12 @@ const Individual = () => {
   };
   //
   useEffect(() => {
+    dispatch(fetchGenders());
+    dispatch(fetchMaritalStatuses());
+    dispatch(fetchRelationships());
+    dispatch(fetchEnrolleeType());
+    dispatch(fetchEnrolleeClass());
+    dispatch(fetchPlanTypes());
     if (corporates.length === 0) {
       dispatch(fetchCorporateEntities());
     }
@@ -195,19 +170,17 @@ const Individual = () => {
         {/* Step indicators */}
         <div className="flex items-center space-x-6 mb-6">
           <div
-            className={`flex items-center space-x-2 cursor-pointer ${
-              step === "enrollee"
+            className={`flex items-center space-x-2 cursor-pointer ${step === "enrollee"
                 ? "text-[#186255] font-semibold"
                 : "text-gray-500"
-            }`}
+              }`}
             onClick={() => setStep("enrollee")}
           >
             <span
-              className={`w-5 h-5 flex items-center justify-center rounded-full border ${
-                step === "enrollee"
+              className={`w-5 h-5 flex items-center justify-center rounded-full border ${step === "enrollee"
                   ? "bg-[#186255] text-white"
                   : "border-gray-400"
-              }`}
+                }`}
             >
               ✓
             </span>
@@ -215,15 +188,13 @@ const Individual = () => {
           </div>
 
           <div
-            className={`flex items-center space-x-2 cursor-pointer ${
-              step === "plan" ? "text-[#186255] font-semibold" : "text-gray-500"
-            }`}
+            className={`flex items-center space-x-2 cursor-pointer ${step === "plan" ? "text-[#186255] font-semibold" : "text-gray-500"
+              }`}
             onClick={() => step === "plan" && setStep("plan")}
           >
             <span
-              className={`w-5 h-5 flex items-center justify-center rounded-full border ${
-                step === "plan" ? "bg-[#186255] text-white" : "border-gray-400"
-              }`}
+              className={`w-5 h-5 flex items-center justify-center rounded-full border ${step === "plan" ? "bg-[#186255] text-white" : "border-gray-400"
+                }`}
             >
               {step === "plan" ? "✓" : "○"}
             </span>
@@ -287,11 +258,11 @@ const Individual = () => {
                 <FormSelect
                   label="Marital Status"
                   {...register("maritalStatus")}
-                  error={errorStatuses}
-                  isLoading={loadingStatuses}
+                  error={errorMaritalStatus}
+                  isLoading={loadingMaritalStatus}
                   defaultValue=""
                 >
-                  {statuses?.map((st) => (
+                  {maritalStatus?.map((st) => (
                     <option key={st} value={st}>
                       {st}
                     </option>
@@ -356,15 +327,15 @@ const Individual = () => {
                 <FormSelect
                   label="Enrollee Type"
                   {...register("enrolleeTypeId")}
-                  error={errorEnrolleeTypes}
-                  isLoading={loadingEnrolleeTypes}
+                  error={errorEnrolleeType}
+                  isLoading={loadingEnrolleeType}
                   onChange={(e) => {
                     setSelectedType(e.target.value);
                     setValue("enrolleeTypeId", e.target.value);
                   }}
                   defaultValue=""
                 >
-                  {enrolleeTypes?.map((et) => (
+                  {enrolleeType?.map((et) => (
                     <option key={et.id} value={et.id}>
                       {et.name}
                     </option>
@@ -409,8 +380,8 @@ const Individual = () => {
                 <FormSelect
                   label="Plan Types"
                   {...register("planTypeId")}
-                  error={errorPlanTypes}
-                  isLoading={loadingPlanTypes}
+                  error={errorPlanType}
+                  isLoading={loadingPlanType}
                   defaultValue=""
                 >
                   {planType?.map((pt) => (
@@ -437,8 +408,8 @@ const Individual = () => {
                 <FormSelect
                   label="Relationship"
                   {...register("nextOfKin.relationship")}
-                  error={errorRelation}
-                  isLoading={loadingRelation}
+                  error={errorRelations}
+                  isLoading={loadingRelations}
                   defaultValue=""
                 >
                   {relations?.map((relation) => (
