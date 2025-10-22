@@ -16,6 +16,7 @@ import Individual from "../pages/enrollee/registration/Individual";
 
 import EnrolleesPage from "../pages/enrollee/EnrolleesPage";
 import Corporate from "../pages/enrollee/registration/Corporate";
+import { NemsasManagement } from "../pages/nemsas/NemsasManagement";
 
 
 const AppRoutes = () => {
@@ -32,6 +33,7 @@ const AppRoutes = () => {
         <Route path="dashboard" element={<Layout><Dashboard /></Layout>} />
          
           <Route path="claims" element={<Layout><ClaimsManagement /></Layout>} />
+          <Route path="nemsas-management" element={<Layout><NemsasManagement /></Layout>} />
           <Route path="enrollee-management" element={<Layout><EnrolleesManagement /></Layout>} />
           <Route path="enrollees/:id" element={<Layout><EnrolleeDetails /></Layout>} />
           <Route path="tariff" element={<Layout><Tariffs /></Layout>} />

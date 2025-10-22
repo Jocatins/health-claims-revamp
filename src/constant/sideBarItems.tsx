@@ -70,7 +70,16 @@ export const ADMIN_SIDEBAR: SidebarItem[] = [
 // Provider Sidebar
 export const PROVIDER_SIDEBAR: SidebarItem[] = [
   {  icon: <DashboardIcon className="w-5 h-5" />, label: "Dashboard", active: false, path: "/enrollee/dashboard" },
-  {  icon: <EnrolleeIcon className="w-5 h-5" />, label: "Claims Management", active: false, path: "/claims" },
+  // {  icon: <EnrolleeIcon className="w-5 h-5" />, label: "Claims Management", active: false, path: "/claims" },
+   {
+    icon: <EnrolleeIcon className="w-5 h-5" />,
+    label: "Providers",
+    active: false,
+    children: [
+      { icon: null, label: "Claims Management", active: false, path: "/claims" },
+      { icon: null, label: "Emergency Claims", active: false, path: "/nemsas-management" }
+    ]
+  },
   { icon: <EnrolleeIcon className="w-5 h-5" />, label: "Enrollees Management", active: false, path: "/enrollee-management" },
   { icon: <SettingsIcon className="w-5 h-5" />, label: "Settings", active: false, path: "/settings"  },
   {  icon: <SettingsIcon className="w-5 h-5" />, label: "Tariff", active: false, path: "/tariff"  },

@@ -5,6 +5,7 @@ import authReducer from "../slices/authSlice";
 import { toastMiddleware } from "./middleware/toastMiddleware";
 import corporateReducer from "../slices/corporateSlice"
 import { enrolleeClassReducer, enrolleeTypeReducer, genderReducer, maritalStatusReducer, planTypeReducer, relationshipReducer } from "../slices/resourceSlice";
+import claimsReducer from "../slices/claimSlice"
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     enrolleeType: enrolleeTypeReducer,
     planType: planTypeReducer,
     enrolleeClass: enrolleeClassReducer,
+    claims: claimsReducer,
     [providerApiSlice.reducerPath]: providerApiSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>

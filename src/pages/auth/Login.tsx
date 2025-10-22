@@ -46,7 +46,7 @@ const Login: React.FC = () => {
   };
 
   if (isAuthenticated) {
-    return null; // or a loading spinner since navigation will happen immediately
+    return null; 
   }
 
   return (

@@ -37,13 +37,15 @@ export const fetchClaims = async (params: {
   StartDate?: string;
   EndDate?: string;
   HmoId?: string;
+  id?: string;
   claimStatus?: string;
   IsExcel?: boolean;
   PageNumber?: number;
   PageSize?: number;
 } = {}) => {
-  const merged = { PageNumber: 1, PageSize: 100, ...params };
-  const res = await axiosInstance.get(`/claims/all-claims`, { params: merged });
+  // const merged = { PageNumber: 1, PageSize: 100, ...params};
+  const merged = {  ...params};
+  const res = await axiosInstance.get(`/claims/all-claims`, { params: merged});
   return res.data; // expect backend returns { data: Claim[] } or array
 };
 

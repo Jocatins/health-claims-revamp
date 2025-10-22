@@ -48,6 +48,19 @@ export const ClaimsManagement = () => {
     const [exportError, setExportError] = useState('');
     const { selectedProviderId } = useProviderContext();
     const hmoId = useSelector((s: RootState)=> s.auth.user?.hmoId);
+    // const hmoId = "8e4c6fa4-6ac3-43bb-b78f-326dccac990c";
+    // const selectedProviderId = "92a540ac-8919-458e-92ae-6ed5405c10e4";
+
+    // Function to format claim ID to 6 digits
+  const formatClaimId = (claimId: string): string => {
+    if (!claimId) return 'N/A';
+    
+    // Remove any hyphens or special characters and take first 6 characters
+    const cleanId = claimId.replace(/[^a-zA-Z0-9]/g, '');
+    
+    // Take first 6 characters and convert to uppercase
+    return cleanId.substring(0, 6).toUpperCase();
+  };
 
   const loadClaims = useCallback(()=> {
     setLoading(true);
@@ -125,7 +138,7 @@ export const ClaimsManagement = () => {
           <Table
             headers={["Claim Id", "Enrollee name", "Enrollee Id", "Submitted date", "Total amount", "Status", "Action"]}
             rows={claims.map((claim) => [
-              claim.id,
+              formatClaimId(claim.id),
               claim.name,
               claim.enrolleeId,
               claim.date,
@@ -255,4 +268,3 @@ async function exportClaimsReport(arg0: { IsExcel: boolean; }) {
     const response = await exportClaimsReportApi(arg0);
     return response;
 }
-
