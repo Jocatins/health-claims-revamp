@@ -107,7 +107,8 @@ const ClaimDetailsModal: React.FC<ClaimDetailsModalProps> = ({
               {getStatusText(firstClaim.claimStatus)}
             </span>
           </div>
-          <Button>Export</Button>
+          <Button>Decline</Button>
+          <Button>Activate</Button>
         </div>
         
         <div style={{ marginBottom: 16, fontWeight: 600, color: "#217346" }}>

@@ -9,7 +9,7 @@ import Table from "../../components/ui/Table";
 import ClaimDetailsModal from "../../components/ui/ClaimDetailsModal";
 import { FaEye } from "react-icons/fa";
 import FormHeader from "../../components/form/FormHeader";
-import type { ClaimItem } from "../../types/claims"; // Import the ClaimItem type
+import type { ClaimItem } from "../../types/claims"; 
 
 export const Claims = () => {
   type Claim = {
@@ -29,7 +29,6 @@ export const Claims = () => {
 
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   
-  // Replace the old selectedClaim state with claimItems
   const [claimItems, setClaimItems] = useState<ClaimItem[]>([]);
   const [detailsLoading, setDetailsLoading] = useState(false);
   const [detailsError, setDetailsError] = useState("");
@@ -110,7 +109,7 @@ export const Claims = () => {
 
   // Handle individual checkbox selection
   const handleCheckboxChange = (claimId: string, event: React.ChangeEvent<HTMLInputElement>) => {
-    event.stopPropagation(); // Prevent event bubbling
+    event.stopPropagation(); 
     
     setSelectedClaims(prev => {
       const newSelected = new Set(prev);
@@ -240,7 +239,7 @@ export const Claims = () => {
               <div key="select-all" onClick={(e) => e.stopPropagation()}>
                 <SelectAllCheckbox />
               </div>,
-              "Claim Id",
+              // "Claim Id",
               "Enrollee name",
               "Enrollee Id",
               "Enrollee Type", 
@@ -257,7 +256,7 @@ export const Claims = () => {
                   onChange={(e) => handleCheckboxChange(claim.id, e)}
                 />
               </div>,
-              claim.id.substring(0, 8).toUpperCase(),
+              // claim.id.substring(0, 8).toUpperCase(),
               claim.name,
               claim.enrolleeId,
               claim.enrolleeType || "Individual",
@@ -288,7 +287,7 @@ export const Claims = () => {
             open={showDetailsModal}
             onClose={() => {
               setShowDetailsModal(false);
-              setClaimItems([]); // Clear claim items when modal closes
+              setClaimItems([]); 
             }}
             claimItems={claimItems}
             loading={detailsLoading}

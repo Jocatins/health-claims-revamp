@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { Claim } from '../../types/claims';
-import { createClaim, fetchClaimById, fetchClaims } from '../thunks/claimsThunk';
+import { createClaim,  fetchClaims } from '../thunks/claimsThunk';
 
 interface ClaimsState {
   claims: Claim[];
@@ -80,22 +80,6 @@ const claimsSlice = createSlice({
         state.success = false;
       });
 
-    // Fetch Claim by ID
-    builder
-      .addCase(fetchClaimById.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(fetchClaimById.fulfilled, (state, action: PayloadAction<Claim>) => {
-        state.loading = false;
-        state.selectedClaim = action.payload;
-        state.success = true;
-      })
-      .addCase(fetchClaimById.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message || 'Failed to fetch claim';
-        state.success = false;
-      });
   },
 });
 

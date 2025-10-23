@@ -27,7 +27,7 @@ export const ADMIN_SIDEBAR: SidebarItem[] = [
     children: [
       { icon: null, label: "All Enrollees", active: false, path:"/enrollee/enrollees" },
       { icon: null, label: "Enrollee Registration", active: false, path: "/enrollee/registration/individual" },
-      // { icon: null, label: "Corporate Registration", active: false, path: "/enrollee/registration/corporate" }
+   
     ]
   },
   {

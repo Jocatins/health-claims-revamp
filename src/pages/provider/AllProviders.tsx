@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../../services/store/store";
-// import { fetchProviders } from "../../services/store/slices/provider.slice";
 import Button from "../../components/ui/Button";
 import Table from "../../components/ui/Table";
 import EmptyState from "../../components/ui/EmptyState";
