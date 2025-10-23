@@ -35,8 +35,8 @@ export const ADMIN_SIDEBAR: SidebarItem[] = [
     label: "Providers",
     active: false,
     children: [
-      { icon: null, label: "All Providers", active: false, path: "/providers" },
-      { icon: null, label: "Providers Registration", active: false, path: "/providers/registration" }
+      { icon: null, label: "All Providers", active: false, path: "/enrollee/providers/all" },
+      { icon: null, label: "Providers Registration", active: false, path: "/enrollee/provider/registration" }
     ]
   },
   {
@@ -44,9 +44,9 @@ export const ADMIN_SIDEBAR: SidebarItem[] = [
     label: "Payments",
     active: false,
     children: [
-      { icon: null, label: "Claims", active: false, path: "/payments/claims" },
-      { icon: null, label: "Authorization", active: false, path: "/payments/authorization" },
-      { icon: null, label: "Tracker", active: false, path: "/payments/tracker" }
+      { icon: null, label: "Emergency Claims", active: false, path: "/enrollee/payments/claims" },
+      { icon: null, label: "Authorization", active: false, path: "/enrollee/payments/authorization" },
+      { icon: null, label: "Tracker", active: false, path: "/enrollee/payments/tracker" }
     ]
   },
     {
@@ -70,7 +70,6 @@ export const ADMIN_SIDEBAR: SidebarItem[] = [
 // Provider Sidebar
 export const PROVIDER_SIDEBAR: SidebarItem[] = [
   {  icon: <DashboardIcon className="w-5 h-5" />, label: "Dashboard", active: false, path: "/enrollee/dashboard" },
-  // {  icon: <EnrolleeIcon className="w-5 h-5" />, label: "Claims Management", active: false, path: "/claims" },
    {
     icon: <EnrolleeIcon className="w-5 h-5" />,
     label: "Providers",

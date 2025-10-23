@@ -51,7 +51,7 @@ export const fetchClaims = async (params: {
 
 // Fetch claim details (assuming endpoint, update if needed)
 export const fetchClaimDetails = async (id: string) => {
-  const res = await axiosInstance.get(`/claims/${id}`);
+  const res = await axiosInstance.get(`/claims/${id}/enrollee`);
   return res.data;
 };
 

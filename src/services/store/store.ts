@@ -6,6 +6,8 @@ import { toastMiddleware } from "./middleware/toastMiddleware";
 import corporateReducer from "../slices/corporateSlice"
 import { enrolleeClassReducer, enrolleeTypeReducer, genderReducer, maritalStatusReducer, planTypeReducer, relationshipReducer } from "../slices/resourceSlice";
 import claimsReducer from "../slices/claimSlice"
+import providerReducer from "../slices/iProviderSlice"
+import claimDetailsReducer from "../slices/claimDetailSlice"
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +20,8 @@ export const store = configureStore({
     planType: planTypeReducer,
     enrolleeClass: enrolleeClassReducer,
     claims: claimsReducer,
+     claimDetails: claimDetailsReducer,
+    allProviders: providerReducer,
     [providerApiSlice.reducerPath]: providerApiSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>

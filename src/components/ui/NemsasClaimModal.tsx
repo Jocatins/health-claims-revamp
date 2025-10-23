@@ -8,6 +8,7 @@ import { createClaims } from "../../services/api/claimsApi";
 import { useProviderContext } from "../../context/useProviderContext";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../services/store/store";
+import SuccessModal from "../form/SuccessModal";
 
 interface ServiceItem {
   name: string;
@@ -18,7 +19,7 @@ interface ServiceItem {
 interface SingleClaimModalProps {
   open: boolean;
   onClose: () => void;
-  onSubmitted?: () => void; // callback to refresh list
+  onSubmitted?: () => void;
 }
 
 const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
@@ -27,8 +28,9 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
   onSubmitted,
 }) => {
   // Enrollee selection
-  const [enrolleeName, setEnrolleeName] = useState(""); // captured for submission payload
+  const [enrolleeName, setEnrolleeName] = useState("");
   const [enrolleeId, setEnrolleeId] = useState("");
+  const [selectedEnrolleeNumber, setSelectedEnrolleeNumber] = useState("");
   const [enrolleeOptions, setEnrolleeOptions] = useState<
     { value: string; label: string; name: string; enrolleeIdNumber: string }[]
   >([]);
@@ -51,6 +53,7 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const { selectedProviderId } = useProviderContext();
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const handleAddItem = () => {
     setItems([...items, { name: "", approvalCode: "", amount: "" }]);
@@ -77,10 +80,11 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
         items[0]?.name || `${enrolleeName || "Claim"} - ${date}`;
       const providerId = selectedProviderId || "";
       const hmoId = userHmoId || "";
+
       const claimItems = items.map((it) => ({
         serviceRendered: it.name,
         enrolleeName: enrolleeName,
-        patientEnrolleeNumber: enrolleeId, // using selected id number
+        patientEnrolleeNumber: selectedEnrolleeNumber,
         providerId,
         hmoId,
         enrolleeEmail: "",
@@ -97,6 +101,7 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
         serviceDate: date ? new Date(date).toISOString() : nowIso,
         attachments: [] as string[],
       }));
+
       await createClaims({
         claimItems,
         hmoId,
@@ -104,8 +109,14 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
         claimName,
         providerId,
       });
+
+      setShowSuccessModal(true);
+
       if (onSubmitted) onSubmitted();
+      setTimeout(() => {
+      setShowSuccessModal(false);
       onClose();
+    }, 3000);
     } catch {
       setSubmitError("Failed to submit claim");
     } finally {
@@ -138,131 +149,166 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
       .finally(() => setEnrolleeLoading(false));
   }, [open, userHmoId]);
 
+  
+  useEffect(() => {
+    if (!open) {
+      setEnrolleeId("");
+      setEnrolleeName("");
+      setSelectedEnrolleeNumber("");
+      setPhoneNumber("");
+      setDate("");
+      setServiceType("");
+      setItems([{ name: "", approvalCode: "", amount: "" }]);
+      setSubmitError("");
+      setShowSuccessModal(false);
+    }
+  }, [open]);
+
   return (
-    <Modal open={open} onClose={onClose} title="Emergency Claim" width="600px">
-      <form
-        onSubmit={handleSubmit}
-        style={{ display: "flex", flexDirection: "column", gap: 16 }}
+    <>
+      <Modal
+        open={open}
+        onClose={onClose}
+        title="Emergency Claim"
+        width="600px"
       >
-        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-          <label className="text-sm font-medium text-gray-700">
-            Patient Name
-          </label>
-          <Select
-            value={enrolleeId}
-            placeholder={
-              enrolleeLoading ? "Loading enrollees..." : "Select Patient"
-            }
-            options={enrolleeOptions}
-            onChange={(val) => {
-              setEnrolleeId(val);
-              const found = enrolleeOptions.find((o) => o.value === val);
-              setEnrolleeName(found?.name || "");
-            }}
-            className="text-sm"
-          />
-          {enrolleeError && (
-            <span className="text-xs text-red-600">{enrolleeError}</span>
-          )}
-        </div>
-        <div style={{ display: "flex", gap: 16 }}>
-          <input
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
-            placeholder="Phone number"
-            required
-            style={{
-              flex: 1,
-              padding: 8,
-              borderRadius: 4,
-              border: "1px solid #ccc",
-            }}
-          />
-          <input
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            type="date"
-            required
-            style={{
-              flex: 1,
-              padding: 8,
-              borderRadius: 4,
-              border: "1px solid #ccc",
-            }}
-          />
-        </div>
-        <div className="flex items-center gap-5">
-          <p>Service Type</p>
-          <select
-            value={serviceType}
-            onChange={(e) => setServiceType(e.target.value)}
-            required
-            style={{ padding: 8, borderRadius: 4, border: "1px solid #ccc" }}
-          >
-            <option value="">Select</option>
-            {serviceOptions.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-        </div>
-        <Table
-          headers={["S/N", "Service name", "Amount"]}
-          rows={items.map((item, idx) => [
-            idx + 1,
-            <input
-              value={item.name}
-              onChange={(e) => handleItemChange(idx, "name", e.target.value)}
-              placeholder="Name"
-              required
-              style={{ width: "100%", padding: 6 }}
-            />,
-            <input
-              value={item.amount}
-              onChange={(e) => handleItemChange(idx, "amount", e.target.value)}
-              placeholder="Amount"
-              required
-              style={{ width: "100%", padding: 6 }}
-            />,
-          ])}
-        />
-        <Button
-          type="button"
-          onClick={handleAddItem}
-          className="bg-transparent text-green-700 hover:bg-green-50 flex self-start mb-12"
+        <form
+          onSubmit={handleSubmit}
+          style={{ display: "flex", flexDirection: "column", gap: 16 }}
         >
-          <div className="flex items-center gap-4 text-[#1B5845]">
-            <div className="w-8 h-8 rounded-lg bg-[#1B5845]/20 text-xl font-extrabold">
-              +
-            </div>
-            <p>Add item</p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <label className="text-sm font-medium text-gray-700">
+              Patient Name
+            </label>
+            <Select
+              value={enrolleeId}
+              placeholder={
+                enrolleeLoading ? "Loading enrollees..." : "Select Patient"
+              }
+              options={enrolleeOptions}
+              onChange={(val) => {
+                setEnrolleeId(val);
+                const found = enrolleeOptions.find((o) => o.value === val);
+                setEnrolleeName(found?.name || "");
+                setSelectedEnrolleeNumber(found?.enrolleeIdNumber || "");
+              }}
+              className="text-sm"
+            />
+            {enrolleeError && (
+              <span className="text-xs text-red-600">{enrolleeError}</span>
+            )}
           </div>
-        </Button>
-        <div className="flex flex-col gap-2 self-start">
+          <div style={{ display: "flex", gap: 16 }}>
+            <input
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              placeholder="Phone number"
+              required
+              style={{
+                flex: 1,
+                padding: 8,
+                borderRadius: 4,
+                border: "1px solid #ccc",
+              }}
+            />
+            <input
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              type="date"
+              required
+              style={{
+                flex: 1,
+                padding: 8,
+                borderRadius: 4,
+                border: "1px solid #ccc",
+              }}
+            />
+          </div>
+          <div className="flex items-center gap-5">
+            <p>Service Type</p>
+            <select
+              value={serviceType}
+              onChange={(e) => setServiceType(e.target.value)}
+              required
+              style={{ padding: 8, borderRadius: 4, border: "1px solid #ccc" }}
+            >
+              <option value="">Select</option>
+              {serviceOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+          <Table
+            headers={["S/N", "Service name", "Amount"]}
+            rows={items.map((item, idx) => [
+              idx + 1,
+              <input
+                value={item.name}
+                onChange={(e) => handleItemChange(idx, "name", e.target.value)}
+                placeholder="Name"
+                required
+                style={{ width: "100%", padding: 6 }}
+              />,
+              <input
+                value={item.amount}
+                onChange={(e) =>
+                  handleItemChange(idx, "amount", e.target.value)
+                }
+                placeholder="Amount"
+                required
+                style={{ width: "100%", padding: 6 }}
+              />,
+            ])}
+          />
           <Button
-            type="submit"
-            disabled={!enrolleeId || !selectedProviderId || submitting}
-            className="flex self-start px-8 py-4 disabled:opacity-50 disabled:cursor-not-allowed"
+            type="button"
+            onClick={handleAddItem}
+            className="bg-transparent text-green-700 hover:bg-green-50 flex self-start mb-12"
           >
-            {submitting ? "Submitting..." : "Submit Claims"}
+            <div className="flex items-center gap-4 text-[#1B5845]">
+              <div className="w-8 h-8 rounded-lg bg-[#1B5845]/20 text-xl font-extrabold">
+                +
+              </div>
+              <p>Add item</p>
+            </div>
           </Button>
-          {!enrolleeId && (
-            <span className="text-xs text-gray-500">
-              Select an enrollee to enable submission.
-            </span>
-          )}
-          {enrolleeId && !selectedProviderId && (
-            <span className="text-xs text-gray-500">
-              Select a provider in the header to submit.
-            </span>
-          )}
-          {submitError && (
-            <span className="text-xs text-red-600">{submitError}</span>
-          )}
-        </div>
-      </form>
-    </Modal>
+          <div className="flex flex-col gap-2 self-start">
+            <Button
+              type="submit"
+              disabled={!enrolleeId || !selectedProviderId || submitting}
+              className="flex self-start px-8 py-4 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {submitting ? "Submitting..." : "Submit Claims"}
+            </Button>
+            {!enrolleeId && (
+              <span className="text-xs text-gray-500">
+                Select an enrollee to enable submission.
+              </span>
+            )}
+            {enrolleeId && !selectedProviderId && (
+              <span className="text-xs text-gray-500">
+                Select a provider in the header to submit.
+              </span>
+            )}
+            {submitError && (
+              <span className="text-xs text-red-600">{submitError}</span>
+            )}
+          </div>
+        </form>
+      </Modal>
+
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => {
+          setShowSuccessModal(false); // Close success modal
+          onClose(); // Also close the main claim creation modal
+        }}
+        title="Claim Created Successfully!"
+        message="Your claim has been submitted and is now being processed."
+      />
+    </>
   );
 };
 

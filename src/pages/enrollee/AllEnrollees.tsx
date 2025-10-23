@@ -20,7 +20,7 @@ import { LoadingSpinner } from "../../components/ui/LoadingSpinner";
 
 const AllEnrollees: React.FC = () => {
   const navigate = useNavigate();
-  const { selectedProviderId } = useProviderContext(); // still available if needed later for auth submissions
+  const { selectedProviderId } = useProviderContext(); 
   const userHmoId = useSelector((s: RootState) => s.auth.user?.hmoId);
   const [items, setItems] = useState<Enrollee[]>([]);
   const [loading, setLoading] = useState(false);

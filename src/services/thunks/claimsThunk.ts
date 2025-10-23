@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axiosInstance from '../../config/axiosInstance';
-import type { Claim, ClaimResponse } from '../../types/claims';
+import type { Claim, ClaimDetailsResponse, ClaimItem, ClaimResponse } from '../../types/claims';
 import type { RootState } from '../store/store';
 
 
@@ -68,9 +68,9 @@ export const createClaim = createAsyncThunk(
 
 // GET Single Claim thunk
 export const fetchClaimById = createAsyncThunk(
-  "claims/fetchClaimById",
-  async (claimId: string): Promise<Claim> => {
-    const response = await axiosInstance.get<Claim>(`/claims/${claimId}`);
-    return response.data;
+  "claimDetails/fetchClaimDetails",
+  async (enrolleeNumber: string): Promise<ClaimItem[]> => {
+    const response = await axiosInstance.get<ClaimDetailsResponse>(`/claims/${enrolleeNumber}/enrollee`);
+    return response.data.data;
   }
 );

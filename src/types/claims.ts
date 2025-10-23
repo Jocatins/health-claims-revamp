@@ -54,3 +54,45 @@ export interface ClaimsState {
   error: string | null;
   success: boolean;
 }
+
+// Claim Item
+
+export interface ClaimItem {
+  id: string;
+  isActive: boolean;
+  serviceRendered: string;
+  enrolleeName: string;
+  patientEnrolleeNumber: string;
+  providerId: string;
+  hmoId: string;
+  enrolleeEmail: string;
+  enrolleePhoneNumber: string;
+  claimType: string;
+  quantity: number;
+  price: number;
+  discount: number;
+  amount: number;
+  diagnosis: string;
+  approvalCode: string;
+  referralHospital: string;
+  nhisno: string;
+  serviceDate: string;
+  attachments: string | null;
+  createdDate: string;
+  claimStatus: number;
+  planTypeName: string | null;
+  planTypeId: string;
+  providerName: string | null;
+}
+
+export interface ClaimDetailsResponse {
+  data: ClaimItem[];
+  message: string;
+  isSuccess: boolean;
+}
+
+export interface ClaimDetailsState {
+  claimItems: ClaimItem[];
+  loading: boolean;
+  error: string | null;
+}
