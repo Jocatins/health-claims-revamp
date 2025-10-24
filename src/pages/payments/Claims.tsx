@@ -6,10 +6,10 @@ import { fetchClaims, fetchClaimDetails } from "../../services/api/claimsApi";
 import { formatDate, dateFormats } from "../../utils/dateFormatter"; 
 import EmptyState from "../../components/ui/EmptyState";
 import Table from "../../components/ui/Table";
-import ClaimDetailsModal from "../../components/ui/ClaimDetailsModal";
 import { FaEye } from "react-icons/fa";
 import FormHeader from "../../components/form/FormHeader";
 import type { ClaimItem } from "../../types/claims"; 
+import NemsasDetailsModal from "../../components/ui/NemsasDetailsModal";
 
 export const Claims = () => {
   type Claim = {
@@ -25,7 +25,7 @@ export const Claims = () => {
   const [claims, setClaims] = useState<Claim[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [selectedClaims, setSelectedClaims] = useState<Set<string>>(new Set());
+ 
 
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   
@@ -107,35 +107,6 @@ export const Claims = () => {
     loadClaims();
   }, [loadClaims]);
 
-  // Handle individual checkbox selection
-  const handleCheckboxChange = (claimId: string, event: React.ChangeEvent<HTMLInputElement>) => {
-    event.stopPropagation(); 
-    
-    setSelectedClaims(prev => {
-      const newSelected = new Set(prev);
-      if (newSelected.has(claimId)) {
-        newSelected.delete(claimId);
-      } else {
-        newSelected.add(claimId);
-      }
-      return newSelected;
-    });
-  };
-
-  // Handle select all checkbox
-  const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
-    event.stopPropagation(); // Prevent event bubbling
-    
-    if (selectedClaims.size === claims.length) {
-      // If all are selected, deselect all
-      setSelectedClaims(new Set());
-    } else {
-      // Select all claims
-      const allClaimIds = new Set(claims.map(claim => claim.id));
-      setSelectedClaims(allClaimIds);
-    }
-  };
-
   // Handle view claim details
   const handleViewClaim = async (enrolleeId: string) => {
     setDetailsLoading(true);
@@ -157,42 +128,6 @@ export const Claims = () => {
     Paid: "#6b6f80",
     Disputed: "#d32f2f",
   };
-
-  // Checkbox component for individual rows
-  const Checkbox = ({ 
-    checked, 
-    onChange 
-  }: { 
-    checked: boolean; 
-    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void 
-  }) => (
-    <input
-      type="checkbox"
-      checked={checked}
-      onChange={onChange}
-      onClick={(e) => e.stopPropagation()} // Additional click protection
-      style={{
-        cursor: "pointer",
-        width: "16px",
-        height: "16px",
-      }}
-    />
-  );
-
-  // Select all checkbox component
-  const SelectAllCheckbox = () => (
-    <input
-      type="checkbox"
-      checked={claims.length > 0 && selectedClaims.size === claims.length}
-      onChange={handleSelectAll}
-      onClick={(e) => e.stopPropagation()} // Additional click protection
-      style={{
-        cursor: "pointer",
-        width: "16px",
-        height: "16px",
-      }}
-    />
-  );
 
   return (
     <div style={{ padding: "32px" }}>
@@ -228,18 +163,13 @@ export const Claims = () => {
             }}
           >
             <FormHeader>Submitted Claims</FormHeader>
-            {selectedClaims.size > 0 && (
-              <div style={{ color: "#6b6f80", fontSize: "14px" }}>
-                {selectedClaims.size} claim(s) selected
-              </div>
-            )}
+         
           </div>
           <Table
             headers={[
               <div key="select-all" onClick={(e) => e.stopPropagation()}>
-                <SelectAllCheckbox />
+                {/* Empty header cell where checkbox used to be */}
               </div>,
-              // "Claim Id",
               "Enrollee name",
               "Enrollee Id",
               "Enrollee Type", 
@@ -250,13 +180,9 @@ export const Claims = () => {
               "Action",
             ]}
             rows={claims.map((claim) => [
-              <div key={`checkbox-${claim.id}`} onClick={(e) => e.stopPropagation()}>
-                <Checkbox
-                  checked={selectedClaims.has(claim.id)}
-                  onChange={(e) => handleCheckboxChange(claim.id, e)}
-                />
+              <div key={claim.id} onClick={(e) => e.stopPropagation()}>
+                {/* Empty cell where checkbox used to be */}
               </div>,
-              // claim.id.substring(0, 8).toUpperCase(),
               claim.name,
               claim.enrolleeId,
               claim.enrolleeType || "Individual",
@@ -283,7 +209,7 @@ export const Claims = () => {
             ])}
           />
           
-          <ClaimDetailsModal
+          <NemsasDetailsModal
             open={showDetailsModal}
             onClose={() => {
               setShowDetailsModal(false);

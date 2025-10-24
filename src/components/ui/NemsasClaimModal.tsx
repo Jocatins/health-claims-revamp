@@ -71,57 +71,64 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!enrolleeId) return;
+    if (!enrolleeId || !selectedProviderId || !userHmoId) return;
+    
     setSubmitting(true);
     setSubmitError("");
+    
     try {
       const nowIso = new Date().toISOString();
-      const claimName =
-        items[0]?.name || `${enrolleeName || "Claim"} - ${date}`;
-      const providerId = selectedProviderId || "";
-      const hmoId = userHmoId || "";
+      const claimName = items[0]?.name || `${enrolleeName || "Claim"} - ${date}`;
 
-      const claimItems = items.map((it) => ({
-        serviceRendered: it.name,
-        enrolleeName: enrolleeName,
-        patientEnrolleeNumber: selectedEnrolleeNumber,
-        providerId,
-        hmoId,
-        enrolleeEmail: "",
-        enrolleePhoneNumber: phoneNumber,
-        claimType: serviceType.replace(/\s+/g, "") || "InpatientCare",
-        quantity: 1,
-        price: Number(it.amount) || 0,
-        discount: 0,
-        amount: Number(it.amount) || 0,
-        diagnosis: "",
-        approvalCode: it.approvalCode,
-        referralHospital: "",
-        nhisno: "",
-        serviceDate: date ? new Date(date).toISOString() : nowIso,
-        attachments: [] as string[],
-      }));
-
-      await createClaims({
-        claimItems,
-        hmoId,
-        claimDate: nowIso,
+      // Create the payload according to CreateClaimsPayload interface
+      const claimData = {
         claimName,
-        providerId,
-      });
+        providerId: selectedProviderId,
+        hmoId: userHmoId,
+        claimDate: nowIso,
+        claimItems: items.map((it) => ({
+          serviceRendered: it.name,
+          enrolleeName: enrolleeName,
+          patientEnrolleeNumber: selectedEnrolleeNumber,
+          providerId: selectedProviderId,
+          hmoId: userHmoId,
+          enrolleeEmail: "",
+          enrolleePhoneNumber: phoneNumber,
+          claimType: serviceType.replace(/\s+/g, "") || "InpatientCare",
+          quantity: 1,
+          price: Number(it.amount) || 0,
+          discount: 0,
+          amount: Number(it.amount) || 0,
+          diagnosis: "",
+          approvalCode: it.approvalCode,
+          referralHospital: "",
+          nhisno: "",
+          serviceDate: date ? new Date(date).toISOString() : nowIso,
+          attachments: [] as string[],
+        })),
+      };
+
+      await createClaims(claimData);
 
       setShowSuccessModal(true);
-
       if (onSubmitted) onSubmitted();
+      
       setTimeout(() => {
-      setShowSuccessModal(false);
-      onClose();
-    }, 3000);
-    } catch {
-      setSubmitError("Failed to submit claim");
+        setShowSuccessModal(false);
+        onClose();
+      }, 3000);
+    } catch (error) {
+      console.error("Claim submission error:", error);
+      setSubmitError("Failed to submit claim. Please try again.");
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const removeItem = (idx: number) => {
+    if (items.length === 1) return; // Keep at least one item
+    const newItems = items.filter((_, index) => index !== idx);
+    setItems(newItems);
   };
 
   // Load enrollees on open
@@ -129,12 +136,14 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
     if (!open || !userHmoId) return;
     setEnrolleeLoading(true);
     setEnrolleeError("");
+    
     interface EnrolleeBrief {
       id: string;
       firstName: string;
       lastName: string;
       enrolleeIdNumber: string;
     }
+    
     getEnrollees({ HMOId: userHmoId, PageNumber: 1, PageSize: 100 })
       .then((res) => {
         const list = ((res.data || []) as EnrolleeBrief[]).map((en) => ({
@@ -149,7 +158,6 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
       .finally(() => setEnrolleeLoading(false));
   }, [open, userHmoId]);
 
-  
   useEffect(() => {
     if (!open) {
       setEnrolleeId("");
@@ -240,28 +248,41 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
               ))}
             </select>
           </div>
+          
+          <div className="text-sm font-medium text-gray-700">Service Items</div>
           <Table
-            headers={["S/N", "Service name", "Amount"]}
+            headers={["S/N", "Service name", "Amount", "Action"]}
             rows={items.map((item, idx) => [
               idx + 1,
               <input
+                key={`name-${idx}`}
                 value={item.name}
                 onChange={(e) => handleItemChange(idx, "name", e.target.value)}
-                placeholder="Name"
+                placeholder="Service name"
                 required
                 style={{ width: "100%", padding: 6 }}
               />,
               <input
+                key={`amount-${idx}`}
                 value={item.amount}
-                onChange={(e) =>
-                  handleItemChange(idx, "amount", e.target.value)
-                }
+                onChange={(e) => handleItemChange(idx, "amount", e.target.value)}
                 placeholder="Amount"
+                type="number"
                 required
                 style={{ width: "100%", padding: 6 }}
               />,
+              items.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => removeItem(idx)}
+                  className="text-red-600 text-xs"
+                >
+                  Remove
+                </button>
+              ),
             ])}
           />
+          
           <Button
             type="button"
             onClick={handleAddItem}
@@ -274,13 +295,14 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
               <p>Add item</p>
             </div>
           </Button>
+          
           <div className="flex flex-col gap-2 self-start">
             <Button
               type="submit"
               disabled={!enrolleeId || !selectedProviderId || submitting}
               className="flex self-start px-8 py-4 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {submitting ? "Submitting..." : "Submit Claims"}
+              {submitting ? "Submitting..." : "Submit Claim"}
             </Button>
             {!enrolleeId && (
               <span className="text-xs text-gray-500">
@@ -302,8 +324,8 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
       <SuccessModal
         isOpen={showSuccessModal}
         onClose={() => {
-          setShowSuccessModal(false); // Close success modal
-          onClose(); // Also close the main claim creation modal
+          setShowSuccessModal(false);
+          onClose();
         }}
         title="Claim Created Successfully!"
         message="Your claim has been submitted and is now being processed."
