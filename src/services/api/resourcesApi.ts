@@ -2,8 +2,8 @@ import type { ApiResponse, Country, State } from "../../types/Country";
 import type { IEnrolleeClassResponse } from "../../types/EnrolleeClass";
 
 import type {  IEnrolleeTypeResponse } from "../../types/EnrolleeType";
-import type { IPlanTypeResponse } from "../../types/PlanType";
-import type { IGender, IMaritalStatuses, IRelationship } from "../../types/resources";
+// import type { IPlanTypeResponse } from "../../types/PlanType";
+import type { IGender, IMaritalStatuses, IPlanTypeResponse, IRelationship } from "../../types/resources";
 import { formatApiError } from "../../utils/errorFormatter";
 import axiosInstance from "../../config/axiosInstance";
 import type {  MemberType,  MemberTypesResponse } from "../../types/MemberType";

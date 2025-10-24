@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState } from "react";
 import FormHeader from "../../../components/form/FormHeader";
 import Input from "../../../components/form/Input";
@@ -62,7 +63,7 @@ const Individual = () => {
   const handleValidateEnrolleeStep = () => {
     validateEnrolleeStep(trigger, setStep);
   };
-  const watchedPlanTypeId = watch("planTypeId");
+  // const watchedPlanTypeId = watch("planTypeId");
 
   const {
     memberTypes,
@@ -92,7 +93,7 @@ const Individual = () => {
   const [selectedStateId, setSelectedStateId] = useState<string | null>(null);
   // --------------------------
 
-  const [selectedType, setSelectedType] = useState("");
+  const [_selectedType, setSelectedType] = useState("");
 
   const handleCountryChange = (countryCode: string) => {
     setSelectedCountryCode(countryCode);
@@ -132,22 +133,38 @@ const Individual = () => {
   const prevStep = () => {
     if (step === "plan") setStep("enrollee");
   };
-  const handleDateChange = (date: Date | null) => {
-    console.log("Date selected:", date);
-    setDateOfBirth(date);
-    if (date) {
-      setValue("dateOfBirth", date, {
-        shouldValidate: true,
-      });
-      console.log("Date set in form:", date);
-    } else {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      setValue("dateOfBirth", null as any, {
-        shouldValidate: true,
-      });
-    }
-  };
+  // const handleDateChange = (date: Date | null) => {
+  //   console.log("Date selected:", date);
+  //   setDateOfBirth(date);
+  //   if (date) {
+  //     setValue("dateOfBirth", date, {
+  //       shouldValidate: true,
+  //     });
+  //     console.log("Date set in form:", date);
+  //   } else {
+  //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  //     setValue("dateOfBirth", null as any, {
+  //       shouldValidate: true,
+  //     });
+  //   }
+  // };
   //
+  const handleDateChange = (date: Date | null) => {
+  console.log("Date selected:", date);
+  setDateOfBirth(date);
+  if (date) {
+    // Convert Date to ISO string
+    const dateString = date.toISOString();
+    setValue("dateOfBirth", dateString, {
+      shouldValidate: true,
+    });
+    console.log("Date set in form:", dateString);
+  } else {
+    setValue("dateOfBirth", "", {
+      shouldValidate: true,
+    });
+  }
+};
   useEffect(() => {
     dispatch(fetchGenders());
     dispatch(fetchMaritalStatuses());
@@ -456,6 +473,7 @@ const Individual = () => {
                 <FormSelect
                   label="Membership Type"
                   isLoading={loadingMemberTypes}
+                  error={errorMemberTypes}
                   defaultValue=""
                 >
                   {Array.from(
@@ -470,6 +488,7 @@ const Individual = () => {
                 <FormSelect
                   label="Billing Frequency"
                   isLoading={loadingBillingFrequency}
+                  error={errorBillingFrequency}
                   defaultValue=""
                 >
                   {billingFrequency?.map((bf: string) => (
@@ -514,11 +533,4 @@ const Individual = () => {
 
 export default Individual;
 
-//   useEffect(() => {
-//   if (selectedPlanType) {
-//     setValue("amount", selectedPlanType.amount);
-//     setValue("discount", selectedPlanType.discount);
-//     setValue("benefits", selectedPlanType.benefits);
-//     setValue("referralNumber", selectedPlanType.referralNumber ?? "");
-//   }
-// }, [selectedPlanType, setValue]);
+

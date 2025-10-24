@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-// import { enrolleeService, createEnrolleeFormData } from '../services/enrolleeService';
+
 import type { EnrolleeFormData } from '../types/Enrollee1';
 
 
@@ -9,7 +9,8 @@ export const useEnrolleeForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [successMessage, _setSuccessMessage] = useState('');
 
   const methods = useForm<EnrolleeFormData>({ 
     mode: "onChange",

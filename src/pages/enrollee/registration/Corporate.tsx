@@ -19,7 +19,7 @@ import { fetchEnrolleeClass } from "../../../services/thunks/resourcesThunk";
 const Corporate = () => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [successMessage, setSuccessMessage] = useState('Corporate entity created successfully!'); 
+  const [successMessage, _setSuccessMessage] = useState('Corporate entity created successfully!'); 
   const dispatch = useDispatch<AppDispatch>();
   
   // Get loading state from Redux

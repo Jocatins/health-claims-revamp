@@ -3,7 +3,7 @@ import { useCustomToast } from "../../../hooks/useCustomToast";
 
 export const toastMiddleware = (): Middleware => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  return (store) => (next) => (action: unknown) => {
+  return (_store) => (next) => (action: unknown) => {
     const { success, error } = useCustomToast();
 
     

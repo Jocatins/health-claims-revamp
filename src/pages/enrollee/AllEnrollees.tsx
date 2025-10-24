@@ -25,7 +25,8 @@ const AllEnrollees: React.FC = () => {
   const [items, setItems] = useState<Enrollee[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [search, setSearch] = useState("");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [search, _setSearch] = useState("");
   const [pageNumber, setPageNumber] = useState(1);
   const pageSize = 20;
   const [exporting, setExporting] = useState(false);

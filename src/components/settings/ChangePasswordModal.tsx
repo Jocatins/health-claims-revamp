@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import Modal from '../ui/Modal';
-import Input from '../ui/Input';
+
 import Button from '../ui/Button';
 import { changePassword, passwordStrength } from '../../services/api/userApi';
+import Input from '../form/Input';
 
 interface Props { open: boolean; onClose: () => void; }
 
