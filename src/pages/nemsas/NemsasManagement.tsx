@@ -91,13 +91,7 @@ export const NemsasManagement = () => {
 
   // Modal state for claim details
   const [showDetailsModal, setShowDetailsModal] = useState(false);
-  // type ClaimDetails = {
-  //   id: string;
-  //   status: string;
-  //   enrollee: { name: string; id: string; plan: string };
-  //   services: { name: string; approvalCode: string; amount: string }[];
-  //   total: string;
-  // };
+ 
   const [selectedClaim, setSelectedClaim] = useState<ClaimItem[] | null>(null);
   // const [selectedClaimItems, setSelectedClaimItems] = useState<ClaimItem[] | null>(null);
   const [detailsLoading, setDetailsLoading] = useState(false);
@@ -110,11 +104,10 @@ export const NemsasManagement = () => {
 
   // const { selectedProviderId } = useProviderContext();
 
-  // Load claims function - USING USER STATE LIKE FLUTTER
-  const loadClaims = useCallback(() => {
-    console.log("🚀 loadClaims called");
 
-    // Use user data from Redux state like in Flutter
+  const loadClaims = useCallback(() => {
+    console.log(" loadClaims called");
+
     const providerIdToUse = currentUser?.providerId;
     const hmoIdToUse = currentUser?.hmoId;
 

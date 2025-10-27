@@ -171,7 +171,7 @@ const NemsasDetailsModal: React.FC<NemsasDetailsModalProps> = ({
             </span>
           </div>
           <Button>Decline</Button>
-          <Button>Activate</Button>
+          <Button>Approve</Button>
         </div>
         
         <div style={{ marginBottom: 16, fontWeight: 600, color: "#217346" }}>

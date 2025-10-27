@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Modal from "./Modal";
 import Button from "./Button";
-import Table from "./Table";
 import Select from "./Select";
 import { getEnrollees } from "../../services/api/enrolleeApi";
 import { createClaims } from "../../services/api/claimsApi";
@@ -43,9 +42,9 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
   const serviceOptions = [
     "Inpatient care",
     "Outpatient care",
-    "Emergency care",
-    "Specialist visit",
-    "Routine care",
+    // "Emergency care",
+    // "Specialist visit",
+    // "Routine care",
   ];
   const [items, setItems] = useState<ServiceItem[]>([
     { name: "", approvalCode: "", amount: "" },
@@ -126,9 +125,25 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
   };
 
   const removeItem = (idx: number) => {
-    if (items.length === 1) return; // Keep at least one item
+    // if (items.length === 1) return; // Keep at least one item
     const newItems = items.filter((_, index) => index !== idx);
     setItems(newItems);
+  };
+   const isFormValid = () => {
+    // Check required fields
+    if (!enrolleeId || !selectedProviderId || !userHmoId || !phoneNumber || !date || !serviceType) {
+      return false;
+    }
+
+    // Check if at least one service item is filled
+    const hasValidItems = items.some(item => 
+      item.name.trim() !== "" && 
+      item.amount.trim() !== "" && 
+      !isNaN(Number(item.amount)) && 
+      Number(item.amount) > 0
+    );
+
+    return hasValidItems;
   };
 
   // Load enrollees on open
@@ -172,7 +187,7 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
     }
   }, [open]);
 
-  return (
+ return (
     <>
       <Modal
         open={open}
@@ -180,6 +195,7 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
         title="Emergency Claim"
         width="600px"
       >
+        <div className="max-h-[70vh] overflow-y-auto pr-2 -mr-2">
         <form
           onSubmit={handleSubmit}
           style={{ display: "flex", flexDirection: "column", gap: 16 }}
@@ -233,7 +249,7 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
             />
           </div>
           <div className="flex items-center gap-5">
-            <p>Service Type</p>
+            <p>Encounter Type</p>
             <select
               value={serviceType}
               onChange={(e) => setServiceType(e.target.value)}
@@ -250,38 +266,75 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
           </div>
           
           <div className="text-sm font-medium text-gray-700">Service Items</div>
-          <Table
-            headers={["S/N", "Service name", "Amount", "Action"]}
-            rows={items.map((item, idx) => [
-              idx + 1,
-              <input
-                key={`name-${idx}`}
-                value={item.name}
-                onChange={(e) => handleItemChange(idx, "name", e.target.value)}
-                placeholder="Service name"
-                required
-                style={{ width: "100%", padding: 6 }}
-              />,
-              <input
-                key={`amount-${idx}`}
-                value={item.amount}
-                onChange={(e) => handleItemChange(idx, "amount", e.target.value)}
-                placeholder="Amount"
-                type="number"
-                required
-                style={{ width: "100%", padding: 6 }}
-              />,
-              items.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removeItem(idx)}
-                  className="text-red-600 text-xs"
-                >
-                  Remove
-                </button>
-              ),
-            ])}
-          />
+          
+          {/* Custom Table Implementation for Better Alignment */}
+          <div className="border border-gray-200 rounded-lg overflow-hidden">
+            {/* Table Header */}
+            <div className="grid grid-cols-12 bg-gray-50 border-b border-gray-200">
+              <div className="col-span-1 px-4 py-3 text-xs font-medium text-gray-500 text-center">
+                S/N
+              </div>
+              <div className="col-span-6 px-4 py-3 text-xs font-medium text-gray-500">
+                Service name
+              </div>
+              <div className="col-span-3 px-4 py-3 text-xs font-medium text-gray-500">
+                Amount
+              </div>
+              <div className="col-span-2 px-4 py-3 text-xs font-medium text-gray-500 text-center">
+                Action
+              </div>
+            </div>
+            
+            {/* Table Body */}
+            <div className="bg-white">
+              {items.map((item, idx) => (
+                <div key={idx} className="grid grid-cols-12 border-b border-gray-100 last:border-b-0">
+                  {/* S/N */}
+                  <div className="col-span-1 px-4 py-3 text-sm text-gray-600 text-center">
+                    {idx + 1}
+                  </div>
+                  
+                  {/* Service Name */}
+                  <div className="col-span-6 px-4 py-2">
+                    <input
+                      value={item.name}
+                      onChange={(e) => handleItemChange(idx, "name", e.target.value)}
+                      placeholder="Service name"
+                      required
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                  
+                  {/* Amount */}
+                  <div className="col-span-3 px-4 py-2">
+                    <input
+                      value={item.amount}
+                      onChange={(e) => handleItemChange(idx, "amount", e.target.value)}
+                      placeholder="Amount"
+                      type="number"
+                      required
+                      min="0"
+                      step="0.01"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                  
+                  {/* Action */}
+                  <div className="col-span-2 px-4 py-3 text-center">
+                    {items.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeItem(idx)}
+                        className="text-red-600 text-xs hover:text-red-800 font-medium"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
           
           <Button
             type="button"
@@ -299,26 +352,35 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
           <div className="flex flex-col gap-2 self-start">
             <Button
               type="submit"
-              disabled={!enrolleeId || !selectedProviderId || submitting}
+              disabled={!isFormValid() || submitting}
               className="flex self-start px-8 py-4 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {submitting ? "Submitting..." : "Submit Claim"}
             </Button>
-            {!enrolleeId && (
-              <span className="text-xs text-gray-500">
-                Select an enrollee to enable submission.
-              </span>
+            
+            {/* Validation messages */}
+            {!isFormValid() && (
+              <div className="text-xs text-gray-500 max-w-xs">
+                {!enrolleeId && <div>• Select an enrollee</div>}
+                {!phoneNumber && <div>• Enter phone number</div>}
+                {!date && <div>• Select date</div>}
+                {!serviceType && <div>• Select encounter type</div>}
+                {enrolleeId && phoneNumber && date && serviceType && 
+                 !items.some(item => item.name.trim() && item.amount.trim() && Number(item.amount) > 0) && (
+                  <div>• Add at least one service item with name and amount</div>
+                )}
+                {!selectedProviderId && (
+                  <div>• Select a provider in the header</div>
+                )}
+              </div>
             )}
-            {enrolleeId && !selectedProviderId && (
-              <span className="text-xs text-gray-500">
-                Select a provider in the header to submit.
-              </span>
-            )}
+            
             {submitError && (
               <span className="text-xs text-red-600">{submitError}</span>
             )}
           </div>
         </form>
+        </div>
       </Modal>
 
       <SuccessModal
