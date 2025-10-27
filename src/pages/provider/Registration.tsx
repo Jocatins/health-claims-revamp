@@ -15,6 +15,7 @@ import { useStepValidator } from "../../constant/stepValidatior";
 import type { AppDispatch, RootState } from "../../services/store/store";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchBanks } from "../../services/thunks/resourcesThunk";
+import { accountTypeOptions, AccountType } from "../../utils/accountTypeUtils";
 
 export type Step = "enrollee" | "plan";
 
@@ -22,7 +23,7 @@ const ProviderRegistration = () => {
   const [step, setStep] = useState<Step>("enrollee");
   const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null);
   const navigate = useNavigate();
-   const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch<AppDispatch>();
 
   const { validateEnrolleeStep } = useStepValidator();
 
@@ -38,7 +39,11 @@ const ProviderRegistration = () => {
     handleFormSubmit,
     isSubmitting,
   } = useEnrolleeForm();
-   const { banks, loading: loadingBanks, error: errorBanks} = useSelector((state: RootState) => state.banks);
+  const {
+    banks,
+    loading: loadingBanks,
+    error: errorBanks,
+  } = useSelector((state: RootState) => state.banks);
   // ----------------------
   const handleValidateEnrolleeStep = () => {
     validateEnrolleeStep(trigger, setStep);
@@ -71,7 +76,7 @@ const ProviderRegistration = () => {
     }
   };
   useEffect(() => {
-    dispatch(fetchBanks())
+    dispatch(fetchBanks());
   }, [dispatch]);
 
   const backNavigation = () => {
@@ -160,7 +165,6 @@ const ProviderRegistration = () => {
                   defaultValue=""
                   isLoading={loadingBanks}
                   error={errorBanks}
-               
                 >
                   {banks?.map((bk) => (
                     <option key={bk.id} value={bk.id}>
@@ -179,7 +183,14 @@ const ProviderRegistration = () => {
                 />
                 <Input type="text" label="Account Name" />
 
-                <FormSelect label="Account Type" defaultValue=""></FormSelect>
+                <FormSelect label="Account Type">
+                  <option value=""></option>
+                  {accountTypeOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </FormSelect>
 
                 <Input type="number" label="BVN" />
                 <Input type="text" label="State Licence Number" />
@@ -217,11 +228,7 @@ const ProviderRegistration = () => {
               <FormHeader>Plan Details</FormHeader>
               <div className="grid grid-cols-2 gap-4 mt-6">
                 <Input type="text" label="Full Name" />
-                <Input
-                  type="email"
-                  label="Email"
-                  
-                />
+                <Input type="email" label="Email" />
 
                 <Input type="text" label="Designation" />
                 <PhoneNumberInput
