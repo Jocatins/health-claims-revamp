@@ -20,7 +20,7 @@ const AllProviders: React.FC = () => {
   }, [dispatch]);
 
   const handleAddProvider = () => {
-    navigate("/providers/create");
+    navigate("/provider/registration");
   };
 
   const handleViewProvider = (providerId: string) => {

@@ -102,3 +102,17 @@ export interface PlanTypeState {
   message: string;
   isSuccess: boolean;
 }
+
+export interface Bank {
+  id: number;
+  code: string;
+  name: string;
+}
+
+export interface BankState {
+  banks: Bank[];
+  currentBank: Bank | null;
+  loading: boolean;
+  error: string | null;
+  success: boolean;
+}

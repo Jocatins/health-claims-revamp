@@ -1,13 +1,19 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import {
+    createBank,
+    fetchBankById,
+    fetchBanks,
     fetchEnrolleeClass,
     fetchEnrolleeType,
     fetchGenders,
     fetchMaritalStatuses,
     fetchPlanTypes,
     fetchRelationships,
+    updateBank,
 } from "../thunks/resourcesThunk";
 import type {
+    Bank,
+    BankState,
     EnrolleeClassState,
     EnrolleeTypeState,
     GenderState,
@@ -316,6 +322,103 @@ export const planTypeSlice = createSlice({
   },
 });
 
+const initialState: BankState = {
+  banks: [],
+  currentBank: null,
+  loading: false,
+  error: null,
+  success: false,
+};
+
+const bankSlice = createSlice({
+  name: 'banks',
+  initialState,
+  reducers: {
+    clearError: (state) => {
+      state.error = null;
+    },
+    clearSuccess: (state) => {
+      state.success = false;
+    },
+    clearCurrentBank: (state) => {
+      state.currentBank = null;
+    },
+    resetBankState: () => initialState,
+  },
+  extraReducers: (builder) => {
+    // Create Bank
+    builder
+      .addCase(createBank.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.success = false;
+      })
+      .addCase(createBank.fulfilled, (state, action: PayloadAction<Bank>) => {
+        state.loading = false;
+        state.success = true;
+        state.banks.push(action.payload);
+      })
+      .addCase(createBank.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
+
+    // Fetch All Banks
+    builder
+      .addCase(fetchBanks.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchBanks.fulfilled, (state, action: PayloadAction<Bank[]>) => {
+        state.loading = false;
+        state.banks = action.payload;
+      })
+      .addCase(fetchBanks.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
+
+    // Fetch Bank By ID
+    builder
+      .addCase(fetchBankById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchBankById.fulfilled, (state, action: PayloadAction<Bank>) => {
+        state.loading = false;
+        state.currentBank = action.payload;
+      })
+      .addCase(fetchBankById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
+
+    // Update Bank
+    builder
+      .addCase(updateBank.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.success = false;
+      })
+      .addCase(updateBank.fulfilled, (state, action: PayloadAction<Bank>) => {
+        state.loading = false;
+        state.success = true;
+        const index = state.banks.findIndex(bank => bank.id === action.payload.id);
+        if (index !== -1) {
+          state.banks[index] = action.payload;
+        }
+        if (state.currentBank?.id === action.payload.id) {
+          state.currentBank = action.payload;
+        }
+      })
+      .addCase(updateBank.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
+  },
+});
+
+
 
 // Export actions
 export const { clearGenderError, resetGenderState } = genderSlice.actions;
@@ -324,6 +427,9 @@ export const { clearRelationshipError, resetRelationshipState } = relationshipSl
 export const { clearEnrolleeTypeError, resetEnrolleeTypeState } = enrolleeTypeSlice.actions;
 export const { clearEnrolleeClassError, resetEnrolleeClassState } = enrolleeClassSlice.actions;
 export const { clearPlanTypeError, resetPlanTypeState } = planTypeSlice.actions;
+export const {clearError, clearSuccess, clearCurrentBank, resetBankState } = bankSlice.actions;
+
+
 
 
 // Export reducers
@@ -333,4 +439,5 @@ export const relationshipReducer = relationshipSlice.reducer;
 export const enrolleeTypeReducer = enrolleeTypeSlice.reducer;
 export const enrolleeClassReducer = enrolleeClassSlice.reducer;
 export const planTypeReducer = planTypeSlice.reducer;
+export const bankReducer = bankSlice.reducer;
 
