@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -15,7 +15,7 @@ import { useStepValidator } from "../../constant/stepValidatior";
 import type { AppDispatch, RootState } from "../../services/store/store";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchBanks } from "../../services/thunks/resourcesThunk";
-import { accountTypeOptions, AccountType } from "../../utils/accountTypeUtils";
+import { accountTypeOptions } from "../../utils/accountTypeUtils";
 
 export type Step = "enrollee" | "plan";
 
@@ -32,7 +32,7 @@ const ProviderRegistration = () => {
     methods: {
       register,
       formState: { errors },
-      watch,
+    
       setValue,
       trigger,
     },
@@ -126,7 +126,7 @@ const ProviderRegistration = () => {
         </div>
 
         {/* Single form wrapper */}
-        <form className="mt-6">
+        <form onSubmit={handleFormSubmit} className="mt-6" >
           {step === "enrollee" && (
             <div>
               <FormHeader>Basic Info</FormHeader>
