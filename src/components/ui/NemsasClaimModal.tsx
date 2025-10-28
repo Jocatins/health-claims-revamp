@@ -21,6 +21,18 @@ interface SingleClaimModalProps {
   onSubmitted?: () => void;
 }
 
+// UI Display Options (what users see)
+const uiServiceOptions = [
+  { label: "Admission", value: "Inpatient care" },
+  { label: "Observation", value: "Outpatient care" },
+];
+
+// Backend Expected Values
+const backendServiceValues = {
+  "Inpatient care": "InpatientCare",
+  "Outpatient care": "OutpatientCare",
+};
+
 const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
   open,
   onClose,
@@ -39,13 +51,6 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
   const [phoneNumber, setPhoneNumber] = useState("");
   const [date, setDate] = useState("");
   const [serviceType, setServiceType] = useState("");
-  const serviceOptions = [
-    "Inpatient care",
-    "Outpatient care",
-    // "Emergency care",
-    // "Specialist visit",
-    // "Routine care",
-  ];
   const [items, setItems] = useState<ServiceItem[]>([
     { name: "", approvalCode: "", amount: "" },
   ]);
@@ -79,6 +84,9 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
       const nowIso = new Date().toISOString();
       const claimName = items[0]?.name || `${enrolleeName || "Claim"} - ${date}`;
 
+      // Convert UI service type to backend format
+      const backendClaimType = backendServiceValues[serviceType as keyof typeof backendServiceValues] || "InpatientCare";
+
       // Create the payload according to CreateClaimsPayload interface
       const claimData = {
         claimName,
@@ -93,7 +101,7 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
           hmoId: userHmoId,
           enrolleeEmail: "",
           enrolleePhoneNumber: phoneNumber,
-          claimType: serviceType.replace(/\s+/g, "") || "InpatientCare",
+          claimType: backendClaimType, // Use converted backend value
           quantity: 1,
           price: Number(it.amount) || 0,
           discount: 0,
@@ -125,11 +133,11 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
   };
 
   const removeItem = (idx: number) => {
-    // if (items.length === 1) return; // Keep at least one item
     const newItems = items.filter((_, index) => index !== idx);
     setItems(newItems);
   };
-   const isFormValid = () => {
+
+  const isFormValid = () => {
     // Check required fields
     if (!enrolleeId || !selectedProviderId || !userHmoId || !phoneNumber || !date || !serviceType) {
       return false;
@@ -187,7 +195,7 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
     }
   }, [open]);
 
- return (
+  return (
     <>
       <Modal
         open={open}
@@ -257,9 +265,9 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
               style={{ padding: 8, borderRadius: 4, border: "1px solid #ccc" }}
             >
               <option value="">Select</option>
-              {serviceOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
+              {uiServiceOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
                 </option>
               ))}
             </select>
@@ -339,10 +347,10 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
           <Button
             type="button"
             onClick={handleAddItem}
-            className="bg-transparent text-[#DC2626]-700 hover:bg-[#DC2626]-50 flex self-start mb-12"
+            className="bg-transparent text-[#DC2626] hover:bg-[#DC2626]/10 flex self-start mb-12"
           >
-            <div className="flex items-center gap-4 text-[#1B5845]">
-              <div className="w-8 h-8 rounded-lg bg-[#1B5845]/20 text-xl font-extrabold">
+            <div className="flex items-center gap-4 text-[#DC2626]">
+              <div className="w-8 h-8 rounded-lg bg-[#DC2626]/20 text-xl font-extrabold">
                 +
               </div>
               <p>Add item</p>
