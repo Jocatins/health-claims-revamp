@@ -16,7 +16,7 @@ const EnrolleesPage: React.FC = () => {
             value="individual"
             checked={view === "individual"}
             onChange={() => setView("individual")}
-            className="text-green-700 focus:ring-green-700"
+            className="text-[#DC2626]-700 focus:ring-[#DC2626]-700"
           />
           <span
             className={`${
@@ -34,7 +34,7 @@ const EnrolleesPage: React.FC = () => {
             value="corporate"
             checked={view === "corporate"}
             onChange={() => setView("corporate")}
-            className="text-green-700 focus:ring-green-700"
+            className="text-[#DC2626]-700 focus:ring-[#DC2626]-700"
           />
           <span
             className={`${

@@ -188,14 +188,14 @@ const Individual = () => {
         <div className="flex items-center space-x-6 mb-6">
           <div
             className={`flex items-center space-x-2 cursor-pointer ${step === "enrollee"
-                ? "text-[#186255] font-semibold"
+                ? "text-[#DC2626] font-semibold"
                 : "text-gray-500"
               }`}
             onClick={() => setStep("enrollee")}
           >
             <span
               className={`w-5 h-5 flex items-center justify-center rounded-full border ${step === "enrollee"
-                  ? "bg-[#186255] text-white"
+                  ? "bg-[#DC2626] text-white"
                   : "border-gray-400"
                 }`}
             >
@@ -205,12 +205,12 @@ const Individual = () => {
           </div>
 
           <div
-            className={`flex items-center space-x-2 cursor-pointer ${step === "plan" ? "text-[#186255] font-semibold" : "text-gray-500"
+            className={`flex items-center space-x-2 cursor-pointer ${step === "plan" ? "text-[#DC2626] font-semibold" : "text-gray-500"
               }`}
             onClick={() => step === "plan" && setStep("plan")}
           >
             <span
-              className={`w-5 h-5 flex items-center justify-center rounded-full border ${step === "plan" ? "bg-[#186255] text-white" : "border-gray-400"
+              className={`w-5 h-5 flex items-center justify-center rounded-full border ${step === "plan" ? "bg-[#DC2626] text-white" : "border-gray-400"
                 }`}
             >
               {step === "plan" ? "✓" : "○"}

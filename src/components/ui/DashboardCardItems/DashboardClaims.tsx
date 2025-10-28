@@ -13,12 +13,12 @@ const ClaimsChart = () => {
     <div className="bg-white p-6 shadow w-[100%] ">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold">All Claims</h2>
-         <a href="#" className="text-green-600 text-sm font-medium">
+         <a href="#" className="text-[#DC2626]-600 text-sm font-medium">
             See All Claims
           </a>
       </div>
        <div className="flex items-center gap-4">
-          <select className="bg-green-100 border rounded-md px-3 py-1 text-sm">
+          <select className="bg-[#DC2626]-100 border rounded-md px-3 py-1 text-sm">
             <option>Monthly</option>
             <option>Yearly</option>
           </select>

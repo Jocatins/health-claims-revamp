@@ -56,7 +56,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
         <button
           type="button"
           onClick={handleClick}
-          className="px-4 py-2 bg-[#186255] text-white text-sm font-medium hover:bg-[#145244]"
+          className="px-4 py-2 bg-[#DC2626] text-white text-sm font-medium hover:bg-[#145244]"
         >
           Browse
         </button>

@@ -76,7 +76,7 @@ const Settings: React.FC = () => {
 		<div className='max-w-xl'>
 			<p className='text-base lg:text-[20px] text-[#192F2B] mb-4 font-medium'>Change password</p>
 			{pwError && <div className='mb-3 text-xs text-red-600'>{pwError}</div>}
-			{pwSuccess && <div className='mb-3 text-xs text-green-600'>Password changed successfully.</div>}
+			{pwSuccess && <div className='mb-3 text-xs text-[#DC2626]-600'>Password changed successfully.</div>}
 			<div className='grid gap-1'>
 				<Input label='Old Password' type='password' value={currentPassword} onChange={e=>setCurrentPassword(e.target.value)} />
 				<div>
@@ -84,7 +84,7 @@ const Settings: React.FC = () => {
 					{newPassword && (
 						<div className='flex items-center justify-between px-1 -mt-2 mb-3'>
 							<div className='flex-1 h-1 bg-gray-200 rounded mr-3 overflow-hidden'>
-								<div className={`h-full transition-all duration-300 ${strength.score <=2 ? 'bg-yellow-500' : strength.score<=3 ? 'bg-green-500' : 'bg-green-600'}`} style={{ width: `${(strength.score/5)*100}%`}} />
+								<div className={`h-full transition-all duration-300 ${strength.score <=2 ? 'bg-yellow-500' : strength.score<=3 ? 'bg-[#DC2626]-500' : 'bg-[#DC2626]-600'}`} style={{ width: `${(strength.score/5)*100}%`}} />
 							</div>
 							<span className='text-xs text-gray-500'>{strength.label}</span>
 						</div>

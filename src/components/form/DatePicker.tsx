@@ -29,7 +29,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
           setFocused(e.target.value !== "");
           props.onBlur?.(e);
         }}
-        className={`peer w-full border rounded-md px-3 pr-10 pt-5 pb-2 bg-white focus:outline-none focus:ring-2 focus:ring-[#186255]
+        className={`peer w-full border rounded-md px-3 pr-10 pt-5 pb-2 bg-white focus:outline-none focus:ring-2 focus:ring-[#DC2626]
           ${error ? 'border-red-500' : 'border-gray-300'}
         `}
         {...props}
@@ -47,7 +47,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
       {/* Calendar icon */}
       <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center pointer-events-none">
         <svg
-          className="w-5 h-5 text-gray-400 peer-focus:text-[#186255] transition-colors"
+          className="w-5 h-5 text-gray-400 peer-focus:text-[#DC2626] transition-colors"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"

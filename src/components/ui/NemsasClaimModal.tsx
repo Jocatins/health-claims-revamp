@@ -339,7 +339,7 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
           <Button
             type="button"
             onClick={handleAddItem}
-            className="bg-transparent text-green-700 hover:bg-green-50 flex self-start mb-12"
+            className="bg-transparent text-[#DC2626]-700 hover:bg-[#DC2626]-50 flex self-start mb-12"
           >
             <div className="flex items-center gap-4 text-[#1B5845]">
               <div className="w-8 h-8 rounded-lg bg-[#1B5845]/20 text-xl font-extrabold">

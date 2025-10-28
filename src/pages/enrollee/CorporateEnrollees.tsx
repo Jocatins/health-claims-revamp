@@ -47,7 +47,7 @@ const CorporateEnrollees: React.FC = () => {
             <Button
               type="button"
               size="sm"
-              className="bg-green-800 text-white hover:bg-green-900"
+              className="bg-[#DC2626]-800 text-white hover:bg-[#DC2626]-900"
               onClick={() => navigate("/enrollee/registration/corporate")}
             >
               + Add Corporate

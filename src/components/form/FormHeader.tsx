@@ -10,7 +10,7 @@ const FormHeader: React.FC<FormHeaderProps> = ({
   className = '' 
 }) => {
   return (
-    <h1 className={`col-span-2 text-lg font-semibold mt-4 text-[#186255] ${className}`}>
+    <h1 className={`col-span-2 text-lg font-semibold mt-4 text-[#DC2626] ${className}`}>
       {children}
     </h1>
   );

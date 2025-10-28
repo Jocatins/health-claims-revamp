@@ -101,7 +101,7 @@ const EnrolleeDetails: React.FC = () => {
       <div className='overflow-x-auto'>
         <table className='w-full text-sm'>
           <thead>
-            <tr className='bg-green-50 text-left'>
+            <tr className='bg-[#DC2626]-50 text-left'>
               <th className='py-2 px-3 font-medium'>Name</th>
               <th className='py-2 px-3 font-medium'>Gender</th>
               <th className='py-2 px-3 font-medium'>Age</th>
@@ -178,7 +178,7 @@ const EnrolleeDetails: React.FC = () => {
         </form>
         <div className='border rounded-md overflow-hidden'>
           <table className='w-full text-xs'>
-            <thead className='bg-green-50 text-gray-700'>
+            <thead className='bg-[#DC2626]-50 text-gray-700'>
               <tr>
                 <th className='text-left px-3 py-2 font-medium'>Date</th>
                 <th className='text-left px-3 py-2 font-medium'>Claim ID</th>
@@ -194,7 +194,7 @@ const EnrolleeDetails: React.FC = () => {
                     <td className='px-3 py-2'>{new Date(c.serviceDate).toLocaleDateString()}</td>
                     <td className='px-3 py-2'>{c.id}</td>
                     <td className='px-3 py-2'>{c.amount.toLocaleString(undefined,{ style:'currency', currency:'NGN'})}</td>
-                    <td className='px-3 py-2'><span className='text-green-700 font-medium'>{c.claimStatus}</span></td>
+                    <td className='px-3 py-2'><span className='text-[#DC2626]-700 font-medium'>{c.claimStatus}</span></td>
                     <td className='px-3 py-2'>
                       <button type='button' onClick={()=> setExpandedClaimId(p=> p===c.id? null : c.id)} className='text-primary text-xs underline'>
                         {expandedClaimId === c.id ? 'Hide' : 'View'}
@@ -259,7 +259,7 @@ const EnrolleeDetails: React.FC = () => {
               <h2 className='font-avenir font-extrabold text-[24px] leading-8 tracking-tightpx'>{data.firstName} {data.lastName}</h2>
               <div className='flex items-center gap-2 text-gray-600 font-avenir font-medium text-[16px] leading-5 tracking-tightpx'>
                 <span className='font-avenir font-medium text-[16px] leading-5 tracking-tightpx'>{data.enrolleeIdNumber}</span>
-                <span className={`px-2 py-0.5 rounded border text-[10px] ${data.isActive? 'text-green-700 border-green-600 bg-green-50':'text-gray-600 border-gray-400'}`}>{data.isActive? 'Active':'Inactive'}</span>
+                <span className={`px-2 py-0.5 rounded border text-[10px] ${data.isActive? 'text-[#DC2626]-700 border-[#DC2626]-600 bg-[#DC2626]-50':'text-gray-600 border-gray-400'}`}>{data.isActive? 'Active':'Inactive'}</span>
               </div>
             </div>
           </div>

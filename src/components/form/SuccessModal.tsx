@@ -27,13 +27,13 @@ const SuccessModal: React.FC<ModalProps> = ({ isOpen, onClose, title, message, i
         {/* Icon */}
         <div className="flex justify-center mb-4">
           {icon || (
-            <div className="h-14 w-14 rounded-full flex items-center justify-center border border-green-700 bg-green-100">
+            <div className="h-14 w-14 rounded-full flex items-center justify-center border border-[#DC2626]-700 bg-[#DC2626]-100">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={2}
-                stroke="green"
+                stroke="[#DC2626]"
                 className="h-8 w-8"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />

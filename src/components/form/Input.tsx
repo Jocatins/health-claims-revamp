@@ -28,7 +28,7 @@ const Input: React.FC<InputProps> = ({
           setFocused(e.target.value !== "");
           props.onBlur?.(e);
         }}
-        className={`peer w-full border rounded-md px-3 pr-10 pt-5 pb-2 focus:outline-none focus:ring-2 focus:ring-[#186255] ${
+        className={`peer w-full border rounded-md px-3 pr-10 pt-5 pb-2 focus:outline-none focus:ring-2 focus:ring-[#DC2626] ${
           error ? "border-red-500" : "border-gray-300"
         }`}
       />

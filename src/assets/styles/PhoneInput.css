@@ -16,8 +16,8 @@
 .phone-input-custom .react-international-phone-input:focus {
   outline: none;
   ring: 2px;
-  ring-color: #186255;
-  border-color: #186255;
+  ring-color: #DC2626;
+  border-color: #DC2626;
 }
 
 .phone-input-custom .react-international-phone-country-selector-button {

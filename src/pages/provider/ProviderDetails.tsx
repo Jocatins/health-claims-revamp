@@ -71,7 +71,7 @@ const ProviderDetails: React.FC = () => {
         <Info label='Status' value={
           <span className={`px-2 py-1 rounded text-xs ${
             data?.isActive
-              ? "bg-green-100 text-green-800"
+              ? "bg-[#DC2626]-100 text-[#DC2626]-800"
               : "bg-red-100 text-red-800"
           }`}>
             {data?.isActive ? "Active" : "Inactive"}
@@ -88,7 +88,7 @@ const ProviderDetails: React.FC = () => {
       <div className='overflow-x-auto'>
         <table className='w-full text-sm'>
           <thead>
-            <tr className='bg-green-50 text-left'>
+            <tr className='bg-[#DC2626]-50 text-left'>
               <th className='py-2 px-3 font-medium'>Name</th>
               <th className='py-2 px-3 font-medium'>Designation</th>
               <th className='py-2 px-3 font-medium'>Email</th>
@@ -155,7 +155,7 @@ const ProviderDetails: React.FC = () => {
       <div className='bg-white rounded-md border shadow-sm p-6'>
         <div className='flex items-start justify-between mb-8'>
           <div className='flex items-center gap-6'>
-            <div className='w-14 h-14 rounded-full bg-green-100 flex items-center justify-center text-green-800 text-lg font-medium'>
+            <div className='w-14 h-14 rounded-full bg-[#DC2626]-100 flex items-center justify-center text-[#DC2626]-800 text-lg font-medium'>
               {data.hospitalName?.charAt(0) || 'H'}
             </div>
             <div>
@@ -168,7 +168,7 @@ const ProviderDetails: React.FC = () => {
                 </span>
                 <span className={`px-2 py-0.5 rounded border text-[10px] ${
                   data.isActive 
-                    ? 'text-green-700 border-green-600 bg-green-50' 
+                    ? 'text-[#DC2626]-700 border-[#DC2626]-600 bg-[#DC2626]-50' 
                     : 'text-gray-600 border-gray-400'
                 }`}>
                   {data.isActive ? 'Active' : 'Inactive'}

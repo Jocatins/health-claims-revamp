@@ -45,7 +45,7 @@ const AllProviders: React.FC = () => {
             <Button
               type="button"
               size="sm"
-              className="bg-green-800 text-white hover:bg-green-900"
+              className="bg-[#DC2626]-800 text-white hover:bg-[#DC2626]-900"
               onClick={handleAddProvider}
             >
               + Add New Provider
@@ -88,7 +88,7 @@ const AllProviders: React.FC = () => {
                 key={provider.id}
                 className={`px-2 py-1 rounded text-xs ${
                   provider.isActive
-                    ? "bg-green-100 text-green-800"
+                    ? "bg-[#DC2626]-100 text-[#DC2626]-800"
                     : "bg-red-100 text-red-800"
                 }`}
               >

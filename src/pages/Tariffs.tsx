@@ -146,7 +146,7 @@ const Tariffs: React.FC = () => {
 							</div>
 							<div>
 								<p className='text-gray-500 text-xs uppercase'>Status</p>
-								<span className={'inline-block px-2 py-1 rounded text-xs ' + (selected.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-600')}>
+								<span className={'inline-block px-2 py-1 rounded text-xs ' + (selected.isActive ? 'bg-[#DC2626]-100 text-[#DC2626]-700' : 'bg-gray-200 text-gray-600')}>
 									{selected.isActive ? 'Active' : 'Inactive'}
 								</span>
 							</div>

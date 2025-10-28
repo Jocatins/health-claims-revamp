@@ -66,7 +66,7 @@ const FileDropZone: React.FC<FileDropZoneProps> = ({
     }
   };
 
-  const zoneClasses = `h-[51px] border-2 rounded-md pl-3 pr-1 py-1 flex items-center justify-between gap-4 text-xs sm:text-sm transition-colors ${isDragging ? 'border-primary bg-green-50' : 'border-primary/80 bg-white'} ${className||''}`;
+  const zoneClasses = `h-[51px] border-2 rounded-md pl-3 pr-1 py-1 flex items-center justify-between gap-4 text-xs sm:text-sm transition-colors ${isDragging ? 'border-primary bg-[#DC2626]-50' : 'border-primary/80 bg-white'} ${className||''}`;
 
   const summary = files.length === 0
     ? 'Drag and drop file here'

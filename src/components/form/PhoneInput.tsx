@@ -48,7 +48,7 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({ error, register }) 
         onChange={handleChange}
         onBlur={handleBlur}
         placeholder="Phone Number"
-        inputClassName={`w-full h-12 border ${error ? 'border-red-500' : 'border-gray-300'} rounded-md px-6 text-sm focus:outline-none focus:ring-2 focus:ring-[#186255]`}
+        inputClassName={`w-full h-12 border ${error ? 'border-red-500' : 'border-gray-300'} rounded-md px-6 text-sm focus:outline-none focus:ring-2 focus:ring-[#DC2626]`}
         countrySelectorStyleProps={{
           buttonClassName: `h-12 border ${error ? 'border-red-500' : 'border-gray-300'} border-r-0 rounded-l-md px-3 flex items-center bg-gray-100`,
           dropdownStyleProps: {

@@ -38,14 +38,14 @@ const ChangePasswordModal: React.FC<Props> = ({ open, onClose }) => {
   return (
     <Modal open={open} onClose={onClose} title='Change Password' width='480px'>
       {error && <div className='mb-3 text-xs text-red-600'>{error}</div>}
-      {success && <div className='mb-3 text-xs text-green-600'>Password changed successfully.</div>}
+      {success && <div className='mb-3 text-xs text-[#DC2626]-600'>Password changed successfully.</div>}
       <Input label='Old Password' type='password' value={currentPassword} onChange={e=>setCurrentPassword(e.target.value)} />
       <div>
         <Input label='New Password' type='password' value={newPassword} onChange={e=>setNewPassword(e.target.value)} />
         {newPassword && (
           <div className='flex items-center justify-between px-1 -mt-2 mb-3'>
             <div className='flex-1 h-1 bg-gray-200 rounded mr-3 overflow-hidden'>
-              <div className={`h-full transition-all duration-300 ${strength.score <=2 ? 'bg-yellow-500' : strength.score<=3 ? 'bg-green-500' : 'bg-green-600'}`} style={{ width: `${(strength.score/5)*100}%`}} />
+              <div className={`h-full transition-all duration-300 ${strength.score <=2 ? 'bg-yellow-500' : strength.score<=3 ? 'bg-[#DC2626]-500' : 'bg-[#DC2626]-600'}`} style={{ width: `${(strength.score/5)*100}%`}} />
             </div>
             <span className='text-xs text-gray-500'>{strength.label}</span>
           </div>

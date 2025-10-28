@@ -54,7 +54,7 @@ const NumberOfEnrollees = () => {
     
         <select
           {...register("period")}
-          className="bg-green-100 border rounded-md px-2 py-1 text-sm">
+          className="bg-[#DC2626]-100 border rounded-md px-2 py-1 text-sm">
           <option value="monthly">Monthly</option>
           <option value="yearly">Yearly</option>
           <option value="biannually">Biannually</option>

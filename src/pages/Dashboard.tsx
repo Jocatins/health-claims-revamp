@@ -19,7 +19,7 @@ const Dashboard: React.FC = () => {
           indicatorColor="bg-red-100 text-red-600"
           value={150}
           percentage="2.5% Last Month"
-          changeColor="text-green-500"
+          changeColor="text-[#DC2626]-500"
           title="Expired Plan"
         />
         <DashboardCard
@@ -45,8 +45,8 @@ const Dashboard: React.FC = () => {
           <StatCard
             percentage={45}
             title="Number of Enrollees"
-            bgColor="bg-green-50"
-            textColor="text-green-600"
+            bgColor="bg-[#DC2626]-50"
+            textColor="text-[#DC2626]-600"
             pathColor="#2C9A5B"
           />
           <StatCard

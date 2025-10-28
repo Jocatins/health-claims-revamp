@@ -1,4 +1,4 @@
-// The Green button in the forms
+// The [#DC2626] button in the forms
 import React from "react";
 
 interface ButtonProps {
@@ -23,12 +23,12 @@ const ButtonG: React.FC<ButtonProps> = ({
       disabled={disabled}
       className={`
     px-16 py-2 
-    bg-[#186255]
+    bg-[#DC2626]
     text-white font-semibold 
     rounded-md 
     transition-colors duration-200
     hover:bg-[#145247] 
-    focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-1
+    focus:outline-none focus:ring-2 focus:ring-[#DC2626]-500 focus:ring-offset-1
     disabled:opacity-50 disabled:cursor-not-allowed
         ${className}
       `}

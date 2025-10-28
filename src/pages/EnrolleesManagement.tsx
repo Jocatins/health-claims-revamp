@@ -80,7 +80,7 @@ const EnrolleesManagement: React.FC = () => {
 							en.enrolleeIdNumber,
 							`${en.firstName} ${en.lastName}`.trim(),
 							en.gender,
-							<span className={`text-xs px-2 py-1 rounded ${en.isActive? 'text-green-700 bg-green-50':'text-gray-500 bg-gray-50'}`}>{en.isActive? 'Active':'Inactive'}</span>,
+							<span className={`text-xs px-2 py-1 rounded ${en.isActive? 'text-[#DC2626]-700 bg-[#DC2626]-50':'text-gray-500 bg-gray-50'}`}>{en.isActive? 'Active':'Inactive'}</span>,
 							en.planType?.name || '-',
 							<Button size='sm' className='!px-2 !py-1' onClick={()=>navigate(`/enrollees/${en.id}`)}>View</Button>
 						])}

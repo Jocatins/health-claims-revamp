@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Input from "../../components/form/Input";
 import { useForm } from "react-hook-form";
-import HimisLogo from "../../assets/himis-logo";
+// import HimisLogo from "../../assets/himis-logo";
 import Button from "../../components/ui/Button";
 import type { LoginForm } from "../../types/LoginForm";
 import { useAuth } from "../../hooks/useAuth";
 import type { LocationWithState } from "../../types/route";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import nemsasImage from '../../assets/nemsas.jpg';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -54,13 +55,14 @@ const Login: React.FC = () => {
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
         <div className="flex flex-col items-center mb-8">
           <div className="flex items-center space-x-2">
-            <HimisLogo />
-            <h1 className="text-green-900 font-bold text-lg">HIMIS</h1>
+            {/* <HimisLogo /> */}
+             <img src={nemsasImage} alt="NEMSAS Logo" className="w-8 h-8" />
+            <h1 className="text-[#DC2626]-900 font-bold text-lg">NEMSAS</h1>
           </div>
         </div>
 
         <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-          <h2 className="text-center text-green-900 font-semibold mb-6">
+          <h2 className="text-center text-[#DC2626]-900 font-semibold mb-6">
             LOGIN
           </h2>
 
@@ -95,7 +97,7 @@ const Login: React.FC = () => {
 
             <Button
               type="submit"
-              className="w-full bg-green-900 text-white py-2 rounded-md hover:bg-green-800 transition-colors"
+              className="w-full bg-[#DC2626]-900 text-white py-2 rounded-md hover:bg-[#DC2626]-800 transition-colors"
               disabled={loading}
             >
               {loading ? "Logging in..." : "Login"}

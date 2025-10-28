@@ -32,7 +32,7 @@ const FormSelect: React.FC<SelectProps> = ({
           setFocused(e.target.value !== "");
           props.onBlur?.(e);
         }}
-        className={`peer w-full border rounded-md px-3 pr-10 pt-5 pb-2 bg-white appearance-none focus:outline-none focus:ring-2 focus:ring-[#186255] 
+        className={`peer w-full border rounded-md px-3 pr-10 pt-5 pb-2 bg-white appearance-none focus:outline-none focus:ring-2 focus:ring-[#DC2626] 
           ${isDisabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'}
           ${error ? 'border-red-500' : 'border-gray-300'}
           `}
@@ -71,7 +71,7 @@ const FormSelect: React.FC<SelectProps> = ({
           <svg
           className={`w-5 h-5 transition-colors
             ${isDisabled ? 'text-gray-300' : error ? 'text-red-500' : 'text-gray-400'}
-            peer-focus:text-[#186255]
+            peer-focus:text-[#DC2626]
             `}
             fill="none"
             stroke="currentColor"
