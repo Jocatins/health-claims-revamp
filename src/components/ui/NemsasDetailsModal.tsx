@@ -152,11 +152,11 @@ const NemsasDetailsModal: React.FC<NemsasDetailsModalProps> = ({
           }}
         >
           <div>
-            <span style={{ fontWeight: 600, fontSize: 18 }}>Enrollee Number</span>
-            <span style={{ marginLeft: 8, fontWeight: 500, color: "#6b6f80" }}>
+            {/* <span style={{ fontWeight: 600, fontSize: 18 }}>Enrollee Number</span> */}
+            {/* <span style={{ marginLeft: 8, fontWeight: 500, color: "#6b6f80" }}>
               {firstClaim.patientEnrolleeNumber || "N/A"}
-            </span>
-            <span
+            </span> */}
+            {/* <span
               style={{
                 marginLeft: 16,
                 background: "#e6f4ea",
@@ -168,23 +168,23 @@ const NemsasDetailsModal: React.FC<NemsasDetailsModalProps> = ({
               }}
             >
               {getStatusText(firstClaim.claimStatus)}
-            </span>
+            </span> */}
           </div>
           <Button>Decline</Button>
-          <Button>Approve</Button>
+          <Button color="green">Approve</Button>
         </div>
         
         <div style={{ marginBottom: 16, fontWeight: 600, color: "#217346" }}>
-          Enrollee Information
+          Patient Information
         </div>
         <Table
-          headers={["Name", "Phone Number", "Email", "Plan Type"]}
+          headers={["Name", "Phone Number", "Email"]}
           rows={[
             [
               firstClaim.enrolleeName || "N/A",
               firstClaim.enrolleePhoneNumber || "N/A",
               firstClaim.enrolleeEmail || "N/A",
-              firstClaim.planTypeName || "N/A",
+              // firstClaim.planTypeName || "N/A",
             ],
           ]}
           tableStyle={{ marginBottom: 16 }}
@@ -212,8 +212,8 @@ const NemsasDetailsModal: React.FC<NemsasDetailsModalProps> = ({
             </div>,
             "Service Rendered", 
             "Service Date", 
-            "Claim Type", 
-            "Quantity", 
+            // "Claim Type", 
+            // "Quantity", 
             "Price", 
             "Amount", 
             "Status"
@@ -227,8 +227,8 @@ const NemsasDetailsModal: React.FC<NemsasDetailsModalProps> = ({
             </div>,
             item.serviceRendered || "N/A",
             formatDate(item.serviceDate, dateFormats.short),
-            item.claimType || "N/A",
-            item.quantity.toString(),
+            // item.claimType || "N/A",
+            // item.quantity.toString(),
             `₦${item.price.toLocaleString()}`,
             `₦${item.amount.toLocaleString()}`,
             <span

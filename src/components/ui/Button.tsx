@@ -11,6 +11,7 @@ interface ButtonProps {
   className?: string;
   size?: "sm" | "md" | "lg";
   variant?: "solid" | "outline" | "text";
+  color?: "red" | "green" | "blue" | "gray"; // Add color prop
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -23,13 +24,37 @@ const Button: React.FC<ButtonProps> = ({
   className = "",
   size = "md",
   variant = "solid",
+  color = "red", // Default color
 }) => {
-  const baseStyles =
-    "bg-[#DC2626] text-white font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#DC2626] focus:ring-offset-2";
+  // Color styles
+  const colorStyles = {
+    red: {
+      solid: "bg-[#DC2626] text-white hover:bg-[#DC2626]/90 focus:ring-[#DC2626]",
+      outline: "border border-[#DC2626] text-[#DC2626] hover:bg-[#DC2626]/10",
+      text: "text-[#DC2626] hover:bg-[#DC2626]/10"
+    },
+    green: {
+      solid: "bg-[#10B981] text-white hover:bg-[#10B981]/90 focus:ring-[#10B981]",
+      outline: "border border-[#10B981] text-[#10B981] hover:bg-[#10B981]/10",
+      text: "text-[#10B981] hover:bg-[#10B981]/10"
+    },
+    blue: {
+      solid: "bg-[#3B82F6] text-white hover:bg-[#3B82F6]/90 focus:ring-[#3B82F6]",
+      outline: "border border-[#3B82F6] text-[#3B82F6] hover:bg-[#3B82F6]/10",
+      text: "text-[#3B82F6] hover:bg-[#3B82F6]/10"
+    },
+    gray: {
+      solid: "bg-[#6B7280] text-white hover:bg-[#6B7280]/90 focus:ring-[#6B7280]",
+      outline: "border border-[#6B7280] text-[#6B7280] hover:bg-[#6B7280]/10",
+      text: "text-[#6B7280] hover:bg-[#6B7280]/10"
+    }
+  };
+
+  const baseStyles = "font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2";
 
   const stateStyles = disabled
     ? "opacity-50 cursor-not-allowed"
-    : "hover:bg-[#DC2626]/90 active:bg-[#DC2626]/80";
+    : "";
 
   // Size variants
   const sizeStyles = {
@@ -45,14 +70,7 @@ const Button: React.FC<ButtonProps> = ({
     lg: 20,
   };
 
-  const variantStyles =
-    variant === "outline"
-      ? "bg-transparent border border-[#DC2626] text-[#DC2626] hover:bg-[#DC2626]/10"
-      : variant === "solid"
-      ? "bg-[#DC2626] text-white font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#DC2626] focus:ring-offset-2"
-      : variant === "text"
-      ? "bg-transparent text-[#DC2626] hover:bg-[#DC2626]/10"
-      : "";
+  const currentColorStyles = colorStyles[color][variant];
 
   return (
     <button
@@ -63,7 +81,7 @@ const Button: React.FC<ButtonProps> = ({
         ${baseStyles}
         ${stateStyles}
         ${sizeStyles[size]}
-        ${variantStyles}
+        ${currentColorStyles}
         ${className}
         inline-flex items-center justify-center gap-2 h-[45px]
       `}
