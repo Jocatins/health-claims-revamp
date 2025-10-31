@@ -3,7 +3,7 @@ import React, { type SelectHTMLAttributes, useState } from "react";
 interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   label: string;
   endAdornment?: React.ReactNode;
- isLoading?: boolean;
+  isLoading?: boolean;
   error?: string | null;
 }
 
@@ -16,10 +16,9 @@ const FormSelect: React.FC<SelectProps> = ({
   ...props
 }) => {
   const [focused, setFocused] = useState(false);
-   const isDisabled = props.disabled || isLoading;
+  const isDisabled = props.disabled || isLoading;
 
   return (
-    <>
     <div className="relative w-full mb-4">
       <select
         {...props}
@@ -35,24 +34,20 @@ const FormSelect: React.FC<SelectProps> = ({
         className={`peer w-full border rounded-md px-3 pr-10 pt-5 pb-2 bg-white appearance-none focus:outline-none focus:ring-2 focus:ring-[#186255] 
           ${isDisabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'}
           ${error ? 'border-red-500' : 'border-gray-300'}
-          `}
+        `}
       >
-        {/* Show loading or error message as the only option if applicable */}
+        {/* Always show the placeholder and options, even when loading or error */}
+        <option value="">Select {label.toLowerCase()}</option>
         {isLoading ? (
-          <option value="">...</option>
-        ) : error ? (
-          <option value=""></option>
+          <option value="" disabled>Loading...</option>
         ) : (
-          <>
-            <option value="" disabled hidden></option>
-            {children}
-          </>
+          children
         )}
       </select>
 
       <label
         className={`absolute left-3 transition-all duration-200 pointer-events-none
-          ${focused ? "-top-1 text-xs bg-white px-1" : "top-3 text-sm"}
+          ${focused || props.value ? "-top-1 text-xs bg-white px-1" : "top-3 text-sm"}
           ${error ? 'text-red-500' : 'text-gray-500'}
           ${isDisabled ? 'text-gray-400' : ''}
         `}
@@ -61,29 +56,28 @@ const FormSelect: React.FC<SelectProps> = ({
       </label>
 
       {/* Show error message below the dropdown */}
-      {error && !isLoading && (
+      {error && (
         <p className="mt-1 text-xs text-red-500">{error}</p>
       )}
 
-      {/* Optional adornment (like dropdown arrow or icon) */}
+      {/* Dropdown arrow */}
       <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center pointer-events-none">
         {endAdornment ?? (
           <svg
-          className={`w-5 h-5 transition-colors
-            ${isDisabled ? 'text-gray-300' : error ? 'text-red-500' : 'text-gray-400'}
-            peer-focus:text-[#186255]
+            className={`w-5 h-5 transition-colors
+              ${isDisabled ? 'text-gray-300' : error ? 'text-red-500' : 'text-gray-400'}
+              peer-focus:text-[#186255]
             `}
             fill="none"
             stroke="currentColor"
             strokeWidth="2"
             viewBox="0 0 24 24"
-            >
+          >
             <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
           </svg>
         )}
       </div>
     </div>
-        </>
   );
 };
 
