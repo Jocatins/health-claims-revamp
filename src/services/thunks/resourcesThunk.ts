@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axiosInstance from '../../config/axiosInstance';
 
-import type { IEnrolleeClass, IEnrolleeClassResponse, IEnrolleeType, IEnrolleeTypeResponse, IGender, IMaritalStatuses, IPlanType, IPlanTypeResponse, IRelationship } from '../../types/resources';
+import type { Bank, IEnrolleeClass, IEnrolleeClassResponse, IEnrolleeType, IEnrolleeTypeResponse, IGender, IMaritalStatuses, IPlanType, IPlanTypeResponse, IRelationship } from '../../types/resources';
 import { formatApiError } from '../../utils/errorFormatter';
 
 const RESOURCES_BASE = "/resources";
@@ -57,7 +58,7 @@ export const fetchEnrolleeClass = createAsyncThunk(
 // PlanType thunks
 export const fetchPlanTypes = createAsyncThunk(
   "planType/fetchPlanTypes",
-  async (): Promise<IPlanType[]> => { // Change return type to IPlanType[]
+  async (): Promise<IPlanType[]> => { 
     try {
       const response = await axiosInstance.get<IPlanTypeResponse>(
         `${SETTINGS_BASE}/plan-types`
@@ -72,6 +73,58 @@ export const fetchPlanTypes = createAsyncThunk(
       const message = formatApiError(error);
       console.error("Error fetching planType:", message);
       throw new Error(message);
+    }
+  }
+);
+
+// Create Bank
+export const createBank = createAsyncThunk(
+  'banks/createBank',
+  async (bankData: Omit<Bank, 'id'>, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post<Bank>(`${RESOURCES_BASE}/banks`, bankData);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to create bank');
+    }
+  }
+);
+
+// Read Banks (Get All)
+export const fetchBanks = createAsyncThunk(
+  'banks/fetchBanks',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get<{ data: Bank[] }>(`${RESOURCES_BASE}/banks`);
+      return response.data.data; // Extract the data array
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch banks');
+    }
+  }
+);
+
+// Read Bank (Get Single)
+export const fetchBankById = createAsyncThunk(
+  'banks/fetchBankById',
+  async (bankId: number, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get<Bank>(`${RESOURCES_BASE}/banks/${bankId}`);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch bank');
+    }
+  }
+);
+
+// Update Bank
+export const updateBank = createAsyncThunk(
+  'banks/updateBank',
+  async ({ id, ...bankData }: Bank, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.put<Bank>(`${RESOURCES_BASE}/banks/${id}`, bankData);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to update bank');
     }
   }
 );

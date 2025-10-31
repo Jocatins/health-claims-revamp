@@ -3,11 +3,19 @@ import { configureStore } from "@reduxjs/toolkit";
 import { providerApiSlice } from "../slices/providerSlice";
 import authReducer from "../slices/authSlice";
 import { toastMiddleware } from "./middleware/toastMiddleware";
-import corporateReducer from "../slices/corporateSlice"
-import { enrolleeClassReducer, enrolleeTypeReducer, genderReducer, maritalStatusReducer, planTypeReducer, relationshipReducer } from "../slices/resourceSlice";
-import claimsReducer from "../slices/claimSlice"
-import providerReducer from "../slices/iProviderSlice"
-import claimDetailsReducer from "../slices/claimDetailSlice"
+import corporateReducer from "../slices/corporateSlice";
+import {
+  enrolleeClassReducer,
+  enrolleeTypeReducer,
+  genderReducer,
+  maritalStatusReducer,
+  planTypeReducer,
+  relationshipReducer,
+  bankReducer,
+} from "../slices/resourceSlice";
+import claimsReducer from "../slices/claimSlice";
+import providerReducer from "../slices/iProviderSlice";
+import claimDetailsReducer from "../slices/claimDetailSlice";
 
 export const store = configureStore({
   reducer: {
@@ -20,8 +28,9 @@ export const store = configureStore({
     planType: planTypeReducer,
     enrolleeClass: enrolleeClassReducer,
     claims: claimsReducer,
-     claimDetails: claimDetailsReducer,
+    claimDetails: claimDetailsReducer,
     allProviders: providerReducer,
+    banks: bankReducer,
     [providerApiSlice.reducerPath]: providerApiSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
