@@ -1,4 +1,4 @@
-// services/slices/corporateSlice.ts
+
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { createCorporate, fetchCorporateEntities } from "../thunks/corporateThunk";
 import type { CorporateEntity } from "../../types/iCorporate"; 
