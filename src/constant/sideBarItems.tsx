@@ -63,6 +63,7 @@ export const ADMIN_SIDEBAR: SidebarItem[] = [
     icon: <SettingsIcon className="w-5 h-5" />,
     label: "Settings",
     active: false,
+    path:"/enrollee/settings"
  
   }
 ];

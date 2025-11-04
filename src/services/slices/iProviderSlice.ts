@@ -2,7 +2,6 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { ProviderState, ProviderEntity } from '../../types/iProvider';
 import { createProvider, fetchProviders, fetchProviderById, updateProvider } from '../thunks/iProviderThunk';
 
-
 const initialState: ProviderState = {
   providers: [],
   loading: false,

@@ -16,6 +16,7 @@ import {
 import claimsReducer from "../slices/claimSlice";
 import providerReducer from "../slices/iProviderSlice";
 import claimDetailsReducer from "../slices/claimDetailSlice";
+import authorizationReducer from "../slices/authorizationSlice";
 
 export const store = configureStore({
   reducer: {
@@ -31,6 +32,7 @@ export const store = configureStore({
     claimDetails: claimDetailsReducer,
     allProviders: providerReducer,
     banks: bankReducer,
+    authorizations: authorizationReducer,
     [providerApiSlice.reducerPath]: providerApiSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>

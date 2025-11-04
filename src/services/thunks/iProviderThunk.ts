@@ -30,6 +30,7 @@ export const fetchProviderById = createAsyncThunk(
   }
 );
 
+
 // Update provider
 export const updateProvider = createAsyncThunk(
   "providers/updateProvider",

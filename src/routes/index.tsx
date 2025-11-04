@@ -9,6 +9,7 @@ import { ClaimsManagement } from "../pages/ClaimsManagement";
 
 import Tariffs from "../pages/Tariffs";
 import Settings from "../pages/Settings";
+
 import EnrolleesManagement from "../pages/EnrolleesManagement";
 import EnrolleeDetails from "../pages/EnrolleeDetails";
 
@@ -18,11 +19,14 @@ import EnrolleesPage from "../pages/enrollee/EnrolleesPage";
 import Corporate from "../pages/enrollee/registration/Corporate";
 import { NemsasManagement } from "../pages/nemsas/NemsasManagement";
 import AllProviders from "../pages/provider/AllProviders";
-// import { ProviderRegistration } from "../pages/provider/Registration";
 import { Claims } from "../pages/payments/Claims";
 import ProviderDetails from "../pages/provider/ProviderDetails";
 import ProviderRegistration from "../pages/provider/Registration";
-// import Claims from "../pages/payments/Claims";
+import {Authorization} from "../pages/payments/Authorization";
+import ESettings from "../pages/settings/ESettings";
+import EditProvider from "../pages/provider/EditProvider";
+
+
 
 
 const AppRoutes = () => {
@@ -35,9 +39,9 @@ const AppRoutes = () => {
         {/* Public route */}
         <Route path="/login" element={<Login />} />
 
-        <Route path="/" element={<ProviderProvider><ProtectedRoute /></ProviderProvider>}> 
-        <Route path="dashboard" element={<Layout><Dashboard /></Layout>} />
-         
+        <Route path="/" element={<ProviderProvider><ProtectedRoute /></ProviderProvider>}>
+          <Route path="dashboard" element={<Layout><Dashboard /></Layout>} />
+
           <Route path="claims" element={<Layout><ClaimsManagement /></Layout>} />
           <Route path="nemsas-management" element={<Layout><NemsasManagement /></Layout>} />
           <Route path="enrollee-management" element={<Layout><EnrolleesManagement /></Layout>} />
@@ -47,24 +51,28 @@ const AppRoutes = () => {
 
           {/* Individual Provider route */}
           <Route path="providers/:id" element={<Layout><ProviderDetails /></Layout>} />
-              <Route path="provider/registration" element={<Layout><ProviderRegistration /></Layout>} />
-          
+          <Route path="providers/:id/edit" element={<Layout><EditProvider /></Layout>} />
+          <Route path="provider/registration" element={<Layout><ProviderRegistration /></Layout>} />
+
           <Route path="enrollee/">
-       
-           <Route path="dashboard" element={<Layout><Dashboard /></Layout>} />
+
+            <Route path="dashboard" element={<Layout><Dashboard /></Layout>} />
             <Route path="enrollees" element={<Layout><EnrolleesPage /></Layout>} />
-          
-          <Route path="registration/individual" element={<Layout><Individual /></Layout>} />
-          <Route path="registration/corporate" element={<Layout><Corporate /></Layout>} />
 
-               <Route path="providers/all" element={<Layout><AllProviders /></Layout>} />
-           
-              
+            <Route path="registration/individual" element={<Layout><Individual /></Layout>} />
+            <Route path="registration/corporate" element={<Layout><Corporate /></Layout>} />
 
-               <Route path="payments/claims" element={<Layout><Claims /></Layout>} />
+            <Route path="providers/all" element={<Layout><AllProviders /></Layout>} />
+
+            <Route path="payments/authorization" element={<Layout><Authorization /></Layout>} />
+            <Route path="payments/claims" element={<Layout><Claims /></Layout>} />
+
+            <Route path="settings" element={<Layout><ESettings /></Layout>} />
+
+
           </Route>
         </Route>
-         
+
       </Routes>
     </BrowserRouter>
   );
