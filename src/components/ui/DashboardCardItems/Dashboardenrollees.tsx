@@ -50,7 +50,7 @@ const NumberOfEnrollees = () => {
   return (
     <div className="bg-white p-4  shadow w-[100%]">
       <div className="flex justify-between items-start gap-40 mb-4">
-        <h2 className="text-lg font-semibold">Number of Enrollees-128k</h2>
+        <h2 className="text-lg font-semibold">Number of Patients-128k</h2>
     
         <select
           {...register("period")}
@@ -69,11 +69,11 @@ const NumberOfEnrollees = () => {
         <div className="flex gap-20 mb-2 text-sm items-right flex-end">
         <div className="flex  gap-2">
           <span className="w-3 h-3 rounded-sm" style={{ backgroundColor: "#2C9A5B" }}></span>
-          <span className="font-medium">Individual Enrollee</span>
+          {/* <span className="font-medium">Individual Enrollee</span> */}
         </div>
         <div className="flex gap-2">
           <span className="w-3 h-3 rounded-sm" style={{ backgroundColor: "#A7D7A9" }}></span>
-          <span className="font-medium">Employer Enrollee</span>
+          {/* <span className="font-medium">Employer Enrollee</span> */}
         </div>
       </div>
       </div>

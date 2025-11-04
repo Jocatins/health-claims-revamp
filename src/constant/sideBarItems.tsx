@@ -20,16 +20,16 @@ export const ADMIN_SIDEBAR: SidebarItem[] = [
     active: false,
     path: "/enrollee/dashboard"
   },
-  {
-    icon: <EnrolleeIcon className="w-5 h-5" />,
-    label: "Enrollees",
-    active: false,
-    children: [
-      { icon: null, label: "All Enrollees", active: false, path:"/enrollee/enrollees" },
-      { icon: null, label: "Enrollee Registration", active: false, path: "/enrollee/registration/individual" },
+  // {
+  //   icon: <EnrolleeIcon className="w-5 h-5" />,
+  //   label: "Enrollees",
+  //   active: false,
+  //   children: [
+  //     { icon: null, label: "All Enrollees", active: false, path:"/enrollee/enrollees" },
+  //     { icon: null, label: "Enrollee Registration", active: false, path: "/enrollee/registration/individual" },
    
-    ]
-  },
+  //   ]
+  // },
   {
     icon: <EnrolleeIcon className="w-5 h-5" />,
     label: "Providers",
@@ -41,7 +41,7 @@ export const ADMIN_SIDEBAR: SidebarItem[] = [
   },
   {
     icon: <EnrolleeIcon className="w-5 h-5" />,
-    label: "Payments",
+    label: "Claims",
     active: false,
     children: [
       { icon: null, label: "Emergency Claims", active: false, path: "/enrollee/payments/claims" },
@@ -79,7 +79,7 @@ export const PROVIDER_SIDEBAR: SidebarItem[] = [
       { icon: null, label: "Emergency Claims", active: false, path: "/nemsas-management" }
     ]
   },
-  { icon: <EnrolleeIcon className="w-5 h-5" />, label: "Enrollees Management", active: false, path: "/enrollee-management" },
+  // { icon: <EnrolleeIcon className="w-5 h-5" />, label: "Enrollee Management", active: false, path: "/enrollee-management" },
   { icon: <SettingsIcon className="w-5 h-5" />, label: "Settings", active: false, path: "/settings"  },
   {  icon: <SettingsIcon className="w-5 h-5" />, label: "Tariff", active: false, path: "/tariff"  },
 ];

@@ -24,7 +24,7 @@ const Button: React.FC<ButtonProps> = ({
   className = "",
   size = "md",
   variant = "solid",
-  color = "red", // Default color
+  color = "red" , 
 }) => {
   // Color styles
   const colorStyles = {

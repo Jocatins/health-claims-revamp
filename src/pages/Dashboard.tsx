@@ -13,26 +13,26 @@ const Dashboard: React.FC = () => {
           value={125}
           percentage="2.5% Last Month"
           changeColor="text-red-500"
-          title="New Enrollees"
+          title="New Claims"
         />
         <DashboardCard
           indicatorColor="bg-red-100 text-red-600"
           value={150}
           percentage="2.5% Last Month"
           changeColor="text-[#DC2626]-500"
-          title="Expired Plan"
+          title="Approved"
         />
         <DashboardCard
           indicatorColor="bg-blue-100 text-blue-600"
           value={100}
           percentage="1.56% Last Month"
           changeColor="text-red-500"
-          title="Renewed Plan"
+          title="Disputed"
         />
         <DashboardCard
           indicatorColor="bg-orange-100 text-orange-600"
           value={125}
-          title="Total Healthcare Providers"
+          title="Declined"
         />
       </div>
 
@@ -44,7 +44,7 @@ const Dashboard: React.FC = () => {
         <div className="bg-white justify-center items-center w-[40%] flex flex-col gap-6">
           <StatCard
             percentage={45}
-            title="Number of Enrollees"
+            title="Number of Patients"
             bgColor="bg-[#DC2626]-50"
             textColor="text-[#DC2626]-600"
             pathColor="#2C9A5B"

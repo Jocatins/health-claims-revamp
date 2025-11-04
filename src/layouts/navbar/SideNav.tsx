@@ -21,6 +21,9 @@ const SideNav: React.FC<SideNavProps> = () => {
   
   const sidebarItems = user?.isProvider ? PROVIDER_SIDEBAR : ADMIN_SIDEBAR;
 
+    // Conditional header text based on user type
+  const headerText = user?.isProvider ? "Absolute Care" : "NEMSAS";
+
   const isActive = (path: string | undefined) => {
     return path && location.pathname === path;
   };
@@ -33,7 +36,10 @@ const SideNav: React.FC<SideNavProps> = () => {
       <div className="flex items-center justify-center p-4">
         {/* <HimisLogo className="w-8 h-8" /> */}
        <img src={nemsasImage} alt="NEMSAS Logo" className="w-8 h-8" />
-        <h1 className="text-xl text-[#DC2626]  text-center">NEMSAS</h1>
+        {/* <h1 className="text-xl text-[#DC2626]  text-center">NEMSAS</h1> */}
+         <h1 className="text-xl text-[#DC2626] text-center">
+          {headerText}
+        </h1>
       </div>
 
       <nav className="flex-1 space-y-1 mt-2 overflow-y-auto">

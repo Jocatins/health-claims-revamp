@@ -1,31 +1,22 @@
 import { useState, useEffect, useCallback } from "react";
-
 import { useSelector } from "react-redux";
 import type { RootState } from "../../services/store/store";
-
 import EmptyState from "../../components/ui/EmptyState";
 import Table from "../../components/ui/Table";
-
-import { FaEye } from "react-icons/fa";
-import NemsasClaimModal from "../../components/ui/NemsasClaimModal";
+import NemsasModal from "../../components/ui/NemsasModal";
 import Modal from "../../components/ui/Modal";
 import Button from "../../components/ui/Button";
 import BatchUploadModal from "../../components/ui/BatchUploadModal";
 import {
   exportClaimsReport as exportClaimsReportApi,
-  fetchClaimDetails,
 } from "../../services/api/claimsApi";
-
 import { useAppSelector, useAppDispatch } from "../../hooks/redux";
 import { fetchClaims } from "../../services/thunks/claimsThunk";
 import { clearError } from "../../services/slices/claimSlice";
-import NemsasDetailsModal from "../../components/ui/NemsasDetailsModal";
-import type { ClaimItem } from "../../types/claims";
 
 // Move the helper function to the top
 const getClaimStatusText = (status: number | string): string => {
   const statusNum = typeof status === "string" ? parseInt(status, 10) : status;
-
   const statusMap: { [key: number]: string } = {
     0: "Pending",
     1: "Approved",
@@ -48,7 +39,7 @@ export const NemsasManagement = () => {
   } = useAppSelector((state) => state.claims);
   const dispatch = useAppDispatch();
 
-  // Get user data from Redux auth state - similar to Flutter's currentUser
+  // Get user data from Redux auth state
   const currentUser = useSelector((state: RootState) => state.auth.user);
 
   // Debug: Check what's in Redux
@@ -78,6 +69,12 @@ export const NemsasManagement = () => {
     status: string;
   };
 
+  // Add this currency formatting function
+  const formatCurrency = (amount: number | undefined): string => {
+    if (amount === undefined || amount === null) return "0.00";
+    return amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+  };
+
   const tableClaims: TableClaim[] = (reduxClaims || []).map((claim) => ({
     id: claim.id || "N/A",
     name: claim.enrolleeName || "N/A",
@@ -85,25 +82,14 @@ export const NemsasManagement = () => {
     date: claim.serviceDate
       ? new Date(claim.serviceDate).toLocaleDateString()
       : "N/A",
-    amount: `$${claim.amount?.toFixed(2) || "0.00"}`,
+    amount: `₦${formatCurrency(claim.amount) || "0.00"}`,
     status: getClaimStatusText(claim.claimStatus),
   }));
-
-  // Modal state for claim details
-  const [showDetailsModal, setShowDetailsModal] = useState(false);
- 
-  const [selectedClaim, setSelectedClaim] = useState<ClaimItem[] | null>(null);
-  // const [selectedClaimItems, setSelectedClaimItems] = useState<ClaimItem[] | null>(null);
-  const [detailsLoading, setDetailsLoading] = useState(false);
-  const [detailsError, setDetailsError] = useState("");
 
   // Export modal state
   const [showExportModal, setShowExportModal] = useState(false);
   const [exportLoading, setExportLoading] = useState(false);
   const [exportError, setExportError] = useState("");
-
-  // const { selectedProviderId } = useProviderContext();
-
 
   const loadClaims = useCallback(() => {
     console.log(" loadClaims called");
@@ -136,7 +122,7 @@ export const NemsasManagement = () => {
         SortBy: "createdDate",
       })
     );
-  }, [dispatch, currentUser]); // Add currentUser to dependencies
+  }, [dispatch, currentUser]);
 
   // Load claims when component mounts AND when currentUser is available
   useEffect(() => {
@@ -148,7 +134,7 @@ export const NemsasManagement = () => {
     } else {
       console.log("⏳ Waiting for user data...");
     }
-  }, [loadClaims, currentUser]); // Add currentUser to dependencies
+  }, [loadClaims, currentUser]);
 
   // Clear errors on unmount
   useEffect(() => {
@@ -187,7 +173,6 @@ export const NemsasManagement = () => {
           <div>{error}</div>
           <Button
             onClick={loadClaims}
-            // style={{ marginTop: 16 }}
           >
             Retry Loading Claims
           </Button>
@@ -234,7 +219,7 @@ export const NemsasManagement = () => {
             }}
           >
             <div style={{ display: "flex", gap: 8 }}>
-              <Button variant="outline">Filter</Button>
+              {/* Filter button can be added here if needed */}
             </div>
             <div style={{ display: "flex", gap: 8 }}>
               <Button
@@ -252,17 +237,14 @@ export const NemsasManagement = () => {
           <Table
             headers={[
               "S/N",
-              "Enrollee name",
-              "Enrollee Id",
+              "Patient name",
               "Submitted date",
               "Total amount",
               "Status",
-              "Action",
             ]}
             rows={tableClaims.map((claim, index) => [
               (index + 1).toString(),
               claim.name,
-              claim.enrolleeId,
               claim.date,
               claim.amount,
               <span
@@ -276,47 +258,8 @@ export const NemsasManagement = () => {
               >
                 {claim.status}
               </span>,
-              <span
-                key={`action-${claim.id}`}
-                style={{ cursor: "pointer", color: "#217346" }}
-                title="View"
-                onClick={async () => {
-                  setDetailsLoading(true);
-                  setShowDetailsModal(true);
-                  try {
-                    const details = await fetchClaimDetails(claim.id);
-                    setSelectedClaim(details);
-                    setDetailsError("");
-                  } catch {
-                    setSelectedClaim(null);
-                    setDetailsError("Failed to fetch claim details");
-                  }
-                  setDetailsLoading(false);
-                }}
-              >
-                <FaEye />
-              </span>,
             ])}
           />
-
-          <NemsasDetailsModal
-            open={showDetailsModal}
-            onClose={() => setShowDetailsModal(false)}
-            claimItems={selectedClaim || []} // ✅ Correct - passing the actual data
-            loading={detailsLoading}
-            error={detailsError}
-          />
-
-          {detailsLoading && (
-            <div style={{ textAlign: "center", padding: 24 }}>
-              Loading claim details...
-            </div>
-          )}
-          {detailsError && (
-            <div style={{ textAlign: "center", color: "red", padding: 24 }}>
-              {detailsError}
-            </div>
-          )}
 
           <div
             style={{
@@ -338,7 +281,7 @@ export const NemsasManagement = () => {
         </div>
       )}
 
-      {/* Rest of your modals remain the same */}
+      {/* Modals */}
       <Modal
         open={showCreateModal}
         onClose={() => setShowCreateModal(false)}
@@ -368,7 +311,7 @@ export const NemsasManagement = () => {
         </div>
       </Modal>
 
-      <NemsasClaimModal
+      <NemsasModal
         open={showNemsasClaimModal}
         onClose={() => setShowNemsasClaimModal(false)}
         onSubmitted={() => {
