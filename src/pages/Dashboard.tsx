@@ -51,7 +51,7 @@ const Dashboard: React.FC = () => {
           />
           <StatCard
             percentage={75}
-            title="Total Number Of Dependants"
+            title="Total Number Of Providers"
             bgColor="bg-red-50"
             textColor="text-red-600"
             pathColor="#D9534F"
