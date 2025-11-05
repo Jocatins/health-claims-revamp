@@ -16,17 +16,18 @@ import { fetchNemsasClaims, fetchNemsasClaimsByPatient } from "../../services/th
 import { clearError } from "../../services/slices/nemsasSlice";
 import { useProviderContext } from "../../context/useProviderContext";
 
-// Move the helper function to the top
-const getClaimStatusText = (status: number | string): string => {
-  const statusNum = typeof status === "string" ? parseInt(status, 10) : status;
-  const statusMap: { [key: number]: string } = {
-    0: "Pending",
-    1: "Approved",
-    2: "Rejected",
-    3: "Paid",
-    4: "Disputed",
-  };
-  return statusMap[statusNum] || "Unknown";
+// Helper: backend now returns textual claimStatus; keep numeric fallback for legacy responses
+const legacyStatusCodeMap: Record<number,string> = {
+  0: 'Pending',
+  1: 'Approved',
+  2: 'Rejected',
+  3: 'Paid',
+  4: 'Disputed'
+};
+const getClaimStatusText = (status: number | string | undefined): string => {
+  if (status === undefined || status === null) return 'Pending';
+  if (typeof status === 'number') return legacyStatusCodeMap[status] || 'Pending';
+  return status.trim() || 'Pending';
 };
 
 export const NemsasManagement = () => {
@@ -107,10 +108,10 @@ export const NemsasManagement = () => {
       ? claim.claimItems.reduce((sum: number, item: NemsasClaimItem) => sum + (item?.amount || 0), 0)
       : (claim.amount || 0);
 
-    // Derive status: backend provides numeric status on claimItems; use first item's status or fallback
-    const rawStatus: string | number = Array.isArray(claim.claimItems) && claim.claimItems.length > 0
-      ? (claim.claimItems[0].claimStatus ?? claim.claimItems[0].status ?? '0')
-      : (claim.claimStatus ?? '0');
+    // Derive status: backend now provides textual claimStatus; still fallback to legacy numeric if present
+    const rawStatus: string | number | undefined = Array.isArray(claim.claimItems) && claim.claimItems.length > 0
+      ? (claim.claimItems[0].claimStatus ?? claim.claimItems[0].status)
+      : claim.claimStatus;
 
     return {
       id: claim.id || 'N/A',
@@ -191,13 +192,16 @@ export const NemsasManagement = () => {
   }, [dispatch]);
 
   // Status color map
-  const statusColor = {
-    Approved: "#217346",
-    Paid: "#6b6f80",
-    Disputed: "#d32f2f",
-    Pending: "#ff9800",
-    Rejected: "#d32f2f",
-    Unknown: "#6b6f80",
+  const statusColor: Record<string,string> = {
+    Approved: '#217346',
+    Paid: '#6b6f80',
+    Disputed: '#d32f2f',
+    Pending: '#ff9800',
+    Rejected: '#d32f2f',
+    Resolved: '#2e7d32',
+    Processed: '#1976d2',
+    Submitted: '#1976d2',
+    New: '#6b6f80'
   };
 
   // Show loading while waiting for user data

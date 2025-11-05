@@ -101,9 +101,11 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
       if (response?.isSuccess) {
         toastSuccess(response.message || "NEMSAS Claim created successfully");
         // Refresh list (non-blocking)
+        // Refresh list (now including NEMSASId to avoid empty first fetch)
         dispatch(
           fetchNemsasClaims({
             ProviderId: selectedProviderId,
+            NEMSASId: NEMSAS_ID,
             PageNumber: 1,
             PageSize: 500,
             SortBy: "createdDate",
