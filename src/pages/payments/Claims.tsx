@@ -1,6 +1,6 @@
 // new claims page, for demo
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { formatDate, dateFormats } from '../../utils/dateFormatter';
 import EmptyState from '../../components/ui/EmptyState';
 import Table from '../../components/ui/Table';
@@ -10,7 +10,7 @@ import type { ClaimItem } from '../../types/claims';
 import DemoDetailsModal from '../../components/ui/DemoDetailsModal';
 import { useProviderContext } from '../../context/useProviderContext';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
-import { fetchNemsasClaims } from '../../services/thunks/nemsasThunk';
+import { fetchNemsasClaims, fetchNemsasClaimsByPatient } from '../../services/thunks/nemsasThunk';
 import { fetchNemsasClaimById } from '../../services/api/nemsasApi';
 
 export const Claims = () => {
@@ -29,6 +29,12 @@ export const Claims = () => {
   const { selectedProviderId } = useProviderContext();
   const { claims: backendClaims, loading, error } = useAppSelector(state => state.nemsas);
   const NEMSAS_ID = '2e4c6fa4-6ac3-43bb-b78f-326dccac110c';
+
+  // Filters (aligned with NemsasManagement)
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
+  const [claimStatus, setClaimStatus] = useState<string>('');
+  const [patientNumberFilter, setPatientNumberFilter] = useState<string>('');
 
   // Status mapping (numeric legacy -> text) and reverse
   const statusCodeToText = useMemo<Record<number,string>>(() => ({
@@ -92,18 +98,34 @@ export const Claims = () => {
     setTableClaims(mapped);
   }, [backendClaims, statusCodeToText]);
 
-  // Initial load from backend
+  // General claims fetch with filters
+  const loadClaims = useCallback(() => {
+    if (!selectedProviderId) return;
+    dispatch(fetchNemsasClaims({
+      ProviderId: selectedProviderId,
+      NEMSASId: NEMSAS_ID,
+      StartDate: startDate ? new Date(startDate).toISOString() : undefined,
+      EndDate: endDate ? new Date(endDate).toISOString() : undefined,
+      ClaimStatus: claimStatus || undefined,
+      PageNumber: 1,
+      PageSize: 500,
+      SortBy: 'createdDate'
+    }));
+  }, [dispatch, selectedProviderId, startDate, endDate, claimStatus]);
+
+  // Patient-specific search
+  const searchByPatient = useCallback(() => {
+    if (!selectedProviderId || !patientNumberFilter.trim()) return;
+    dispatch(fetchNemsasClaimsByPatient({
+      patientNumber: patientNumberFilter.trim(),
+      ProviderId: selectedProviderId
+    }));
+  }, [dispatch, selectedProviderId, patientNumberFilter]);
+
+  // Initial load
   useEffect(() => {
-    if (selectedProviderId) {
-      dispatch(fetchNemsasClaims({
-        ProviderId: selectedProviderId,
-        NEMSASId: NEMSAS_ID,
-        PageNumber: 1,
-        PageSize: 500,
-        SortBy: 'createdDate'
-      }));
-    }
-  }, [dispatch, selectedProviderId]);
+    if (selectedProviderId) loadClaims();
+  }, [selectedProviderId, loadClaims]);
 
 
 const handleViewClaim = async (claimId: string) => {
@@ -174,15 +196,7 @@ const handleViewClaim = async (claimId: string) => {
 
   // Refresh mapping only (backendClaims effect handles updates)
   const refreshClaims = () => {
-    if (selectedProviderId) {
-      dispatch(fetchNemsasClaims({
-        ProviderId: selectedProviderId,
-        NEMSASId: NEMSAS_ID,
-        PageNumber: 1,
-        PageSize: 500,
-        SortBy: 'createdDate'
-      }));
-    }
+    loadClaims();
   };
 
   const statusColor = {
@@ -226,27 +240,108 @@ const handleViewClaim = async (claimId: string) => {
               alignItems: "center",
               marginBottom: 16,
             }}
-          >
-            <FormHeader>Claims ({tableClaims.length})</FormHeader>
+          >            
             
             {/* Action Buttons */}
-            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-              <button
-                onClick={refreshClaims}
-                style={{
-                  padding: "8px 12px",
-                  borderRadius: 4,
-                  border: "1px solid #ccc",
-                  background: "#f5f5f5",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 8,
-                }}
-              >
-                <FaSync /> Refresh
-              </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+              {/* Filters */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                <label style={{ fontSize: 12, color: '#555' }}>Start Date</label>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  style={{ padding: 6, border: '1px solid #ccc', borderRadius: 4 }}
+                />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                <label style={{ fontSize: 12, color: '#555' }}>End Date</label>
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  style={{ padding: 6, border: '1px solid #ccc', borderRadius: 4 }}
+                />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                <label style={{ fontSize: 12, color: '#555' }}>Status</label>
+                <select
+                  value={claimStatus}
+                  onChange={(e) => setClaimStatus(e.target.value)}
+                  style={{ padding: 6, border: '1px solid #ccc', borderRadius: 4 }}
+                >
+                  <option value="">All</option>
+                  {['Pending','Processed','Rejected','Resolved','Approved','Paid'].map(s => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </select>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                <label style={{ fontSize: 12, color: '#555' }}>Patient Number</label>
+                <div style={{ display: 'flex', gap: 4 }}>
+                  <input
+                    type="text"
+                    value={patientNumberFilter}
+                    onChange={(e) => setPatientNumberFilter(e.target.value)}
+                    placeholder="e.g. 000001"
+                    style={{ padding: 6, border: '1px solid #ccc', borderRadius: 4, minWidth: 120 }}
+                  />
+                  <button
+                    onClick={searchByPatient}
+                    disabled={!patientNumberFilter.trim()}
+                    style={{
+                      padding: '6px 10px',
+                      borderRadius: 4,
+                      border: '1px solid #ccc',
+                      background: '#f5f5f5',
+                      cursor: patientNumberFilter.trim() ? 'pointer' : 'not-allowed'
+                    }}
+                  >Search</button>
+                </div>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                <label style={{ fontSize: 12, color: '#555' }}>Actions</label>
+                <div style={{ display: 'flex', gap: 6 }}>
+                  <button
+                    onClick={loadClaims}
+                    style={{
+                      padding: '6px 10px',
+                      borderRadius: 4,
+                      border: '1px solid #ccc',
+                      background: '#f5f5f5',
+                      cursor: 'pointer'
+                    }}
+                  >Apply</button>
+                  <button
+                    onClick={() => { setStartDate(''); setEndDate(''); setClaimStatus(''); setPatientNumberFilter(''); loadClaims(); }}
+                    style={{
+                      padding: '6px 10px',
+                      borderRadius: 4,
+                      border: '1px solid #ccc',
+                      background: '#f5f5f5',
+                      cursor: 'pointer'
+                    }}
+                  >Reset</button>
+                  <button
+                    onClick={refreshClaims}
+                    style={{
+                      padding: '6px 10px',
+                      borderRadius: 4,
+                      border: '1px solid #ccc',
+                      background: '#f5f5f5',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 6
+                    }}
+                  ><FaSync /> Refresh</button>
+                </div>
+              </div>
             </div>
+          </div>
+
+          <div className="mt-10 mb-3">
+            <FormHeader>Claims ({tableClaims.length})</FormHeader>
           </div>
 
           <Table

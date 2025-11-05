@@ -170,8 +170,11 @@ const DemoDetailsModal: React.FC<NemsasDetailsModalProps> = ({
             marginBottom: 16,
           }}
         >
-          <Button onClick={handleReject}>Reject</Button>
-          <Button color="green" onClick={handleApprove}>Approve</Button>
+          <Button color="red" onClick={handleReject}>Decline</Button>
+          <div className="flex gap-3">
+            <Button color="gray" onClick={handleReject}>Dispute</Button>
+            <Button color="green" onClick={handleApprove}>Approve</Button>
+          </div>
         </div>
         {/* Dispute workflow removed */}
         
