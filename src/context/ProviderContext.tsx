@@ -24,7 +24,8 @@ export const ProviderProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const [cachedProviders, setCachedProviders] = useState<Provider[]>(initialProviders);
   const shouldSkipQuery = cachedProviders.length > 0; // skip network if we have fresh cache
-  const { data, isLoading, error } = useGetProvidersQuery(undefined, { skip: shouldSkipQuery });
+  // Always request up to 100 providers (paging support added)
+  const { data, isLoading, error } = useGetProvidersQuery({ pageSize: 100, pageNumber: 1 }, { skip: shouldSkipQuery });
 
   // Merge: prefer cached list until new network data arrives
   const providers = useMemo<Provider[]>(() => {
@@ -64,10 +65,10 @@ export const ProviderProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   return (
     <ProviderContext.Provider value={{
-  providers,
+      providers,
       selectedProviderId,
       setSelectedProviderId,
-  loading: shouldSkipQuery ? false : isLoading,
+      loading: shouldSkipQuery ? false : isLoading,
       error: error ? ('status' in error ? `Error ${error.status}` : 'Failed to load providers') : null
     }}>
       {children}

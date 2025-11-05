@@ -287,7 +287,7 @@ export const NemsasManagement = () => {
                 className="p-2 border border-[#ccc] rounded-sm"
               />
             </div>
-            <div className="flex flex-col gap-1">
+            {/* <div className="flex flex-col gap-1">
               <label className="text-sm text-[#555]">Status</label>
               <select
                 value={claimStatus}
@@ -299,7 +299,7 @@ export const NemsasManagement = () => {
                   <option key={s} value={s}>{s}</option>
                 ))}
               </select>
-            </div>
+            </div> */}
             <div className="col-span-2 flex flex-col gap-1">
               <label style={{ fontSize: 12, color: '#555' }}>Patient Number</label>
               <div className="flex gap-1">

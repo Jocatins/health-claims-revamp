@@ -176,16 +176,7 @@ const DemoDetailsModal: React.FC<NemsasDetailsModalProps> = ({
   return (
     <Modal open={open} onClose={onClose} title="Claims Details" width="800px">
       <div style={{ padding: "8px 0 0 0" }}>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 16,
-            flexWrap: 'wrap',
-            gap: 12
-          }}
-        >
+        <div className="flex justify-between items-center mb-4 flex-wrap gap-3">
           {/* Hide Reject when overall status is Rejected */}
           {overallStatus !== 'Rejected' && (
             <Button color="red" onClick={handleReject}>Reject</Button>

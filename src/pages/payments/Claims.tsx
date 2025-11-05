@@ -91,7 +91,7 @@ export const Claims = () => {
         phoneNumber: claim.phoneNumber || 'N/A',
         serviceDate: claim.serviceDate || claim.claimDate || '',
         amount: totalAmount.toFixed(2),
-      status: statusText,
+        status: statusText,
         submittedAt: claim.claimDate || claim.createdDate || claim.serviceDate || '',
       };
     });
@@ -128,60 +128,60 @@ export const Claims = () => {
   }, [selectedProviderId, loadClaims]);
 
 
-const handleViewClaim = async (claimId: string) => {
-  setDetailsLoading(true);
-  setShowDetailsModal(true);
-  try {
-    const res = await fetchNemsasClaimById(claimId);
-    if (res?.isSuccess && res?.data) {
-      const data = res.data;
-      setSelectedPatientInfo({
-        patientName: data.patientName || data.claimName || 'N/A',
-        phoneNumber: data.phoneNumber || 'N/A'
-      });
-      const convertedItems: ClaimItem[] = (data.claimItems || []).map((ci: BackendClaimItem) => ({
-        id: ci.id,
-        serviceRendered: ci.name,
-        amount: ci.amount,
-        approvalCode: '',
-        serviceDate: data.serviceDate,
-        quantity: ci.quantity || 1,
-        price: ci.amount,
-        discount: 0,
-        diagnosis: '',
-        referralHospital: '',
-        nhisno: '',
-        attachments: [],
-        claimStatus: typeof (ci.claimStatus ?? ci.status) === 'number'
-          ? (ci.claimStatus as number)
-          : textToStatusCode[String(ci.claimStatus ?? ci.status ?? 'Pending')] ?? 0,
-        isActive: true,
-        enrolleeName: data.patientName,
-        patientEnrolleeNumber: data.patientNumber || '',
-        providerId: data.providerId,
-        hmoId: data.hmoId || '',
-        enrolleeEmail: '',
-        enrolleePhoneNumber: data.phoneNumber || '',
-        claimType: ci.claimType || 'EmergencyService',
-        planTypeName: '',
-        createdDate: data.claimDate || data.serviceDate,
-        modifiedDate: data.claimDate || data.serviceDate,
-        planTypeId: '',
-        providerName: '',
-      }));
-      setClaimItems(convertedItems);
-      setDetailsError('');
-    } else {
+  const handleViewClaim = async (claimId: string) => {
+    setDetailsLoading(true);
+    setShowDetailsModal(true);
+    try {
+      const res = await fetchNemsasClaimById(claimId);
+      if (res?.isSuccess && res?.data) {
+        const data = res.data;
+        setSelectedPatientInfo({
+          patientName: data.patientName || data.claimName || 'N/A',
+          phoneNumber: data.phoneNumber || 'N/A'
+        });
+        const convertedItems: ClaimItem[] = (data.claimItems || []).map((ci: BackendClaimItem) => ({
+          id: ci.id,
+          serviceRendered: ci.name,
+          amount: ci.amount,
+          approvalCode: '',
+          serviceDate: data.serviceDate,
+          quantity: ci.quantity || 1,
+          price: ci.amount,
+          discount: 0,
+          diagnosis: '',
+          referralHospital: '',
+          nhisno: '',
+          attachments: [],
+          claimStatus: typeof (ci.claimStatus ?? ci.status) === 'number'
+            ? (ci.claimStatus as number)
+            : textToStatusCode[String(ci.claimStatus ?? ci.status ?? 'Pending')] ?? 0,
+          isActive: true,
+          enrolleeName: data.patientName,
+          patientEnrolleeNumber: data.patientNumber || '',
+          providerId: data.providerId,
+          hmoId: data.hmoId || '',
+          enrolleeEmail: '',
+          enrolleePhoneNumber: data.phoneNumber || '',
+          claimType: ci.claimType || 'EmergencyService',
+          planTypeName: '',
+          createdDate: data.claimDate || data.serviceDate,
+          modifiedDate: data.claimDate || data.serviceDate,
+          planTypeId: '',
+          providerName: '',
+        }));
+        setClaimItems(convertedItems);
+        setDetailsError('');
+      } else {
+        setClaimItems([]);
+        setDetailsError(res?.message || 'Failed to fetch claim details');
+      }
+    } catch {
       setClaimItems([]);
-      setDetailsError(res?.message || 'Failed to fetch claim details');
+      setDetailsError('Failed to fetch claim details');
+    } finally {
+      setDetailsLoading(false);
     }
-  } catch {
-    setClaimItems([]);
-    setDetailsError('Failed to fetch claim details');
-  } finally {
-    setDetailsLoading(false);
-  }
-};
+  };
 
   // Handle modal close
   const handleCloseModal = () => {
@@ -192,7 +192,6 @@ const handleViewClaim = async (claimId: string) => {
       phoneNumber: ""
     });
   };
-
 
   // Refresh mapping only (backendClaims effect handles updates)
   const refreshClaims = () => {
@@ -263,7 +262,7 @@ const handleViewClaim = async (claimId: string) => {
                   style={{ padding: 6, border: '1px solid #ccc', borderRadius: 4 }}
                 />
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              {/* <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                 <label style={{ fontSize: 12, color: '#555' }}>Status</label>
                 <select
                   value={claimStatus}
@@ -275,7 +274,7 @@ const handleViewClaim = async (claimId: string) => {
                     <option key={s} value={s}>{s}</option>
                   ))}
                 </select>
-              </div>
+              </div> */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                 <label style={{ fontSize: 12, color: '#555' }}>Patient Number</label>
                 <div style={{ display: 'flex', gap: 4 }}>
