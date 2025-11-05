@@ -37,7 +37,9 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
   const [patientName, setPatientName] = useState("");
   const [patientNumber, setPatientNumber] = useState(""); // maps to patientNumber in API request body
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [serviceType, setServiceType] = useState(""); // free text per requirement
+  // Constrained service types (dropdown)
+  const SERVICE_TYPE_OPTIONS = ["Observation", "Admission"] as const;
+  const [serviceType, setServiceType] = useState(""); // must choose one
   const STATUS_OPTIONS = ["Pending","Processed","Rejected","Resolved","Approved","Paid"] as const;
   const DEFAULT_STATUS = "Pending";
   const [items, setItems] = useState<ServiceItem[]>([
@@ -261,7 +263,17 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
             </div>
             <div className="flex-1 flex flex-col">
               <label className="text-sm font-medium text-gray-700">Service Type</label>
-              <input value={serviceType} onChange={(e) => setServiceType(e.target.value)} placeholder="e.g. InpatientCare" required style={{ flex:1, padding:8, borderRadius:4, border:"1px solid #ccc"}} />
+              <select
+                value={serviceType}
+                onChange={(e) => setServiceType(e.target.value)}
+                required
+                style={{ flex:1, padding:8, borderRadius:4, border:"1px solid #ccc", background:'#fff' }}
+              >
+                <option value="" disabled>Select service type</option>
+                {SERVICE_TYPE_OPTIONS.map(opt => (
+                  <option key={opt} value={opt}>{opt}</option>
+                ))}
+              </select>
             </div>
           </div>
           
@@ -345,7 +357,7 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
                 {!patientName && <div>• Enter patient name</div>}
                 {!patientNumber && <div>• Enter patient / enrollee number</div>}
                 {!phoneNumber && <div>• Enter phone number</div>}
-                {!serviceType && <div>• Enter service type</div>}
+                {!serviceType && <div>• Select service type</div>}
                 {claimName && claimDate && serviceDate && patientName && patientNumber && phoneNumber && serviceType &&
                   !items.some(item => item.name.trim() && item.amount.trim() && Number(item.amount) > 0) && (
                     <div>• Add at least one claim item with name and amount</div>

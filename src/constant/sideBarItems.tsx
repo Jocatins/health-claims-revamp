@@ -72,7 +72,7 @@ export const PROVIDER_SIDEBAR: SidebarItem[] = [
   {  icon: <DashboardIcon className="w-5 h-5" />, label: "Dashboard", active: false, path: "/enrollee/dashboard" },
    {
     icon: <EnrolleeIcon className="w-5 h-5" />,
-    label: "Providers",
+    label: "Claims",
     active: false,
     children: [
       { icon: null, label: "Claims Management", active: false, path: "/claims" },

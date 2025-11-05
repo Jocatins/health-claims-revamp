@@ -298,7 +298,14 @@ const NemsasClaimDetailsModal: React.FC<NemsasClaimDetailsModalProps> = ({ open,
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                   <label style={{ fontSize: 12 }}>Service Type</label>
-                  <input value={claim.serviceType} onChange={e => setClaim({ ...claim, serviceType: e.target.value })} style={{ padding: 6, border: '1px solid #ccc', borderRadius: 4 }} />
+                  <select
+                    value={claim.serviceType}
+                    onChange={e => setClaim({ ...claim, serviceType: e.target.value })}
+                    style={{ padding: 6, border: '1px solid #ccc', borderRadius: 4, background:'#fff' }}
+                  >
+                    <option value="Observation">Observation</option>
+                    <option value="Admission">Admission</option>
+                  </select>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                   <label style={{ fontSize: 12 }}>Patient Name</label>
