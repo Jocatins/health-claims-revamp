@@ -8,6 +8,7 @@ import { enrolleeClassReducer, enrolleeTypeReducer, genderReducer, maritalStatus
 import claimsReducer from "../slices/claimSlice"
 import providerReducer from "../slices/iProviderSlice"
 import claimDetailsReducer from "../slices/claimDetailSlice"
+import nemsasReducer from "../slices/nemsasSlice"
 
 export const store = configureStore({
   reducer: {
@@ -20,7 +21,8 @@ export const store = configureStore({
     planType: planTypeReducer,
     enrolleeClass: enrolleeClassReducer,
     claims: claimsReducer,
-     claimDetails: claimDetailsReducer,
+    claimDetails: claimDetailsReducer,
+    nemsas: nemsasReducer,
     allProviders: providerReducer,
     [providerApiSlice.reducerPath]: providerApiSlice.reducer,
   },

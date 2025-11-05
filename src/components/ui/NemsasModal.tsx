@@ -2,15 +2,18 @@ import React, { useEffect, useState } from "react";
 import Modal from "./Modal";
 import Button from "./Button";
 import { useProviderContext } from "../../context/useProviderContext";
-import { useSelector } from "react-redux";
-import type { RootState } from "../../services/store/store";
 import SuccessModal from "../form/SuccessModal";
-import { saveClaimToLocalStorage } from "../../utils/localStorageUtils";
+// local storage caching removed for server-first submission
+import { createNemsasClaim } from "../../services/api/nemsasApi";
+import { useCustomToast } from "../../hooks/useCustomToast";
+import { fetchNemsasClaims } from "../../services/thunks/nemsasThunk";
+import { useAppDispatch } from "../../hooks/redux";
 
 export interface ServiceItem {
   name: string;
-  approvalCode: string;
-  amount: string;
+  amount: string; // numeric string
+  claimStatus: string; // Pending | Processed | Rejected | Resolved | Approved | Paid
+  quantity: string; // numeric string for easy binding
 }
 
 interface SingleClaimModalProps {
@@ -19,17 +22,8 @@ interface SingleClaimModalProps {
   onSubmitted?: () => void;
 }
 
-// UI Display Options (what users see)
-const uiServiceOptions = [
-  { label: "Admission", value: "Inpatient care" },
-  { label: "Observation", value: "Outpatient care" },
-];
-
-// Backend Expected Values
-const backendServiceValues = {
-  "Inpatient care": "InpatientCare",
-  "Outpatient care": "OutpatientCare",
-};
+// Constants
+const NEMSAS_ID = "2e4c6fa4-6ac3-43bb-b78f-326dccac110c"; // constant as specified
 
 const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
   open,
@@ -37,15 +31,17 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
   onSubmitted,
 }) => {
   // Patient information - input directly by user
+  const [claimName, setClaimName] = useState("");
+  const [claimDate, setClaimDate] = useState(""); // separate claim date
+  const [serviceDate, setServiceDate] = useState(""); // separate service date
   const [patientName, setPatientName] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_enrolleeIdNumber, setEnrolleeIdNumber] = useState("");
-  const userHmoId = useSelector((s: RootState) => s.auth.user?.hmoId);
+  const [patientNumber, setPatientNumber] = useState(""); // maps to patientNumber in API request body
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [date, setDate] = useState("");
-  const [serviceType, setServiceType] = useState("");
+  const [serviceType, setServiceType] = useState(""); // free text per requirement
+  const STATUS_OPTIONS = ["Pending","Processed","Rejected","Resolved","Approved","Paid"] as const;
+  const DEFAULT_STATUS = "Pending";
   const [items, setItems] = useState<ServiceItem[]>([
-    { name: "", approvalCode: "", amount: "" },
+    { name: "", amount: "", claimStatus: DEFAULT_STATUS, quantity: "1" },
   ]);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
@@ -53,66 +49,77 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const handleAddItem = () => {
-    setItems([...items, { name: "", approvalCode: "", amount: "" }]);
+    setItems([
+      ...items,
+      { name: "", amount: "", claimStatus: DEFAULT_STATUS, quantity: "1" },
+    ]);
   };
 
-  const handleItemChange = (
-    idx: number,
-    field: keyof ServiceItem,
-    value: string
-  ) => {
+  const handleItemChange = (idx: number, field: keyof ServiceItem, value: string) => {
     const newItems = [...items];
     newItems[idx][field] = value;
     setItems(newItems);
   };
 
+  const dispatch = useAppDispatch();
+
+  const { success: toastSuccess, error: toastError } = useCustomToast();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedProviderId || !userHmoId) return;
+    if (!selectedProviderId) return; // provider/nemsas id required
     
     setSubmitting(true);
     setSubmitError("");
     
     try {
-      const nowIso = new Date().toISOString();
-      const claimName = items[0]?.name || `${patientName || "Claim"} - ${date}`;
-
-      // Convert UI service type to backend format
-      const backendClaimType = backendServiceValues[serviceType as keyof typeof backendServiceValues] || "InpatientCare";
-
-      // Create the payload for local storage
-      const claimData = {
-        claimName,
+      const payload = {
+        nemsasId: NEMSAS_ID,
         providerId: selectedProviderId,
-        hmoId: userHmoId,
-        claimDate: nowIso,
-        patientName: patientName,
-
-  
+        claimName,
+        claimDate: claimDate ? new Date(claimDate).toISOString() : new Date().toISOString(),
+        patientName,
+        patientNumber,
         phoneNumber,
-        serviceDate: date,
-        serviceType: backendClaimType,
-        items: items.map((it) => ({
+        serviceDate: serviceDate ? new Date(serviceDate).toISOString() : new Date().toISOString(),
+        serviceType,
+        claimItems: items.map((it) => ({
+          id: crypto.randomUUID(),
           name: it.name,
-          approvalCode: it.approvalCode,
-          amount: it.amount,
+          amount: Number(it.amount) || 0,
+          claimStatus: it.claimStatus || DEFAULT_STATUS,
+          claimType: "EmergencyService",
+          quantity: Number(it.quantity) || 1,
         })),
       };
 
-      // Save to local storage
-      saveClaimToLocalStorage(claimData);
+  // (Optional) If local draft caching is needed, reintroduce saveClaimToLocalStorage with mapped shape.
 
-      setShowSuccessModal(true);
-      if (onSubmitted) onSubmitted();
-      
-      setTimeout(() => {
-        setShowSuccessModal(false);
+      // API call
+      const response = await createNemsasClaim(payload);
+
+      if (response?.isSuccess) {
+        toastSuccess(response.message || "NEMSAS Claim created successfully");
+        // Refresh list (non-blocking)
+        dispatch(
+          fetchNemsasClaims({
+            ProviderId: selectedProviderId,
+            PageNumber: 1,
+            PageSize: 500,
+            SortBy: "createdDate",
+          })
+        );
+        if (onSubmitted) onSubmitted();
+        // Close immediately after toast cue
         onClose();
         resetForm();
-      }, 3000);
+      } else {
+        toastError(response?.message || "Failed to create NEMSAS Claim");
+      }
     } catch (error) {
-      console.error("Claim submission error:", error);
-      setSubmitError("Failed to submit claim. Please try again.");
+  console.error("Claim submission error:", error);
+  toastError("Claim submission failed. Please try again.");
+  setSubmitError("Failed to submit claim.");
     } finally {
       setSubmitting(false);
     }
@@ -124,18 +131,20 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
   };
 
   const resetForm = () => {
+    setClaimName("");
+    setClaimDate("");
+    setServiceDate("");
     setPatientName("");
-    setEnrolleeIdNumber("");
+    setPatientNumber("");
     setPhoneNumber("");
-    setDate("");
     setServiceType("");
-    setItems([{ name: "", approvalCode: "", amount: "" }]);
+  setItems([{ name: "", amount: "", claimStatus: DEFAULT_STATUS, quantity: "1" }]);
     setSubmitError("");
   };
 
   const isFormValid = () => {
     // Check required fields
-    if (!selectedProviderId || !userHmoId || !patientName || !phoneNumber || !date || !serviceType) {
+    if (!selectedProviderId || !claimName || !claimDate || !serviceDate || !patientName || !patientNumber || !phoneNumber || !serviceType) {
       return false;
     }
 
@@ -170,6 +179,18 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
           onSubmit={handleSubmit}
           style={{ display: "flex", flexDirection: "column", gap: 16 }}
         >
+          {/* Claim Name */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <label className="text-sm font-medium text-gray-700">Claim Name</label>
+            <input
+              value={claimName}
+              onChange={(e) => setClaimName(e.target.value)}
+              placeholder="Enter claim name"
+              required
+              style={{ flex: 1, padding: 8, borderRadius: 4, border: "1px solid #ccc" }}
+            />
+          </div>
+
           {/* Patient Name Input */}
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
             <label className="text-sm font-medium text-gray-700">
@@ -189,15 +210,16 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
             />
           </div>
 
-          {/* Enrollee ID Number */}
-          {/* <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          {/* Patient / Enrollee Number */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
             <label className="text-sm font-medium text-gray-700">
-              Enrollee ID Number
+              Patient Number
             </label>
-            <input 
-              value={enrolleeIdNumber}
-              onChange={(e) => setEnrolleeIdNumber(e.target.value)}
-              placeholder="Enter enrollee ID number"
+            <input
+              value={patientNumber}
+              onChange={(e) => setPatientNumber(e.target.value)}
+              placeholder="Enter patient number"
+              required
               style={{
                 flex: 1,
                 padding: 8,
@@ -205,115 +227,84 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
                 border: "1px solid #ccc",
               }}
             />
-          </div> */}
+          </div>
 
           <div style={{ display: "flex", gap: 16 }}>
-            <input
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              placeholder="Phone number"
-              required
-              style={{
-                flex: 1,
-                padding: 8,
-                borderRadius: 4,
-                border: "1px solid #ccc",
-              }}
-            />
-            <input
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              type="date"
-              required
-              style={{
-                flex: 1,
-                padding: 8,
-                borderRadius: 4,
-                border: "1px solid #ccc",
-              }}
-            />
+            <div className="flex-1 flex flex-col">
+              <label className="text-sm font-medium text-gray-700">
+                Phone Number
+              </label>
+              <input
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                placeholder="Phone number"
+                required
+                style={{
+                  flex: 1,
+                  padding: 8,
+                  borderRadius: 4,
+                  border: "1px solid #ccc",
+                }}
+              />
+            </div>
+            <div className="flex-1 flex flex-col">
+              <label className="text-sm font-medium text-gray-700">Service Date</label>
+              <input value={serviceDate} onChange={(e) => setServiceDate(e.target.value)} type="date" required style={{ flex:1, padding:8, borderRadius:4, border:"1px solid #ccc"}} />
+            </div>
           </div>
-          <div className="flex items-center gap-5">
-            <p>Encounter Type</p>
-            <select
-              value={serviceType}
-              onChange={(e) => setServiceType(e.target.value)}
-              required
-              style={{ padding: 8, borderRadius: 4, border: "1px solid #ccc" }}
-            >
-              <option value="">Select</option>
-              {uiServiceOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+          <div style={{ display: "flex", gap: 16 }}>
+            <div className="flex-1 flex flex-col">
+              <label className="text-sm font-medium text-gray-700">Claim Date</label>
+              <input value={claimDate} onChange={(e) => setClaimDate(e.target.value)} type="date" required style={{ flex:1, padding:8, borderRadius:4, border:"1px solid #ccc"}} />
+            </div>
+            <div className="flex-1 flex flex-col">
+              <label className="text-sm font-medium text-gray-700">Service Type</label>
+              <input value={serviceType} onChange={(e) => setServiceType(e.target.value)} placeholder="e.g. InpatientCare" required style={{ flex:1, padding:8, borderRadius:4, border:"1px solid #ccc"}} />
+            </div>
           </div>
           
-          <div className="text-sm font-medium text-gray-700">Service Items</div>
+          <div className="text-sm font-medium text-gray-700">Claim Items</div>
           
           {/* Custom Table Implementation for Better Alignment */}
           <div className="border border-gray-200 rounded-lg overflow-hidden">
             {/* Table Header */}
-            <div className="grid grid-cols-12 bg-gray-50 border-b border-gray-200">
-              <div className="col-span-1 px-4 py-3 text-xs font-medium text-gray-500 text-center">
-                S/N
-              </div>
-              <div className="col-span-6 px-4 py-3 text-xs font-medium text-gray-500">
-                Service name
-              </div>
-              <div className="col-span-3 px-4 py-3 text-xs font-medium text-gray-500">
-                Amount
-              </div>
-              <div className="col-span-2 px-4 py-3 text-xs font-medium text-gray-500 text-center">
-                Action
-              </div>
+            <div className="grid grid-cols-14 bg-gray-50 border-b border-gray-200">
+              <div className="col-span-1 px-2 py-3 text-[10px] font-medium text-gray-500 text-center">#</div>
+              <div className="col-span-4 px-2 py-3 text-[10px] font-medium text-gray-500">Name</div>
+              <div className="col-span-3 px-2 py-3 text-[10px] font-medium text-gray-500">Amount</div>
+              <div className="col-span-3 px-2 py-3 text-[10px] font-medium text-gray-500">Status</div>
+              <div className="col-span-2 px-2 py-3 text-[10px] font-medium text-gray-500">Qty</div>
+              <div className="col-span-1 px-2 py-3 text-[10px] font-medium text-gray-500 text-center">X</div>
             </div>
             
             {/* Table Body */}
             <div className="bg-white">
               {items.map((item, idx) => (
-                <div key={idx} className="grid grid-cols-12 border-b border-gray-100 last:border-b-0">
-                  {/* S/N */}
-                  <div className="col-span-1 px-4 py-3 text-sm text-gray-600 text-center">
-                    {idx + 1}
+                <div key={idx} className="grid grid-cols-14 border-b border-gray-100 last:border-b-0">
+                  <div className="col-span-1 px-2 py-2 text-xs text-gray-600 text-center">{idx + 1}</div>
+                  <div className="col-span-4 px-2 py-2">
+                    <input value={item.name} onChange={(e) => handleItemChange(idx, "name", e.target.value)} placeholder="Name" required className="w-full px-2 py-1 border border-gray-300 rounded text-[11px]" />
                   </div>
-                  
-                  {/* Service Name */}
-                  <div className="col-span-6 px-4 py-2">
-                    <input
-                      value={item.name}
-                      onChange={(e) => handleItemChange(idx, "name", e.target.value)}
-                      placeholder="Service name"
-                      required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
+                  <div className="col-span-3 px-2 py-2">
+                    <input value={item.amount} onChange={(e) => handleItemChange(idx, "amount", e.target.value)} placeholder="0.00" type="number" min="0" step="0.01" required className="w-full px-2 py-1 border border-gray-300 rounded text-[11px]" />
                   </div>
-                  
-                  {/* Amount */}
-                  <div className="col-span-3 px-4 py-2">
-                    <input
-                      value={item.amount}
-                      onChange={(e) => handleItemChange(idx, "amount", e.target.value)}
-                      placeholder="Amount"
-                      type="number"
-                      required
-                      min="0"
-                      step="0.01"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
+                  <div className="col-span-3 px-2 py-2">
+                    <select
+                      value={item.claimStatus}
+                      onChange={(e) => handleItemChange(idx, "claimStatus", e.target.value)}
+                      className="w-full px-2 py-1 border border-gray-300 rounded text-[11px] bg-white"
+                    >
+                      {STATUS_OPTIONS.map(opt => (
+                        <option key={opt} value={opt}>{opt}</option>
+                      ))}
+                    </select>
                   </div>
-                  
-                  {/* Action */}
-                  <div className="col-span-2 px-4 py-3 text-center">
+                  <div className="col-span-2 px-2 py-2">
+                    <input value={item.quantity} onChange={(e) => handleItemChange(idx, "quantity", e.target.value)} type="number" min="1" step="1" className="w-full px-2 py-1 border border-gray-300 rounded text-[11px]" />
+                  </div>
+                  <div className="col-span-1 px-2 py-2 text-center">
                     {items.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeItem(idx)}
-                        className="text-red-600 text-xs hover:text-red-800 font-medium"
-                      >
-                        Remove
-                      </button>
+                      <button type="button" onClick={() => removeItem(idx)} className="text-red-600 text-[10px] hover:text-red-800 font-medium">✕</button>
                     )}
                   </div>
                 </div>
@@ -346,13 +337,16 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
             {/* Validation messages */}
             {!isFormValid() && (
               <div className="text-xs text-gray-500 max-w-xs">
+                {!claimName && <div>• Enter claim name</div>}
+                {!claimDate && <div>• Select claim date</div>}
+                {!serviceDate && <div>• Select service date</div>}
                 {!patientName && <div>• Enter patient name</div>}
+                {!patientNumber && <div>• Enter patient / enrollee number</div>}
                 {!phoneNumber && <div>• Enter phone number</div>}
-                {!date && <div>• Select date</div>}
-                {!serviceType && <div>• Select encounter type</div>}
-                {patientName && phoneNumber && date && serviceType && 
-                 !items.some(item => item.name.trim() && item.amount.trim() && Number(item.amount) > 0) && (
-                  <div>• Add at least one service item with name and amount</div>
+                {!serviceType && <div>• Enter service type</div>}
+                {claimName && claimDate && serviceDate && patientName && patientNumber && phoneNumber && serviceType &&
+                  !items.some(item => item.name.trim() && item.amount.trim() && Number(item.amount) > 0) && (
+                    <div>• Add at least one claim item with name and amount</div>
                 )}
                 {!selectedProviderId && (
                   <div>• Select a provider in the header</div>
