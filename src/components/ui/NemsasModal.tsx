@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { CLAIM_STATUSES } from '../../constant/claimStatuses';
 import Modal from "./Modal";
 import Button from "./Button";
 import { useProviderContext } from "../../context/useProviderContext";
@@ -40,7 +41,7 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
   // Constrained service types (dropdown)
   const SERVICE_TYPE_OPTIONS = ["Observation", "Admission"] as const;
   const [serviceType, setServiceType] = useState(""); // must choose one
-  const STATUS_OPTIONS = ["Pending","Processed","Rejected","Resolved","Approved","Paid"] as const;
+  const STATUS_OPTIONS = CLAIM_STATUSES;
   const DEFAULT_STATUS = "Pending";
   const [items, setItems] = useState<ServiceItem[]>([
     { name: "", amount: "", claimStatus: DEFAULT_STATUS, quantity: "1" },
@@ -308,7 +309,7 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
                       onChange={(e) => handleItemChange(idx, "claimStatus", e.target.value)}
                       className="w-full px-2 py-1 border border-gray-300 rounded text-[11px] bg-white"
                     >
-                      {STATUS_OPTIONS.map(opt => (
+                      {STATUS_OPTIONS.map((opt: string) => (
                         <option key={opt} value={opt}>{opt}</option>
                       ))}
                     </select>

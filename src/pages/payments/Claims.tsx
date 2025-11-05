@@ -1,134 +1,161 @@
 // new claims page, for demo
 
-import { useState, useEffect, useCallback } from "react";
-import { formatDate, dateFormats } from "../../utils/dateFormatter"; 
-import EmptyState from "../../components/ui/EmptyState";
-import Table from "../../components/ui/Table";
-import { FaEye, FaDatabase, FaSync } from "react-icons/fa";
-import FormHeader from "../../components/form/FormHeader";
-import type { ClaimItem } from "../../types/claims"; 
-import DemoDetailsModal from "../../components/ui/DemoDetailsModal";
-import { getClaimsFromLocalStorage } from "../../utils/localStorageUtils";
+import { useState, useEffect, useMemo } from 'react';
+import { formatDate, dateFormats } from '../../utils/dateFormatter';
+import EmptyState from '../../components/ui/EmptyState';
+import Table from '../../components/ui/Table';
+import { FaEye, FaSync } from 'react-icons/fa';
+import FormHeader from '../../components/form/FormHeader';
+import type { ClaimItem } from '../../types/claims';
+import DemoDetailsModal from '../../components/ui/DemoDetailsModal';
+import { useProviderContext } from '../../context/useProviderContext';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
+import { fetchNemsasClaims } from '../../services/thunks/nemsasThunk';
+import { fetchNemsasClaimById } from '../../services/api/nemsasApi';
 
 export const Claims = () => {
-  type Claim = {
+  // Table shape after mapping backend claims
+  type TableClaim = {
     id: string;
     name: string;
-    date: string;
+    phoneNumber: string;
+    serviceDate: string;
     amount: string;
     status: string;
-    enrolleeType?: string;
-    healthProvider?: string;
-    phoneNumber: string;
     submittedAt: string;
   };
 
-  const [claims, setClaims] = useState<Claim[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const dispatch = useAppDispatch();
+  const { selectedProviderId } = useProviderContext();
+  const { claims: backendClaims, loading, error } = useAppSelector(state => state.nemsas);
+  const NEMSAS_ID = '2e4c6fa4-6ac3-43bb-b78f-326dccac110c';
+
+  // Status mapping (numeric legacy -> text) and reverse
+  const statusCodeToText = useMemo<Record<number,string>>(() => ({
+    0: 'Pending',
+    1: 'Approved',
+    2: 'Rejected',
+    3: 'Paid',
+    4: 'Disputed',
+    5: 'Resolved',
+    6: 'Processed'
+  }), []);
+  const textToStatusCode = useMemo<Record<string,number>>(
+    () => Object.fromEntries(Object.entries(statusCodeToText).map(([k,v]) => [v, Number(k)])),
+    [statusCodeToText]
+  );
+
+  const [tableClaims, setTableClaims] = useState<TableClaim[]>([]);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [claimItems, setClaimItems] = useState<ClaimItem[]>([]);
   const [detailsLoading, setDetailsLoading] = useState(false);
-  const [detailsError, setDetailsError] = useState("");
+  const [detailsError, setDetailsError] = useState('');
   const [selectedPatientInfo, setSelectedPatientInfo] = useState<{patientName: string; phoneNumber: string}>({
     patientName: "",
     phoneNumber: ""
   });
 
-  // Load claims from local storage
-  const loadLocalClaims = useCallback(() => {
-    setLoading(true);
-    setError("");
-    
-    try {
-      const storedClaims = getClaimsFromLocalStorage();
-      console.log('Loaded local claims:', storedClaims); // Debug log
-      
-      const mapped: Claim[] = storedClaims.map((lc) => {
-        const totalAmount = lc.items.reduce((sum, item) => sum + Number(item.amount || 0), 0);
-        
-        return {
-          id: lc.id,
-          name: lc.patientName,
-          date: lc.serviceDate,
-          amount: totalAmount.toFixed(2),
-          status: lc.status.charAt(0).toUpperCase() + lc.status.slice(1), // Capitalize status
-          enrolleeType: "Individual",
-          healthProvider: "Local Provider",
-          phoneNumber: lc.phoneNumber,
-          submittedAt: lc.submittedAt
-        };
-      });
-      
-      setClaims(mapped);
-      console.log('Mapped claims:', mapped); // Debug log
-    } catch (error) {
-      console.error("Error loading local claims:", error);
-      setError("Failed to load local claims");
-    } finally {
-      setLoading(false);
+  // Map backend claims to table shape whenever redux updates
+  interface BackendClaimItem { id: string; amount: number; claimStatus?: string | number; status?: string | number; quantity?: number; name?: string; claimType?: string; }
+  interface BackendClaim {
+    id: string;
+    patientName?: string;
+    claimName?: string;
+    phoneNumber?: string;
+    serviceDate?: string;
+    claimDate?: string;
+    createdDate?: string;
+    claimItems?: BackendClaimItem[];
+    amount?: number;
+    claimStatus?: string | number;
+  }
+
+  useEffect(() => {
+    const mapped: TableClaim[] = (backendClaims || []).map((claim: BackendClaim) => {
+      const totalAmount = Array.isArray(claim.claimItems)
+        ? claim.claimItems.reduce((sum: number, item: BackendClaimItem) => sum + (item?.amount || 0), 0)
+        : (claim.amount || 0);
+      const rawStatus: string | number | undefined = Array.isArray(claim.claimItems) && claim.claimItems.length > 0
+        ? (claim.claimItems[0].claimStatus ?? claim.claimItems[0].status)
+        : claim.claimStatus;
+      const statusText = typeof rawStatus === 'number' ? (statusCodeToText[rawStatus] || 'Pending') : (rawStatus || 'Pending');
+      return {
+        id: claim.id || 'N/A',
+        name: claim.patientName || claim.claimName || 'N/A',
+        phoneNumber: claim.phoneNumber || 'N/A',
+        serviceDate: claim.serviceDate || claim.claimDate || '',
+        amount: totalAmount.toFixed(2),
+      status: statusText,
+        submittedAt: claim.claimDate || claim.createdDate || claim.serviceDate || '',
+      };
+    });
+    setTableClaims(mapped);
+  }, [backendClaims, statusCodeToText]);
+
+  // Initial load from backend
+  useEffect(() => {
+    if (selectedProviderId) {
+      dispatch(fetchNemsasClaims({
+        ProviderId: selectedProviderId,
+        NEMSASId: NEMSAS_ID,
+        PageNumber: 1,
+        PageSize: 500,
+        SortBy: 'createdDate'
+      }));
     }
-  }, []);
+  }, [dispatch, selectedProviderId]);
 
 
 const handleViewClaim = async (claimId: string) => {
   setDetailsLoading(true);
   setShowDetailsModal(true);
-  
   try {
-    // Get local storage claim details
-    const storedClaims = getClaimsFromLocalStorage();
-    const localClaim = storedClaims.find(lc => lc.id === claimId);
-    
-    if (localClaim) {
-      // Store patient information for the modal
+    const res = await fetchNemsasClaimById(claimId);
+    if (res?.isSuccess && res?.data) {
+      const data = res.data;
       setSelectedPatientInfo({
-        patientName: localClaim.patientName,
-        phoneNumber: localClaim.phoneNumber
+        patientName: data.patientName || data.claimName || 'N/A',
+        phoneNumber: data.phoneNumber || 'N/A'
       });
-
-      // Convert local claim items - use type assertion to bypass TS errors for demo
-      const convertedItems = localClaim.items.map((item, index) => ({
-        id: `${localClaim.id}-${index}`,
-        serviceRendered: item.name,
-        amount: Number(item.amount),
-        approvalCode: item.approvalCode,
-        serviceDate: localClaim.serviceDate,
-        quantity: 1,
-        price: Number(item.amount),
+      const convertedItems: ClaimItem[] = (data.claimItems || []).map((ci: BackendClaimItem) => ({
+        id: ci.id,
+        serviceRendered: ci.name,
+        amount: ci.amount,
+        approvalCode: '',
+        serviceDate: data.serviceDate,
+        quantity: ci.quantity || 1,
+        price: ci.amount,
         discount: 0,
-        diagnosis: "",
-        referralHospital: "",
-        nhisno: "",
+        diagnosis: '',
+        referralHospital: '',
+        nhisno: '',
         attachments: [],
-        claimStatus: 0,
-        // Add all the missing required properties
+        claimStatus: typeof (ci.claimStatus ?? ci.status) === 'number'
+          ? (ci.claimStatus as number)
+          : textToStatusCode[String(ci.claimStatus ?? ci.status ?? 'Pending')] ?? 0,
         isActive: true,
-        enrolleeName: localClaim.patientName,
-        patientEnrolleeNumber: "", 
-        providerId: localClaim.providerId,
-        hmoId: localClaim.hmoId,
-        enrolleeEmail: "",
-        enrolleePhoneNumber: localClaim.phoneNumber,
-        claimType: localClaim.serviceType,
-        planTypeName: "",
-        createdDate: localClaim.submittedAt,
-        modifiedDate: localClaim.submittedAt,
-        // Add the missing properties from the error
-        planTypeId: "", // Add empty string
-        providerName: "Local Provider", // Add default value
+        enrolleeName: data.patientName,
+        patientEnrolleeNumber: data.patientNumber || '',
+        providerId: data.providerId,
+        hmoId: data.hmoId || '',
+        enrolleeEmail: '',
+        enrolleePhoneNumber: data.phoneNumber || '',
+        claimType: ci.claimType || 'EmergencyService',
+        planTypeName: '',
+        createdDate: data.claimDate || data.serviceDate,
+        modifiedDate: data.claimDate || data.serviceDate,
+        planTypeId: '',
+        providerName: '',
       }));
-      
-      // Use type assertion to bypass TypeScript errors for demo
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      setClaimItems(convertedItems as any);
+      setClaimItems(convertedItems);
+      setDetailsError('');
     } else {
-      setDetailsError("Claim not found in local storage");
+      setClaimItems([]);
+      setDetailsError(res?.message || 'Failed to fetch claim details');
     }
-    setDetailsError("");
   } catch {
     setClaimItems([]);
-    setDetailsError("Failed to fetch claim details");
+    setDetailsError('Failed to fetch claim details');
   } finally {
     setDetailsLoading(false);
   }
@@ -144,55 +171,44 @@ const handleViewClaim = async (claimId: string) => {
     });
   };
 
-  // Export claims as JSON
-  const handleExportClaims = () => {
-    try {
-      const storedClaims = getClaimsFromLocalStorage();
-      const dataStr = JSON.stringify(storedClaims, null, 2);
-      const dataBlob = new Blob([dataStr], { type: 'application/json' });
-      
-      const url = URL.createObjectURL(dataBlob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `local-claims-${new Date().toISOString().split('T')[0]}.json`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Error exporting claims:", error);
-      setError("Failed to export claims");
+
+  // Refresh mapping only (backendClaims effect handles updates)
+  const refreshClaims = () => {
+    if (selectedProviderId) {
+      dispatch(fetchNemsasClaims({
+        ProviderId: selectedProviderId,
+        NEMSASId: NEMSAS_ID,
+        PageNumber: 1,
+        PageSize: 500,
+        SortBy: 'createdDate'
+      }));
     }
   };
 
-  useEffect(() => {
-    loadLocalClaims();
-  }, [loadLocalClaims]);
-
   const statusColor = {
-    Approved: "#217346",
-    Paid: "#6b6f80",
-    Disputed: "#d32f2f",
-    Pending: "#ff9800",
-    Processed: "#2196f3",
-    Rejected: "#d32f2f",
-  };
+    Pending: '#ff9800',
+    Processed: '#1976d2',
+    Rejected: '#d32f2f',
+    Resolved: '#2e7d32',
+    Approved: '#217346',
+    Paid: '#6b6f80'
+  } as const;
 
   return (
     <div style={{ padding: "32px" }}>
       {loading ? (
-        <div style={{ textAlign: "center", padding: 48 }}>
-          Loading local claims...
+        <div style={{ textAlign: 'center', padding: 48 }}>
+          Loading claims...
         </div>
       ) : error ? (
-        <div style={{ textAlign: "center", color: "red", padding: 48 }}>
+        <div style={{ textAlign: 'center', color: 'red', padding: 48 }}>
           {error}
         </div>
-      ) : claims.length === 0 ? (
+      ) : tableClaims.length === 0 ? (
         <EmptyState
           icon={<span style={{ fontSize: 32 }}>📄</span>}
-          title="No local claims available yet"
-          description="Submit claims using the emergency claim form to see them here. All claims are stored locally in your browser."
+          title="No claims available yet"
+          description="Submit or process claims to see them here."
         />
       ) : (
         <div
@@ -211,12 +227,12 @@ const handleViewClaim = async (claimId: string) => {
               marginBottom: 16,
             }}
           >
-            <FormHeader>Claims ({claims.length})</FormHeader>
+            <FormHeader>Claims ({tableClaims.length})</FormHeader>
             
             {/* Action Buttons */}
             <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
               <button
-                onClick={loadLocalClaims}
+                onClick={refreshClaims}
                 style={{
                   padding: "8px 12px",
                   borderRadius: 4,
@@ -229,23 +245,6 @@ const handleViewClaim = async (claimId: string) => {
                 }}
               >
                 <FaSync /> Refresh
-              </button>
-
-              <button
-                onClick={handleExportClaims}
-                style={{
-                  padding: "8px 12px",
-                  borderRadius: 4,
-                  border: "1px solid #217346",
-                  background: "#e8f5e8",
-                  color: "#217346",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 8,
-                }}
-              >
-                <FaDatabase /> Export File
               </button>
             </div>
           </div>
@@ -263,14 +262,14 @@ const handleViewClaim = async (claimId: string) => {
               "Submitted",
               // "Action",
             ]}
-            rows={claims.map((claim) => {
+            rows={tableClaims.map((claim) => {
               return [
                 <div key={claim.id} onClick={(e) => e.stopPropagation()}>
                   {/* Empty cell */}
                 </div>,
                 claim.name,
                 claim.phoneNumber,
-                formatDate(claim.date, dateFormats.short),
+                formatDate(claim.serviceDate, dateFormats.short),
                 `₦${claim.amount}`,
                 <span
                   key={`status-${claim.id}`}
@@ -315,7 +314,7 @@ const handleViewClaim = async (claimId: string) => {
             }}
           >
             <span>
-              Showing all {claims.length} local claims
+              Showing all {tableClaims.length} claims
             </span>
           </div>
         </div>

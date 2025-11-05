@@ -3,6 +3,7 @@ import Modal from './Modal';
 import Button from './Button';
 import { fetchNemsasClaimById, updateNemsasClaim } from '../../services/api/nemsasApi';
 import type { NemsasClaimItemRequest, UpdateNemsasClaimRequest } from '../../services/api/nemsasApi';
+import { CLAIM_STATUSES } from '../../constant/claimStatuses';
 import { useCustomToast } from '../../hooks/useCustomToast';
 import { useProviderContext } from '../../context/useProviderContext';
 import { fetchNemsasClaims } from '../../services/thunks/nemsasThunk';
@@ -14,7 +15,6 @@ const statusCodeToText: Record<number,string> = {
   1: 'Approved',
   2: 'Rejected',
   3: 'Paid',
-  4: 'Disputed',
   5: 'Resolved', // guessed additional code if backend adds
   6: 'Processed', // guessed
 };
@@ -278,7 +278,7 @@ const NemsasClaimDetailsModal: React.FC<NemsasClaimDetailsModalProps> = ({ open,
                     <div style={{ padding: '6px 4px', textAlign: 'center' }}>{idx + 1}</div>
                     <div style={{ padding: '6px 4px' }}>{ci.name || '-'}</div>
                     <div style={{ padding: '6px 4px' }}>{ci.amount}</div>
-                    <div style={{ padding: '6px 4px' }}>{ci.claimStatus || ci.status || 'Pending'}</div>
+                    <div style={{ padding: '6px 4px' }}>{ci.claimStatus || 'Pending'}</div>
                     <div style={{ padding: '6px 4px' }}>{ci.quantity}</div>
                   </div>
                 ))}
@@ -353,7 +353,7 @@ const NemsasClaimDetailsModal: React.FC<NemsasClaimDetailsModalProps> = ({ open,
                         onChange={e => handleItemChange(idx, 'claimStatus', e.target.value)}
                         style={{ width: '100%', padding: 4, border: '1px solid #ccc', borderRadius: 4 }}
                       >
-                        {['Pending','Processed','Rejected','Resolved','Approved','Paid'].map(s => <option key={s} value={s}>{s}</option>)}
+                        {CLAIM_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
                       </select>
                     </div>
                     <div style={{ padding: '6px 4px' }}>

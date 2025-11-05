@@ -41,10 +41,10 @@ const SideNav: React.FC<SideNavProps> = () => {
         <div className="absolute bottom-0 right-[20%]">
           <span
             className={`w-fit inline-flex items-center px-2 pb-0.5 rounded text-[10px] font-semibold tracking-wide uppercase shadow-sm
-              ${user?.isProvider ? 'bg-green-100 text-green-700 ring-1 ring-green-200' : 'bg-indigo-100 text-indigo-700 ring-1 ring-indigo-200'}`}
+              ${user?.isProvider && 'bg-green-100 text-green-700 ring-1 ring-green-200'}`}
             title={user?.isProvider ? 'You are operating in a Provider context: submit and manage claims.' : 'You are operating in an HMO context: review, adjudicate and oversee provider claims.'}
           >
-            {user?.isProvider ? 'Provider' : 'HMO'}
+            {user?.isProvider && 'Provider'}
           </span>
         </div>
       </div>

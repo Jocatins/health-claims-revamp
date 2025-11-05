@@ -4,6 +4,7 @@ import Button from "./Button";
 import Table from "./Table";
 import type { ClaimItem } from "../../types/claims";
 import { formatDate, dateFormats } from "../../utils/dateFormatter";
+import { CLAIM_STATUSES, CLAIM_STATUS_COLORS } from '../../constant/claimStatuses';
 
 interface NemsasDetailsModalProps {
   open: boolean;
@@ -15,22 +16,20 @@ interface NemsasDetailsModalProps {
   phoneNumber: string; 
 }
 
-const statusColor = {
-  Pending: "#6b6f80",
-  Approved: "#217346",
-  Paid: "#217346",
-  Disputed: "#d32f2f",
+// Numeric legacy -> textual mapping (aligning with canonical statuses; missing codes fallback to Pending)
+const legacyNumericStatusMap: Record<number,string> = {
+  0: 'Pending',
+  1: 'Approved',
+  2: 'Rejected',
+  3: 'Paid',
+  5: 'Resolved',
+  6: 'Processed'
 };
 
-// Helper function to map claim status number to text
-const getStatusText = (status: number): string => {
-  switch (status) {
-    case 0: return "Pending";
-    case 1: return "Approved";
-    case 2: return "Paid";
-    case 3: return "Disputed";
-    default: return "Unknown";
-  }
+const getStatusText = (status: number | string): string => {
+  if (typeof status === 'number') return legacyNumericStatusMap[status] || 'Pending';
+  const normalized = status.trim();
+  return CLAIM_STATUSES.includes(normalized as typeof CLAIM_STATUSES[number]) ? normalized : 'Pending';
 };
 
 const DemoDetailsModal: React.FC<NemsasDetailsModalProps> = ({
@@ -43,8 +42,7 @@ const DemoDetailsModal: React.FC<NemsasDetailsModalProps> = ({
   phoneNumber,
 }) => {
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
-  const [showDisputeComment, setShowDisputeComment] = useState(false);
-  const [disputeComment, setDisputeComment] = useState("");
+  // Dispute workflow removed (status set no longer includes Disputed)
 
   // Handle individual checkbox change
   const handleCheckboxChange = (itemId: string) => {
@@ -69,30 +67,6 @@ const DemoDetailsModal: React.FC<NemsasDetailsModalProps> = ({
     }
   };
 
-  // Handle dispute button click
-  const handleDisputeClick = () => {
-    setShowDisputeComment(true);
-  };
-
-  // Handle submit dispute
-  const handleSubmitDispute = () => {
-    if (disputeComment.trim() === "") {
-      alert("Please provide a reason for disputing this claim.");
-      return;
-    }
-    
-    console.log("Disputing claim with comment:", disputeComment);
-    console.log("Selected items:", Array.from(selectedItems));
-    
-    // Here you would typically make an API call to update the claim status
-    alert(`Claim disputed successfully!\nReason: ${disputeComment}`);
-    
-    // Reset and close
-    setShowDisputeComment(false);
-    setDisputeComment("");
-    onClose();
-  };
-
   // Handle approve
   const handleApprove = () => {
     console.log("Approving claim");
@@ -103,13 +77,13 @@ const DemoDetailsModal: React.FC<NemsasDetailsModalProps> = ({
     onClose();
   };
 
-  // Handle decline
-  const handleDecline = () => {
-    console.log("Declining claim");
+  // Handle reject (was decline)
+  const handleReject = () => {
+    console.log("Rejecting claim");
     console.log("Selected items:", Array.from(selectedItems));
     
     // Here you would typically make an API call to update the claim status
-    alert("Claim declined successfully!");
+    alert("Claim rejected successfully!");
     onClose();
   };
 
@@ -196,65 +170,10 @@ const DemoDetailsModal: React.FC<NemsasDetailsModalProps> = ({
             marginBottom: 16,
           }}
         >
-          <Button onClick={handleDecline}>Decline</Button>
-          <div style={{ display: "flex", gap: "8px" }}>
-            <Button 
-              onClick={handleDisputeClick}
-              // style={{ background: "#d32f2f", borderColor: "#d32f2f" }}
-              color="gray"
-            >
-              Disputed
-            </Button>
-            <Button color="green" onClick={handleApprove}>Approve</Button>
-          </div>
+          <Button onClick={handleReject}>Reject</Button>
+          <Button color="green" onClick={handleApprove}>Approve</Button>
         </div>
-
-        {/* Dispute Comment Section */}
-        {showDisputeComment && (
-          <div style={{ 
-            marginBottom: 16, 
-            padding: 16, 
-            background: "#ffebee", 
-            borderRadius: 8,
-            border: "1px solid #d32f2f"
-          }}>
-            <div style={{ fontWeight: 600, color: "#d32f2f", marginBottom: 8 }}>
-              Reason for Dispute *
-            </div>
-            <textarea
-              value={disputeComment}
-              onChange={(e) => setDisputeComment(e.target.value)}
-              placeholder="Please provide a detailed reason for disputing this claim..."
-              style={{
-                width: "100%",
-                minHeight: "80px",
-                padding: "8px 12px",
-                borderRadius: 4,
-                border: "1px solid #ccc",
-                fontSize: 14,
-                resize: "vertical",
-                fontFamily: "inherit"
-              }}
-            />
-            <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
-              <Button 
-                onClick={() => {
-                  setShowDisputeComment(false);
-                  setDisputeComment("");
-                }}
-                  color="gray"
-              >
-                Cancel
-              </Button>
-              <Button 
-                onClick={handleSubmitDispute}
-                // style={{ background: "#d32f2f", borderColor: "#d32f2f" }}
-              >
-                Submit Dispute
-              </Button>
-            </div>
-          </div>
-        )}
+        {/* Dispute workflow removed */}
         
         <div style={{ marginBottom: 16, fontWeight: 600, color: "#217346" }}>
           Patient Information
@@ -312,7 +231,7 @@ const DemoDetailsModal: React.FC<NemsasDetailsModalProps> = ({
               key={item.id}
               style={{
                 background: "#e6f4ea",
-                color: statusColor[getStatusText(item.claimStatus) as keyof typeof statusColor] || "#6b6f80",
+                color: CLAIM_STATUS_COLORS[getStatusText(item.claimStatus) as keyof typeof CLAIM_STATUS_COLORS] || "#6b6f80",
                 borderRadius: 8,
                 padding: "2px 12px",
                 fontWeight: 600,

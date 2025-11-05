@@ -193,15 +193,12 @@ export const NemsasManagement = () => {
 
   // Status color map
   const statusColor: Record<string,string> = {
-    Approved: '#217346',
-    Paid: '#6b6f80',
-    Disputed: '#d32f2f',
     Pending: '#ff9800',
+    Processed: '#1976d2',
     Rejected: '#d32f2f',
     Resolved: '#2e7d32',
-    Processed: '#1976d2',
-    Submitted: '#1976d2',
-    New: '#6b6f80'
+    Approved: '#217346',
+    Paid: '#6b6f80'
   };
 
   // Show loading while waiting for user data
@@ -298,12 +295,9 @@ export const NemsasManagement = () => {
                 className="p-2 border border-[#ccc] rounded-sm"
               >
                 <option value="">All</option>
-                <option value="New">New</option>
-                <option value="Submitted">Submitted</option>
-                <option value="Disputed">Disputed</option>
-                <option value="Resolved">Resolved</option>
-                <option value="Approved">Approved</option>
-                <option value="Paid">Paid</option>
+                {['Pending','Processed','Rejected','Resolved','Approved','Paid'].map(s => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
               </select>
             </div>
             <div className="col-span-2 flex flex-col gap-1">
