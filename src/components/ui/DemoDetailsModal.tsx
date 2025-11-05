@@ -87,6 +87,16 @@ const DemoDetailsModal: React.FC<NemsasDetailsModalProps> = ({
     onClose();
   };
 
+  // Handle reject (was decline)
+  const handleDispute = () => {
+    console.log("Disputing claim");
+    console.log("Selected items:", Array.from(selectedItems));
+    
+    // Here you would typically make an API call to update the claim status
+    alert("Claim disputed successfully!");
+    onClose();
+  };
+
   // Checkbox component for individual rows
   const Checkbox = ({ 
     checked, 
@@ -158,22 +168,34 @@ const DemoDetailsModal: React.FC<NemsasDetailsModalProps> = ({
 
   // Calculate total amount
   const totalAmount = claimItems.reduce((sum, item) => sum + item.amount, 0);
+  // Derive overall status (if all items share same status)
+  const itemStatuses = claimItems.map(ci => getStatusText(ci.claimStatus));
+  const uniqueStatuses = new Set(itemStatuses);
+  const overallStatus = uniqueStatuses.size === 1 ? itemStatuses[0] : 'Mixed';
 
   return (
     <Modal open={open} onClose={onClose} title="Claims Details" width="800px">
       <div style={{ padding: "8px 0 0 0" }}>
         <div
           style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
             marginBottom: 16,
+            flexWrap: 'wrap',
+            gap: 12
           }}
         >
-          <Button color="red" onClick={handleReject}>Decline</Button>
+          {/* Hide Reject when overall status is Rejected */}
+          {overallStatus !== 'Rejected' && (
+            <Button color="red" onClick={handleReject}>Reject</Button>
+          )}
           <div className="flex gap-3">
-            <Button color="gray" onClick={handleReject}>Dispute</Button>
-            <Button color="green" onClick={handleApprove}>Approve</Button>
+            <Button color="gray" onClick={handleDispute}>Dispute</Button>
+            {/* Hide Approve when overall status is Approved */}
+            {overallStatus !== 'Approved' && (
+              <Button color="green" onClick={handleApprove}>Approve</Button>
+            )}
           </div>
         </div>
         {/* Dispute workflow removed */}

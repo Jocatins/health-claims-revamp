@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { CLAIM_STATUSES } from '../../constant/claimStatuses';
 import Modal from "./Modal";
 import Button from "./Button";
-import { useProviderContext } from "../../context/useProviderContext";
+import { useProviderContext } from "../../context/useProviderContext"; // retained for other potential uses, not for providerId source
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../services/store/store';
 import SuccessModal from "../form/SuccessModal";
 // local storage caching removed for server-first submission
 import { createNemsasClaim } from "../../services/api/nemsasApi";
@@ -49,6 +51,7 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const { selectedProviderId } = useProviderContext();
+  const authUser = useSelector((state: RootState) => state.auth.user);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const handleAddItem = () => {
@@ -70,7 +73,11 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedProviderId) return; // provider/nemsas id required
+    const providerIdToUse = authUser?.providerId; // requirement: use logged-in user's providerId
+    if (!providerIdToUse) {
+      setSubmitError('Missing providerId on logged in user – please re-login.');
+      return;
+    }
     
     setSubmitting(true);
     setSubmitError("");
@@ -78,7 +85,7 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
     try {
       const payload = {
         nemsasId: NEMSAS_ID,
-        providerId: selectedProviderId,
+  providerId: providerIdToUse,
         claimName,
         claimDate: claimDate ? new Date(claimDate).toISOString() : new Date().toISOString(),
         patientName,
@@ -107,7 +114,7 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
         // Refresh list (now including NEMSASId to avoid empty first fetch)
         dispatch(
           fetchNemsasClaims({
-            ProviderId: selectedProviderId,
+            ProviderId: providerIdToUse,
             NEMSASId: NEMSAS_ID,
             PageNumber: 1,
             PageSize: 500,
@@ -363,8 +370,8 @@ const NemsasClaimModal: React.FC<SingleClaimModalProps> = ({
                   !items.some(item => item.name.trim() && item.amount.trim() && Number(item.amount) > 0) && (
                     <div>• Add at least one claim item with name and amount</div>
                 )}
-                {!selectedProviderId && (
-                  <div>• Select a provider in the header</div>
+                {!authUser?.providerId && (
+                  <div>• Logged in user has no providerId</div>
                 )}
               </div>
             )}

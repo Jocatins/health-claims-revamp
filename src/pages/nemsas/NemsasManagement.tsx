@@ -61,7 +61,7 @@ export const NemsasManagement = () => {
   });
 
   // Debug: Check user data
-  const { selectedProviderId } = useProviderContext();
+  const { selectedProviderId } = useProviderContext(); // still available for other areas but not used for fetch
 
   console.log("👤 Current User & Provider Selection:", {
     currentUser,
@@ -133,18 +133,18 @@ export const NemsasManagement = () => {
   const loadClaims = useCallback(() => {
     console.log(" loadClaims called");
 
-    const providerIdToUse = selectedProviderId;
+    const providerIdToUse = currentUser?.providerId; // use logged in user's providerId per requirement
 
-    console.log("📋 Using selected provider:", {
+    console.log("📋 Using logged-in user's providerId:", {
       providerIdToUse,
+      selectedProviderIdFallback: selectedProviderId
     });
 
     if (!providerIdToUse) {
-      console.error("❌ No selectedProviderId available (choose a provider)");
+      console.error("❌ No providerId on current user (login response missing providerId)");
       return;
     }
 
-    // Always general fetch here; patient-specific search separated
     dispatch(
       fetchNemsasClaims({
         ProviderId: providerIdToUse,
@@ -157,20 +157,20 @@ export const NemsasManagement = () => {
         SortBy: "createdDate",
       })
     );
-  }, [dispatch, selectedProviderId, startDate, endDate, claimStatus]);
+  }, [dispatch, currentUser?.providerId, startDate, endDate, claimStatus, selectedProviderId]);
 
   // Patient-specific search triggered only by button
   const searchByPatient = useCallback(() => {
-    const providerIdToUse = selectedProviderId;
+    const providerIdToUse = currentUser?.providerId;
     if (!providerIdToUse || !patientNumberFilter.trim()) return;
-    console.log('🔍 Patient search triggered:', { providerIdToUse, patientNumber: patientNumberFilter.trim() });
+    console.log('🔍 Patient search triggered (logged-in providerId):', { providerIdToUse, patientNumber: patientNumberFilter.trim() });
     dispatch(
       fetchNemsasClaimsByPatient({
         patientNumber: patientNumberFilter.trim(),
         ProviderId: providerIdToUse,
       })
     );
-  }, [dispatch, selectedProviderId, patientNumberFilter]);
+  }, [dispatch, currentUser?.providerId, patientNumberFilter]);
 
   // Load claims when component mounts AND when currentUser is available
   useEffect(() => {
@@ -210,10 +210,10 @@ export const NemsasManagement = () => {
     );
   }
 
-  if (!selectedProviderId) {
+  if (!currentUser?.providerId) {
     return (
       <div style={{ padding: "32px", textAlign: "center" }}>
-        Please select a provider to view NEMSAS claims.
+        No providerId found on logged in user. Please re-login or contact support.
       </div>
     );
   }
