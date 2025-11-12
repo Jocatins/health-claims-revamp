@@ -1,10 +1,10 @@
 import { type UseFormTrigger } from "react-hook-form";
 
 import type { ProviderStep } from "../types/Step";
-import type { ProviderFormData } from "../schemas/providerSchema";
+import type { ProviderEditFormData } from "../schemas/providerSchema";
 
 export const validateProviderStep = async (
-  trigger: UseFormTrigger<ProviderFormData>,
+  trigger: UseFormTrigger<ProviderEditFormData>,
   setStep: (step: ProviderStep) => void
 ) => {
   const firstStepFields = [
@@ -12,6 +12,7 @@ export const validateProviderStep = async (
     "email",
     "hospitalAdress",
     "phoneNumber",
+    "bankId",
     "bankName",
     "accountNumber",
     "bankCode",

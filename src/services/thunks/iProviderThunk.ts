@@ -31,13 +31,17 @@ export const fetchProviderById = createAsyncThunk(
 );
 
 
-// Update provider
+
 export const updateProvider = createAsyncThunk(
-  "providers/updateProvider",
-  async ({ id, providerData }: { id: string; providerData: Partial<CreateProviderRequest> }): Promise<ProviderEntity> => {
-    const response = await axiosInstance.put<ProviderEntity>(`/providers/${id}`, providerData, {
-      headers: { "Content-Type": "application/json" },
-    });
-    return response.data;
+  'providers/updateProvider',
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async ({ id, providerData }: { id: string; providerData: any }, { rejectWithValue }) => {
+    try {
+      // Send the providerData directly, don't wrap it in a data object
+      const response = await axiosInstance.put(`/providers/${id}`, providerData);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
   }
 );

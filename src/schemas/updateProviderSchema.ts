@@ -1,11 +1,11 @@
 import { z } from "zod";
 import { AccountType } from "../utils/accountTypeUtils";
 
-// Base schema with common fields - updated to match backend exactly
+// Base schema with common fields
 const baseProviderSchema = {
   hospitalName: z.string().min(1, "Hospital name is required"),
   email: z.string().email("Invalid email address"),
-  hospitalAdress: z.string().min(1, "Hospital address is required"), 
+  hospitalAdress: z.string().min(1, "Hospital address is required"),
   phoneNumber: z.string().min(1, "Phone number is required"),
   bankId: z.string().min(1, "Bank is required"),
   bankName: z.string().min(1, "Bank name is required"),
@@ -22,7 +22,7 @@ const baseProviderSchema = {
       (val) => Object.values(AccountType).includes(val as AccountType),
       "Please select a valid account type"
     ),
-  bankVeririfationNumber: z 
+  bankVeririfationNumber: z
     .string()
     .min(1, "BVN is required")
     .regex(/^\d{11}$/, "BVN must be exactly 11 digits"),
@@ -46,12 +46,14 @@ export const providerCreateSchema = z.object({
     .min(1, "At least one contact is required"),
 });
 
-
+// Schema for editing providers (uses individual contact fields)
 export const providerEditSchema = z.object({
   ...baseProviderSchema,
-  
-  
-  // Keep individual contact fields for form handling, but they'll be transformed to contacts array
+  // Additional fields needed for editing
+  professionalIndemnityNumber: z.string().min(1, "Professional indemnity number is required"),
+  indemnityNumberExpiryDate: z.string().min(1, "Indemnity number expiry date is required"),
+  tariffBand: z.string().min(1, "Tariff band is required"),
+  // Individual contact fields for editing
   contactName: z.string().min(1, "Contact name is required"),
   contactDesignation: z.string().min(1, "Designation is required"),
   contactEmail: z.string().email("Invalid contact email"),

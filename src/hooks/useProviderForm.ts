@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { providerSchema, type ProviderFormData } from "../schemas/providerSchema";
+import { providerCreateSchema, type ProviderCreateFormData } from "../schemas/providerSchema";
 import type { AppDispatch, RootState } from "../services/store/store";
 import { useDispatch, useSelector } from "react-redux";
 import { createProvider } from "../services/thunks/iProviderThunk";
@@ -8,8 +8,8 @@ import { createProvider } from "../services/thunks/iProviderThunk";
 export const useProviderForm = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.auth);
-  const methods = useForm<ProviderFormData>({
-    resolver: zodResolver(providerSchema),
+  const methods = useForm<ProviderCreateFormData>({
+    resolver: zodResolver(providerCreateSchema),
     mode: "onChange",
     defaultValues: {
       contacts: [{
