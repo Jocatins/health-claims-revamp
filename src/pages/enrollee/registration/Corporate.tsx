@@ -51,7 +51,7 @@ const Corporate = () => {
   };
 
   const backNavigation = () => {
-    navigate("/enrollee/enrollees");
+    navigate("/enrollee/registration/choose-type");
   };
 
   const handleFormSubmit = async (data: CorporateEntity) => {
@@ -80,7 +80,7 @@ const Corporate = () => {
             })}
             error={errors.corporateType?.message as string}
           >
-            <option value=""></option>
+            {/* <option value=""></option> */}
             {corporateTypeOptions.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
@@ -95,7 +95,7 @@ const Corporate = () => {
             })}
             error={errors.corporateCatgory?.message as string}
           >
-            <option value=""></option>
+            {/* <option value=""></option> */}
             {corporateCategoryOptions.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
@@ -155,7 +155,7 @@ const Corporate = () => {
             error={errors.enrolleeClassId?.message as string || errorEnrolleeClass}
             isLoading={loadingEnrolleeClass}
           >
-            <option value=""></option>
+            {/* <option value=""></option> */}
             {enrolleeClass?.map((ec) => (
               <option key={ec.id} value={ec.id}>
                 {ec.name}

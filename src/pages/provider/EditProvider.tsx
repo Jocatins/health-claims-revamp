@@ -10,10 +10,13 @@ import PhoneNumberInput from "../../components/form/PhoneInput";
 import type { AppDispatch, RootState } from "../../services/store/store";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchBanks } from "../../services/thunks/resourcesThunk";
-import { fetchProviderById, updateProvider } from "../../services/thunks/iProviderThunk"; 
+import {
+  fetchProviderById,
+  updateProvider,
+} from "../../services/thunks/iProviderThunk";
 import { accountTypeOptions } from "../../utils/accountTypeUtils";
 import SuccessModal from "../../components/form/SuccessModal";
-import { LoadingSpinner } from "../../components/ui/LoadingSpinner"; 
+import { LoadingSpinner } from "../../components/ui/LoadingSpinner";
 import type { ProviderEntity } from "../../types/iProvider";
 import { useProviderEditForm } from "../../hooks/useProviderEditForm";
 import type { ProviderEditFormData } from "../../schemas/providerSchema";
@@ -23,7 +26,7 @@ const EditProvider = () => {
   const [licenseExpiryDate, setLicenseExpiryDate] = useState<Date | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); 
+  const [isLoading, setIsLoading] = useState(true);
   const [providerData, setProviderData] = useState<ProviderEntity | null>(null);
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
@@ -36,10 +39,10 @@ const EditProvider = () => {
   const { user } = useSelector((state: RootState) => state.auth);
 
   // Find existing provider data using selectedProviderId
-  const existingProvider = providers.find(p => p.id === selectedProviderId);
+  const existingProvider = providers.find((p) => p.id === selectedProviderId);
 
   // react - form hooks
- const {
+  const {
     methods: {
       register,
       formState: { errors, isValid },
@@ -58,7 +61,6 @@ const EditProvider = () => {
     error: errorBanks,
   } = useSelector((state: RootState) => state.banks);
 
-  // Simplified form initialization - matches Flutter pattern
   useEffect(() => {
     const initializeForm = async () => {
       if (!selectedProviderId) {
@@ -66,15 +68,15 @@ const EditProvider = () => {
         setIsLoading(false);
         return;
       }
-      
+
       setIsLoading(true);
       setSubmitError(null);
-      
+
       try {
         console.log("Fetching provider data for ID:", selectedProviderId);
-        
+
         let data: ProviderEntity;
-        
+
         // If provider is already in the list, use it
         if (existingProvider) {
           console.log("Using existing provider from store:", existingProvider);
@@ -84,12 +86,14 @@ const EditProvider = () => {
           console.log("Fetching provider from API...");
           const result = await dispatch(fetchProviderById(selectedProviderId));
           console.log("API response:", result);
-          
+
           if (fetchProviderById.fulfilled.match(result)) {
             data = result.payload;
             console.log("Fetched provider data:", data);
           } else {
-            throw new Error(result.error?.message || "Failed to fetch provider");
+            throw new Error(
+              result.error?.message || "Failed to fetch provider"
+            );
           }
         }
 
@@ -112,7 +116,7 @@ const EditProvider = () => {
 
         // Find the bank ID based on bank name and code
         const existingBank = banks.find(
-          bank => bank.name === data.bankName && bank.code === data.bankCode
+          (bank) => bank.name === data.bankName && bank.code === data.bankCode
         );
 
         // Simple form initialization - matches Flutter structure exactly
@@ -131,7 +135,6 @@ const EditProvider = () => {
           stateLicenseNumber: data.stateLicenseNumber || "",
           licenseExpiryDate: data.licenseExpiryDate || "",
           geoLocation: data.geoLocation || "",
-          // Single contact like Flutter: provider.contact![0]
           contactName: firstContact?.name || "",
           contactEmail: firstContact?.email || "",
           contactDesignation: firstContact?.designation || "",
@@ -147,7 +150,7 @@ const EditProvider = () => {
           setLicenseExpiryDate(expiryDate);
         }
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         console.error("Failed to fetch provider data:", error);
         setSubmitError(error.message || "Failed to load provider data");
@@ -159,7 +162,6 @@ const EditProvider = () => {
     initializeForm();
   }, [selectedProviderId, existingProvider, dispatch, reset, banks]);
 
-
   // Handle bank selection
   const handleBankChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedBankId = e.target.value;
@@ -168,11 +170,11 @@ const EditProvider = () => {
     );
 
     if (selectedBank) {
-      setValue("bankId" , selectedBankId, { shouldValidate: true });
+      setValue("bankId", selectedBankId, { shouldValidate: true });
       setValue("bankName", selectedBank.name, { shouldValidate: true });
       setValue("bankCode", selectedBank.code, { shouldValidate: true });
     } else {
-      setValue("bankId" , "", { shouldValidate: true });
+      setValue("bankId", "", { shouldValidate: true });
       setValue("bankName", "", { shouldValidate: true });
       setValue("bankCode", "", { shouldValidate: true });
     }
@@ -189,7 +191,7 @@ const EditProvider = () => {
     }
   };
 
-  // Update provider function - FIXED: Use selectedProviderId
+  // Update provider function - Use selectedProviderId
   const handleUpdateProvider = async (formData: ProviderEditFormData) => {
     if (!selectedProviderId || !user?.hmoId || !providerData) {
       throw new Error("Missing required information for update");
@@ -199,14 +201,14 @@ const EditProvider = () => {
     const providerUpdateData = {
       hospitalName: formData.hospitalName.trim(),
       email: formData.email.trim(),
-      hospitalAdress: formData.hospitalAdress.trim(), // Note: 'Adress' spelling
+      hospitalAdress: formData.hospitalAdress.trim(),
       phoneNumber: formData.phoneNumber.trim(),
       bankName: formData.bankName.trim(),
       accountNumber: formData.accountNumber.trim(),
       bankCode: formData.bankCode.trim(),
       accountName: formData.accountName.trim(),
       accountType: formData.accountType,
-      bankVeririfationNumber: formData.bankVeririfationNumber.trim(), // Note spelling
+      bankVeririfationNumber: formData.bankVeririfationNumber.trim(),
       stateLicenseNumber: formData.stateLicenseNumber.trim(),
       licenseExpiryDate: formData.licenseExpiryDate,
       geoLocation: formData.geoLocation.trim(),
@@ -217,22 +219,24 @@ const EditProvider = () => {
           designation: formData.contactDesignation.trim(),
           email: formData.contactEmail.trim(),
           phoneNumber: formData.contactPhone.trim(),
-        }
+        },
       ],
       id: selectedProviderId, // FIXED: Use selectedProviderId
-      hmoId: user.hmoId
+      hmoId: user.hmoId,
     };
 
     console.log("Update payload:", providerUpdateData);
     console.log("Updating provider with ID:", selectedProviderId);
 
     try {
-      const result = await dispatch(updateProvider({
-        id: selectedProviderId, // FIXED: Use selectedProviderId
-        providerData: providerUpdateData
-      })).unwrap();
+      const result = await dispatch(
+        updateProvider({
+          id: selectedProviderId, // FIXED: Use selectedProviderId
+          providerData: providerUpdateData,
+        })
+      ).unwrap();
       return result;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Update failed:", error);
       throw error;
@@ -244,7 +248,7 @@ const EditProvider = () => {
     console.log("Form data:", data);
     console.log("Form errors:", errors);
     console.log("Is form valid?", isValid);
-    
+
     setSubmitError(null);
     try {
       if (!user?.hmoId) {
@@ -260,7 +264,7 @@ const EditProvider = () => {
       // Validate all fields before submission
       const isValid = await trigger();
       console.log("Form validation result:", isValid);
-      
+
       if (!isValid) {
         setSubmitError("Please fix all form errors before submitting.");
         return;
@@ -270,20 +274,11 @@ const EditProvider = () => {
       await handleUpdateProvider(data);
       console.log("Update successful, showing success modal");
       setShowSuccessModal(true);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Submission error:", error);
       setSubmitError(error.message || "Failed to update provider");
     }
-  };
-
-  // Test button click handler
-  const handleTestClick = () => {
-    console.log("=== TEST BUTTON CLICKED ===");
-    console.log("Selected Provider ID from context:", selectedProviderId);
-    console.log("Form values:", watch());
-    console.log("Form errors:", errors);
-    console.log("Is submitting:", isSubmitting);
   };
 
   const handleModalClose = () => {
@@ -296,7 +291,7 @@ const EditProvider = () => {
   }, [dispatch]);
 
   const backNavigation = () => {
-    navigate("/enrollee/enrollees");
+    navigate("/enrollee/providers/all");
   };
 
   // Show loading state
@@ -308,8 +303,8 @@ const EditProvider = () => {
       <div className="p-6 bg-gray-50">
         <div className="text-center py-8">
           <p className="text-red-500">{submitError}</p>
-          <button 
-            onClick={() => window.location.reload()} 
+          <button
+            onClick={() => window.location.reload()}
             className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
           >
             Retry
@@ -350,7 +345,7 @@ const EditProvider = () => {
           <p className="text-red-500">
             No provider selected. Please select a provider to edit.
           </p>
-          <button 
+          <button
             onClick={() => navigate("/enrollee/providers/all")}
             className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
           >
@@ -366,50 +361,18 @@ const EditProvider = () => {
   return (
     <>
       <div className="p-6 bg-gray-50">
-        {/* Show provider info when loaded */}
-        {providerData && (
-          <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-md">
-            <p className="text-green-700 font-semibold">
-              Editing: {providerData.hospitalName}
-            </p>
-            <p className="text-green-600 text-sm">
-              Email: {providerData.email} | Phone: {providerData.phoneNumber}
-            </p>
-            {providerData.contacts?.[0] && (
-              <p className="text-green-600 text-sm">
-                Contact: {providerData.contacts[0].name} | Provider ID: {providerData.contacts[0].phoneNumber}
-              </p>
-            )}
-            <p className="text-green-600 text-sm font-semibold">
-              Provider ID: {selectedProviderId}
-            </p>
-          </div>
-        )}
-
         {/* Error Display */}
         {(submitError || createError || error) && (
           <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
-            <p className="text-red-600 text-sm">{submitError || createError || error}</p>
+            <p className="text-red-600 text-sm">
+              {submitError || createError || error}
+            </p>
           </div>
         )}
 
-        {/* Debug panel */}
-        <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
-          <p className="text-yellow-700 text-sm font-semibold">Debug Info:</p>
-          <p className="text-yellow-600 text-xs">Selected Provider ID: {selectedProviderId}</p>
-          <p className="text-yellow-600 text-xs">Form Valid: {isValid ? "Yes" : "No"}</p>
-          <p className="text-yellow-600 text-xs">Errors: {Object.keys(errors).length}</p>
-          <button 
-            onClick={handleTestClick}
-            className="mt-2 px-3 py-1 bg-yellow-500 text-white text-xs rounded"
-          >
-            Test Console Log
-          </button>
-        </div>
-
         <form onSubmit={handleSubmit(onSubmit)} className="mt-6">
           <FormHeader>Edit Provider Details</FormHeader>
-          
+
           <div className="grid grid-cols-2 gap-4 mt-6">
             {/* Hospital Name */}
             <Input
@@ -444,28 +407,18 @@ const EditProvider = () => {
             {/* Bank Selection */}
             <FormSelect
               label="Banks"
-              value={watch("bankId" ) || ""} 
+              value={watch("bankId") || ""}
               isLoading={loadingBanks}
               error={errors.bankId?.message || errorBanks}
               onChange={handleBankChange}
             >
               <option value="">Select a bank</option>
               {banks?.map((bk) => (
-                <option key={bk.id} value={bk.id}> 
+                <option key={bk.id} value={bk.id}>
                   {bk.name}
                 </option>
               ))}
             </FormSelect>
-
-            {/* Display selected bank info */}
-            {(watch("bankName") || watch("bankCode")) && (
-              <div className="col-span-2 p-3 bg-blue-50 border border-blue-200 rounded-md">
-                <p className="text-blue-700 text-sm">
-                  <strong>Selected Bank:</strong> {watch("bankName")} 
-                  {watch("bankCode") && ` (Code: ${watch("bankCode")})`}
-                </p>
-              </div>
-            )}
 
             {/* Account Number */}
             <Input
@@ -562,14 +515,14 @@ const EditProvider = () => {
             <PhoneNumberInput
               register={register("contactPhone")}
               error={errors.contactPhone?.message}
-             
             />
 
             {/* Buttons */}
-            <div className="flex col-span-2 gap-4 mt-4">
+            <div className="flex justify-between col-span-2 gap-4 mt-4">
               <ButtonT type="button" onClick={backNavigation}>
                 Back
               </ButtonT>
+
               <ButtonG
                 type="submit"
                 disabled={isSubmittingForm}
@@ -577,7 +530,7 @@ const EditProvider = () => {
                   isSubmittingForm ? "opacity-50 cursor-not-allowed" : ""
                 }
               >
-                {isSubmittingForm ? "Updating..." : "Update Provider"}
+                {isSubmittingForm ? "Updating..." : "Update"}
               </ButtonG>
             </div>
           </div>

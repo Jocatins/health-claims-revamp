@@ -25,6 +25,7 @@ import ProviderRegistration from "../pages/provider/Registration";
 import {Authorization} from "../pages/payments/Authorization";
 import ESettings from "../pages/settings/ESettings";
 import EditProvider from "../pages/provider/EditProvider";
+import RegistrationType from "../pages/enrollee/registration/Index";
 
 
 
@@ -59,7 +60,9 @@ const AppRoutes = () => {
             <Route path="dashboard" element={<Layout><Dashboard /></Layout>} />
             <Route path="enrollees" element={<Layout><EnrolleesPage /></Layout>} />
 
-            <Route path="registration/individual" element={<Layout><Individual /></Layout>} />
+            <Route path="registration/choose-type" element={<Layout><RegistrationType/></Layout>} />
+            <Route path="registration/individual" element={<Layout><Individual/></Layout>} />
+          
             <Route path="registration/corporate" element={<Layout><Corporate /></Layout>} />
 
             <Route path="providers/all" element={<Layout><AllProviders /></Layout>} />

@@ -178,7 +178,7 @@ const Individual = () => {
   }, [dispatch, corporates.length]);
 
   const backNavigation = () => {
-    navigate("/enrollee/enrollees");
+    navigate("/enrollee/registration/choose-type");
   };
 
   return (
